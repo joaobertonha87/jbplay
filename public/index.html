@@ -216,6 +216,17 @@ input[type=range]{padding:0;accent-color:#f7c53d}
 .v52-active-player{filter:drop-shadow(0 0 7px rgba(247,197,61,.75))}
 </style>
 
+
+<style>
+/* ===== JB PLAY V5.3 — POSICIONAMENTO REAL ===== */
+.v53-route{fill:none;stroke:#53e4ff;stroke-width:5;stroke-linecap:round;opacity:.92}
+.v53-run{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-dasharray:8 9;opacity:.38}
+.v53-trail{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;opacity:.20}
+.v53-contact{fill:none;stroke:#f7c53d;stroke-width:4;opacity:.8}
+.v53-label{font-size:10px;font-weight:900;fill:#fff;paint-order:stroke;stroke:#071016;stroke-width:3px}
+.v53-active{filter:drop-shadow(0 0 7px rgba(247,197,61,.72))}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1495,6 +1506,358 @@ if(typeof playTimeline!=='undefined')playTimeline.onclick=v52PlayTimeline;
 if(typeof previewAttack!=='undefined')previewAttack.onclick=v52PreviewAttack;
 if(typeof previewDefense!=='undefined')previewDefense.onclick=v52PreviewDefense;
 if(typeof animate!=='undefined')animate=v52PlayTimeline;
+
+
+// ===== JB PLAY V5.3 — MOVIMENTO POR ZONA + RECEPÇÃO REAL =====
+let v53Running=false, v53Els=[], v53Ball=null, v53Trail=null, v53State=new Map();
+
+function v53ResetVisuals(){
+  v53Els.forEach(n=>n?.remove?.()); v53Els=[];
+  if(v53Ball){v53Ball.remove();v53Ball=null}
+  if(v53Trail){v53Trail.remove();v53Trail=null}
+  players.forEach(pl=>{
+    pl?.g?.classList?.remove('v53-active');
+    if(pl?.bodyEnhanced){
+      pl.bodyEnhanced.body.removeAttribute('transform');
+      pl.bodyEnhanced.racket.removeAttribute('transform');
+      pl.bodyEnhanced.flash?.setAttribute('opacity','0');
+    } else pl?.g?.removeAttribute('transform');
+  });
+  v53State.clear();
+}
+
+function v53Ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
+function v53EaseOut(t){return 1-Math.pow(1-t,3)}
+
+function v53Player(actor){
+  const m=(actor||'').match(/Aluno\s([1-4])/i);
+  return m ? players[+m[1]-1] : null;
+}
+function v53PlayerIndex(actor){
+  const m=(actor||'').match(/Aluno\s([1-4])/i);
+  return m ? (+m[1]-1) : -1;
+}
+function v53Base(pl){return {x:pl.x,y:pl.y}}
+
+function v53StatePoint(pl){
+  if(!pl)return {x:350,y:450};
+  if(!v53State.has(pl))v53State.set(pl,{x:pl.x,y:pl.y});
+  return {...v53State.get(pl)};
+}
+function v53SetState(pl,p){if(pl)v53State.set(pl,{x:p.x,y:p.y})}
+
+function v53ZoneY(pl,zone){
+  const top=pl.y<450;
+  const z=(zone||'').toLowerCase();
+  if(z.includes('vermel')||z.includes('recuper')) return top?92:808;
+  if(z.includes('amarel')||z.includes('constru')) return top?220:680;
+  if(z.includes('verde')||z.includes('defini')) return top?365:535;
+  return pl.y;
+}
+function v53LaneX(pl,lane){
+  if(lane==null||lane==='')return pl.x;
+  if(typeof lane==='number')return 150+(Math.max(1,Math.min(5,lane))-1)*100;
+  const s=String(lane).toLowerCase();
+  const zm=s.match(/[1-5]/); if(zm)return 150+(+zm[0]-1)*100;
+  if(s.includes('esquer'))return 205;
+  if(s.includes('direit'))return 495;
+  if(s.includes('central')||s.includes('centro'))return 350;
+  if(s.includes('lateral')){
+    return pl.x<350?Math.max(120,pl.x-65):Math.min(580,pl.x+65);
+  }
+  return pl.x;
+}
+function v53ContactPointFor(pl,zone,lane,movement){
+  let x=v53LaneX(pl,lane), y=v53ZoneY(pl,zone);
+  const mv=(movement?.type||movement||'').toString().toLowerCase();
+  if(mv.includes('lateral')){
+    const dir=(movement?.direction||'').toString().toLowerCase();
+    if(dir.includes('esquer'))x=Math.max(115,x-75);
+    else if(dir.includes('direit'))x=Math.min(585,x+75);
+    else x=pl.x<350?Math.max(115,x-60):Math.min(585,x+60);
+  }
+  if(mv.includes('recu')) y=pl.y<450?Math.max(70,y-55):Math.min(830,y+55);
+  if(mv.includes('avan')) y=pl.y<450?Math.min(420,y+55):Math.max(480,y-55);
+  return {x,y};
+}
+function v53StepActorContact(step){
+  const pl=v53Player(step.actor);
+  if(!pl){
+    if(/Professor/i.test(step.actor||'')&&professor)return{x:professor.x,y:professor.y};
+    return{x:350,y:450};
+  }
+  const zone=step.contactZone||step.receiveZone||step.zone||'';
+  const lane=step.contactLane||step.lane||'';
+  return v53ContactPointFor(pl,zone,lane,step.movement);
+}
+function v53RecoveryPoint(pl,step){
+  if(!pl)return null;
+  const rz=step.recoveryZone;
+  if(!rz)return v53Base(pl);
+  return v53ContactPointFor(pl,rz,step.recoveryLane||'',{type:'recuperação'});
+}
+function v53TargetZonePoint(step){
+  const a=v53StepActorContact(step);
+  const top=a.y<450;
+  const zone=(step.targetZone||step.target||'').toLowerCase();
+  let y=top?690:210;
+  if(zone.includes('vermel')||zone.includes('recuper')) y=top?808:92;
+  else if(zone.includes('amarel')||zone.includes('constru')) y=top?680:220;
+  else if(zone.includes('verde')||zone.includes('defini')) y=top?535:365;
+  let x=350;
+  const lane=step.targetLane||step.direction||step.target||'';
+  const s=String(lane).toLowerCase();
+  const z=s.match(/zona\s*([1-5])/i);
+  if(z)x=150+(+z[1]-1)*100;
+  else if(s.includes('paralela'))x=a.x;
+  else if(s.includes('cruzad'))x=a.x<350?500:200;
+  else if(s.includes('central'))x=350;
+  return{x,y};
+}
+function v53NextReceiverPoint(step,nextStep){
+  const targetPlayer=step.targetPlayer||((step.target||'').match(/Aluno\s[1-4]/i)?.[0])||nextStep?.actor;
+  const pl=v53Player(targetPlayer);
+  if(pl){
+    const zone=step.targetZone||nextStep?.contactZone||nextStep?.receiveZone||'';
+    const lane=step.targetLane||nextStep?.contactLane||nextStep?.lane||'';
+    return {player:pl, point:v53ContactPointFor(pl,zone,lane,nextStep?.movement||{})};
+  }
+  return {player:null,point:v53TargetZonePoint(step)};
+}
+function v53Profile(action){
+  return typeof profileFor==='function'?profileFor(action||''):{arc:-28,speed:1.1,contact:'frente'};
+}
+function v53Racket(action,t){
+  if(/Smash|Gancho|Bandeja|Rainbow|Anômalo|Saque/i.test(action||''))return -72+144*t;
+  if(/Forehand/i.test(action||''))return -50+100*t;
+  if(/Backhand/i.test(action||''))return 50-100*t;
+  if(/Voleio/i.test(action||''))return -28+56*t;
+  if(/Lob|Curta/i.test(action||''))return 38-76*t;
+  return -20+40*t;
+}
+function v53ApplyPlayer(pl,p,lean=0,racket=0,scale=1){
+  if(!pl)return;
+  pl.g.classList.add('v53-active');
+  const dx=p.x-pl.x,dy=p.y-pl.y;
+  if(pl.bodyEnhanced){
+    pl.bodyEnhanced.body.setAttribute('transform',`translate(${dx} ${dy}) rotate(${lean} ${pl.x} ${pl.y}) scale(${scale})`);
+    pl.bodyEnhanced.racket.setAttribute('transform',`translate(${dx} ${dy}) rotate(${racket} ${pl.x+18} ${pl.y-4})`);
+  }else pl.g.setAttribute('transform',`translate(${dx} ${dy})`);
+}
+function v53AnimateMove(pl,from,to,duration,kind='aproximação'){
+  if(!pl)return Promise.resolve();
+  const line=el('path',{d:`M ${from.x} ${from.y} L ${to.x} ${to.y}`,class:'v53-run'});v53Els.push(line);
+  return new Promise(resolve=>{
+    let start=null;
+    function frame(ts){
+      if(!start)start=ts;
+      const raw=Math.min(1,(ts-start)/duration),t=v53Ease(raw);
+      const p={x:from.x+(to.x-from.x)*t,y:from.y+(to.y-from.y)*t};
+      const lean=Math.max(-10,Math.min(10,(to.x-from.x)*.025));
+      v53ApplyPlayer(pl,p,lean,0,1+.015*Math.sin(raw*Math.PI));
+      if(raw<1)requestAnimationFrame(frame);else{
+        v53SetState(pl,to);line.style.opacity='0';setTimeout(()=>line.remove(),120);resolve();
+      }
+    }requestAnimationFrame(frame);
+  });
+}
+function v53AnimateSwing(pl,action,contact,duration=320){
+  if(!pl)return Promise.resolve();
+  return new Promise(resolve=>{
+    let start=null;
+    function frame(ts){
+      if(!start)start=ts;
+      const raw=Math.min(1,(ts-start)/duration);
+      const racket=v53Racket(action,raw);
+      const lean=/Backhand/i.test(action||'')?-6:6;
+      v53ApplyPlayer(pl,contact,lean*Math.sin(raw*Math.PI),racket,1+.025*Math.sin(raw*Math.PI));
+      if(pl.bodyEnhanced?.flash)pl.bodyEnhanced.flash.setAttribute('opacity',Math.max(0,1-Math.abs(raw-.55)*6));
+      if(raw<1)requestAnimationFrame(frame);else{
+        if(pl.bodyEnhanced?.flash)pl.bodyEnhanced.flash.setAttribute('opacity','0');
+        resolve();
+      }
+    }requestAnimationFrame(frame);
+  });
+}
+function v53BallPath(start,end,action,trajectory){
+  const p=v53Profile(action);let arc=p.arc||0;
+  if(trajectory?.curve!=null)arc=+trajectory.curve;
+  const tt=(trajectory?.type||'').toLowerCase();
+  if(tt.includes('alto')||/Lob|Rainbow/i.test(action||''))arc=Math.min(-105,arc);
+  if(tt.includes('desc')||/Smash/i.test(action||''))arc=Math.max(28,arc);
+  if(tt.includes('curta')||/Curta/i.test(action||''))arc=35;
+  const mx=(start.x+end.x)/2,my=(start.y+end.y)/2+arc;
+  const path=el('path',{d:`M ${start.x} ${start.y} Q ${mx} ${my} ${end.x} ${end.y}`,class:'v53-route'});
+  const label=el('text',{x:mx,y:my-10,class:'v53-label'});label.textContent=action||'Bola';
+  v53Els.push(path,label);return path;
+}
+function v53AnimateBall(path,duration){
+  if(!v53Ball)v53Ball=el('circle',{r:10,fill:'#f7c53d',stroke:'#fff','stroke-width':3});
+  if(!v53Trail)v53Trail=el('path',{class:'v53-trail'});
+  const len=path.getTotalLength(),pts=[];
+  return new Promise(resolve=>{
+    let start=null;
+    function frame(ts){
+      if(!start)start=ts;
+      const raw=Math.min(1,(ts-start)/duration),t=v53Ease(raw),pt=path.getPointAtLength(t*len);
+      v53Ball.setAttribute('cx',pt.x);v53Ball.setAttribute('cy',pt.y);v53Ball.setAttribute('opacity','1');
+      pts.push({x:pt.x,y:pt.y});if(pts.length>12)pts.shift();
+      if(pts.length>1)v53Trail.setAttribute('d',pts.map((q,i)=>`${i?'L':'M'} ${q.x} ${q.y}`).join(' '));
+      if(raw<1)requestAnimationFrame(frame);else resolve();
+    }requestAnimationFrame(frame);
+  });
+}
+
+async function v53PlayTimeline(){
+  if(v53Running||!Array.isArray(timelineSteps)||!timelineSteps.length)return;
+  v53Running=true;v53ResetVisuals();
+  players.forEach(pl=>v53SetState(pl,v53Base(pl)));
+  svg.querySelectorAll('path[marker-end="url(#arrow)"], .trajectory-label').forEach(n=>{if(!n.closest('defs'))n.remove()});
+
+  const pace=typeof sessionPace!=='undefined'?(+sessionPace.value||1):1;
+  const ps=typeof playerSpeed!=='undefined'?(+playerSpeed.value||1):1;
+
+  for(let i=0;i<timelineSteps.length;i++){
+    const step=timelineSteps[i],next=timelineSteps[i+1];
+    currentTimelineIndex=i;renderTimeline?.();
+
+    const actorPl=v53Player(step.actor);
+    const actorContact=v53StepActorContact(step);
+
+    // 1) actor vai realmente até o ponto definido para pegar/rebater
+    if(actorPl){
+      const from=v53StatePoint(actorPl);
+      if(Math.hypot(actorContact.x-from.x,actorContact.y-from.y)>5){
+        await v53AnimateMove(actorPl,from,actorContact,Math.max(280,520/(ps*pace)),'aproximação');
+      }
+      await v53AnimateSwing(actorPl,step.action,actorContact,Math.max(220,340/pace));
+    }
+
+    // 2) descobre exatamente onde o próximo jogador receberá a bola
+    const recv=v53NextReceiverPoint(step,next);
+    const start=/Professor/i.test(step.actor||'')?v53StepActorContact(step):actorContact;
+    const path=v53BallPath(start,recv.point,step.action,step.trajectory);
+    const prof=v53Profile(step.action),flight=Math.max(380,780/((+step.speed||prof.speed||1)*pace));
+
+    // 3) enquanto a bola viaja, o recebedor já se desloca para a zona de contato
+    const receiverMove=recv.player
+      ? v53AnimateMove(recv.player,v53StatePoint(recv.player),recv.point,Math.max(300,flight*.88),'recepção')
+      : Promise.resolve();
+
+    // 4) ator recupera posição depois do golpe
+    const recovery=actorPl
+      ? v53AnimateMove(actorPl,actorContact,v53RecoveryPoint(actorPl,step),Math.max(300,flight*.78),'recuperação')
+      : Promise.resolve();
+
+    await Promise.all([v53AnimateBall(path,flight),receiverMove,recovery]);
+
+    path.style.opacity='0';
+    if(v53Trail)v53Trail.setAttribute('d','');
+    await new Promise(r=>setTimeout(r,90));
+  }
+
+  currentTimelineIndex=-1;renderTimeline?.();
+  await new Promise(r=>setTimeout(r,220));
+  v53ResetVisuals();v53Running=false;
+}
+
+function v53Example(){
+  timelineSteps=[
+    {
+      actor:'Professor',action:'Lançamento',
+      targetPlayer:'Aluno 3',targetZone:'Zona verde',
+      speed:.9
+    },
+    {
+      actor:'Aluno 3',action:'Forehand neutro',
+      contactZone:'Zona verde',
+      targetPlayer:'Aluno 1',targetLane:'Paralela',
+      recoveryZone:'Zona amarela',
+      speed:1.1
+    },
+    {
+      actor:'Aluno 1',action:'Backhand / Lob',
+      contactZone:'Zona verde',
+      targetPlayer:'Aluno 4',targetZone:'Zona vermelha',
+      trajectory:{type:'arco alto',curve:-125},
+      recoveryZone:'Zona amarela',
+      speed:.9
+    },
+    {
+      actor:'Aluno 4',action:'Smash',
+      contactZone:'Zona vermelha',
+      movement:{type:'lateral',direction:'direita'},
+      targetPlayer:'Aluno 2',targetZone:'Zona vermelha',
+      trajectory:{type:'descendente',curve:35},
+      recoveryZone:'Zona amarela',
+      speed:1.8
+    },
+    {
+      actor:'Aluno 2',action:'Defesa de forehand',
+      contactZone:'Zona vermelha',
+      targetZone:'Zona verde',
+      targetLane:'Central',
+      recoveryZone:'Zona amarela',
+      speed:1.0
+    }
+  ];
+  renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});v53PlayTimeline();
+}
+
+// usa o exemplo solicitado no botão Ataque para validação imediata
+if(typeof previewAttack!=='undefined')previewAttack.onclick=v53Example;
+if(typeof playTimeline!=='undefined')playTimeline.onclick=v53PlayTimeline;
+if(typeof animate!=='undefined')animate=v53PlayTimeline;
+
+// IA online V5.3: preserva zonas de contato, alvo e recuperação
+if(typeof onlineAiGenerate!=='undefined'){
+  onlineAiGenerate.onclick=async()=>{
+    const prompt=onlineAiPrompt.value.trim();
+    if(!prompt){onlineAiState.className='ai-state err';onlineAiState.textContent='Descreva o treino.';return}
+    onlineAiState.className='ai-state';onlineAiState.textContent='IA montando deslocamentos, zonas de contato e trajetórias...';
+    try{
+      const res=await fetch('/api/generate-training',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({prompt,context:{
+          level:levelEl.value,players:+playersEl.value,mode:modeEl.value,focus:focusEl.value,
+          availableShots:shots,
+          request:'include contactZone, contactLane, targetPlayer, targetZone, targetLane, recoveryZone, movement and trajectory for every timeline step'
+        }})
+      });
+      if(!res.ok)throw new Error(await res.text());
+      const data=await res.json();
+      if(data.players){playersEl.value=String(data.players);drawCourt()}
+      if(data.level)levelEl.value=data.level;
+      if(data.mode)modeEl.value=data.mode;
+      if(data.focus)focusEl.value=data.focus;
+      if(Array.isArray(data.timeline)){
+        timelineSteps=data.timeline.map(x=>({
+          actor:x.actor||'Professor',
+          action:x.action||'Lançamento',
+          contactZone:x.contactZone||x.receiveZone||'',
+          contactLane:x.contactLane||x.lane||'',
+          targetPlayer:x.targetPlayer||'',
+          targetZone:x.targetZone||'',
+          targetLane:x.targetLane||'',
+          recoveryZone:x.recoveryZone||'',
+          recoveryLane:x.recoveryLane||'',
+          movement:x.movement||{},
+          trajectory:x.trajectory||{},
+          speed:+x.speed||1
+        }));
+        renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});
+      }
+      exTitle.textContent=data.title||'Treino tático por IA';
+      objective.textContent=data.objective||'';
+      onlineAiState.className='ai-state ok';
+      onlineAiState.textContent='Treino aplicado com zonas de contato e deslocamentos.';
+    }catch(e){
+      console.error(e);
+      onlineAiState.className='ai-state err';
+      onlineAiState.textContent='Não foi possível gerar. Verifique créditos e logs.';
+    }
+  };
+}
 
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
