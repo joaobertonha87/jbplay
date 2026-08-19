@@ -492,7 +492,7 @@ function drawCourt(){
   zx.forEach((x,i)=>{el('circle',{cx:x,cy:410,r:22,fill:'#071016',opacity:.64}); const t=el('text',{x:x,y:417,'text-anchor':'middle',fill:'#fff','font-size':20,'font-weight':900});t.textContent=i+1;});
   players=[];
   const n=+document.getElementById('players').value;
-  const pts=n===2?[[250,690],[450,210]]:[[230,690],[470,690],[230,210],[470,210]];
+  const pts=n===2?[[230,300],[230,600]]:[[230,300],[470,300],[230,600],[470,600]];
   pts.forEach((p,i)=>addPlayer(p[0],p[1],i+1));
 }
 function addPlayer(x,y,i){
@@ -2061,6 +2061,67 @@ if(playersEl){
   playersEl.value='4';
   drawCourt();
 }
+
+
+// ===== JB PLAY V5.5 STRICT COURT MAP =====
+const V55_HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
+function v55P(actor){const m=(actor||'').match(/Aluno\s*([1-4])/i);return m?players[+m[1]-1]:null}
+function v55Point(step,kind){
+  if(kind==='contact' && step.fixedContact)return {...step.fixedContact};
+  if(kind==='target' && step.fixedTarget)return {...step.fixedTarget};
+  return null;
+}
+async function v55StrictPlay(){
+  if(v53Running||!timelineSteps?.length)return;
+  v53Running=true;v53ResetVisuals();
+  players.forEach((pl,i)=>{
+    const p=V55_HOME[i+1];
+    pl.x=p.x;pl.y=p.y;
+    pl.c.setAttribute('cx',p.x);pl.c.setAttribute('cy',p.y);
+    pl.t.setAttribute('x',p.x);pl.t.setAttribute('y',p.y+6);
+    v53SetState(pl,p);
+  });
+  const pace=+sessionPace.value||1,ps=+playerSpeed.value||1;
+  for(let i=0;i<timelineSteps.length;i++){
+    const s=timelineSteps[i];
+    currentTimelineIndex=i;renderTimeline?.();
+    const actor=v55P(s.actor);
+    const contact=v55Point(s,'contact') || (actor?v53StatePoint(actor):(professor?{x:professor.x,y:professor.y}:{x:40,y:520}));
+    if(actor){
+      const from=v53StatePoint(actor);
+      const mv=((s.movement?.type)||'').toLowerCase();
+      if(!mv.includes('parado')&&Math.hypot(contact.x-from.x,contact.y-from.y)>4)
+        await v53AnimateMove(actor,from,contact,Math.max(340,620/(ps*pace)),'aproximação');
+      await v53AnimateSwing(actor,s.action,contact,Math.max(240,360/pace));
+    }
+    const target=v55Point(s,'target') || {x:350,y:450};
+    const recv=s.targetPlayer?v55P(s.targetPlayer):null;
+    const start=/Professor/i.test(s.actor||'')?(professor?{x:professor.x,y:professor.y}:contact):contact;
+    const path=v53BallPath(start,target,s.action,s.trajectory);
+    const prof=v53Profile(s.action),flight=Math.max(440,860/((+s.speed||prof.speed||1)*pace));
+    const recvMove=recv?v53AnimateMove(recv,v53StatePoint(recv),target,Math.max(360,flight*.9),'recepção'):Promise.resolve();
+    const home=actor?V55_HOME[players.indexOf(actor)+1]:null;
+    const rec=actor&&home?v53AnimateMove(actor,contact,home,Math.max(340,flight*.78),'recuperação'):Promise.resolve();
+    await Promise.all([v53AnimateBall(path,flight),recvMove,rec]);
+    path.style.opacity='0';if(v53Trail)v53Trail.setAttribute('d','');
+    await new Promise(r=>setTimeout(r,100));
+  }
+  currentTimelineIndex=-1;renderTimeline?.();v53ResetVisuals();v53Running=false;
+}
+function v55StrictExample(){
+  playersEl.value='4';drawCourt();
+  timelineSteps=[
+    {actor:'Professor',action:'Lançamento',targetPlayer:'Aluno 1',fixedTarget:{x:230,y:300},speed:.9},
+    {actor:'Aluno 1',action:'Forehand neutro',movement:{type:'parado'},fixedContact:{x:230,y:300},targetPlayer:'Aluno 3',fixedTarget:{x:230,y:600},trajectory:{type:'reta',curve:-8},speed:1.1},
+    {actor:'Aluno 3',action:'Backhand / Lob',movement:{type:'parado'},fixedContact:{x:230,y:600},targetPlayer:'Aluno 2',fixedTarget:{x:520,y:105},trajectory:{type:'arco alto',curve:-145},speed:.9},
+    {actor:'Aluno 2',action:'Smash',movement:{type:'lateral+recuo',direction:'direita/fundo'},fixedContact:{x:520,y:105},targetPlayer:'Aluno 4',fixedTarget:{x:470,y:535},trajectory:{type:'descendente',curve:42},speed:1.8},
+    {actor:'Aluno 4',action:'Voleio forehand',movement:{type:'avanço',direction:'frente'},fixedContact:{x:470,y:535},fixedTarget:{x:350,y:365},trajectory:{type:'reta',curve:-8},speed:1.35}
+  ];
+  renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});v55StrictPlay();
+}
+if(typeof previewAttack!=='undefined')previewAttack.onclick=v55StrictExample;
+if(typeof playTimeline!=='undefined')playTimeline.onclick=v55StrictPlay;
+if(typeof animate!=='undefined')animate=v55StrictPlay;
 
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
