@@ -227,6 +227,13 @@ input[type=range]{padding:0;accent-color:#f7c53d}
 .v53-active{filter:drop-shadow(0 0 7px rgba(247,197,61,.72))}
 </style>
 
+
+<style>
+/* ===== JB PLAY V5.4 — MAPEAMENTO FIXO 1/2/3/4 ===== */
+.v54-id-label{font-size:12px;font-weight:900;fill:#fff;paint-order:stroke;stroke:#071016;stroke-width:3px}
+.v54-start-line{stroke:#f7c53d;stroke-width:3;stroke-dasharray:8 8;opacity:.35}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1857,6 +1864,202 @@ if(typeof onlineAiGenerate!=='undefined'){
       onlineAiState.textContent='Não foi possível gerar. Verifique créditos e logs.';
     }
   };
+}
+
+
+// ===== JB PLAY V5.4 — IDENTIDADE FIXA DOS ALUNOS =====
+// REGRA ABSOLUTA:
+// Aluno 1 = parte de cima, lado esquerdo
+// Aluno 2 = parte de cima, lado direito
+// Aluno 3 = parte de baixo, lado esquerdo
+// Aluno 4 = parte de baixo, lado direito
+// Todos partem sobre a linha verde/amarela: y=300 em cima e y=600 embaixo.
+
+const V54_START = {
+  1:{x:230,y:300,side:'top',lane:'left'},
+  2:{x:470,y:300,side:'top',lane:'right'},
+  3:{x:230,y:600,side:'bottom',lane:'left'},
+  4:{x:470,y:600,side:'bottom',lane:'right'}
+};
+
+function v54ApplyFixedIdentity(){
+  players.forEach((pl,i)=>{
+    const id=i+1, pos=V54_START[id];
+    if(!pos)return;
+    pl.x=pos.x; pl.y=pos.y;
+    pl.c.setAttribute('cx',pos.x);pl.c.setAttribute('cy',pos.y);
+    pl.t.setAttribute('x',pos.x);pl.t.setAttribute('y',pos.y+6);
+
+    // move enhanced body to the corrected base if already created
+    if(pl.bodyEnhanced){
+      const dx=pos.x-(+pl.bodyEnhanced.body.dataset?.baseX||pos.x);
+      const dy=pos.y-(+pl.bodyEnhanced.body.dataset?.baseY||pos.y);
+      pl.bodyEnhanced.body.removeAttribute('transform');
+      pl.bodyEnhanced.racket.removeAttribute('transform');
+    }
+  });
+
+  // visible labels near initial positions to remove ambiguity
+  svg.querySelectorAll('.v54-id-label,.v54-start-line').forEach(n=>n.remove());
+  el('line',{x1:75,y1:300,x2:625,y2:300,class:'v54-start-line'});
+  el('line',{x1:75,y1:600,x2:625,y2:600,class:'v54-start-line'});
+  Object.entries(V54_START).forEach(([id,p])=>{
+    const t=el('text',{x:p.x,y:p.y-34,'text-anchor':'middle',class:'v54-id-label'});
+    t.textContent=`A${id}`;
+  });
+}
+
+// Override all court redraws so mapping is always restored.
+const v54DrawCourtBase = drawCourt;
+drawCourt = function(){
+  v54DrawCourtBase();
+  // Force exact role mapping independent of array order/AI
+  if(players.length===4){
+    players.forEach((pl,i)=>{
+      const p=V54_START[i+1];
+      pl.x=p.x;pl.y=p.y;
+      pl.c.setAttribute('cx',p.x);pl.c.setAttribute('cy',p.y);
+      pl.t.setAttribute('x',p.x);pl.t.setAttribute('y',p.y+6);
+    });
+  }
+  if(typeof ensureEnhancedPlayers==='function')ensureEnhancedPlayers();
+  v54ApplyFixedIdentity();
+};
+
+// Hard identity lookup — never infer by current visual position.
+function v54PlayerById(id){
+  const n=Number(id);
+  return Number.isInteger(n)&&n>=1&&n<=4 ? players[n-1] : null;
+}
+function v54PlayerFromActor(actor){
+  const m=(actor||'').match(/Aluno\s*([1-4])/i);
+  return m ? v54PlayerById(+m[1]) : null;
+}
+
+// Override V5.3 helpers to respect identity mapping.
+if(typeof v53Player==='function'){
+  v53Player = function(actor){
+    return v54PlayerFromActor(actor);
+  };
+}
+if(typeof v53Base==='function'){
+  v53Base = function(pl){
+    const idx=players.indexOf(pl)+1;
+    const p=V54_START[idx]||{x:pl.x,y:pl.y};
+    return {x:p.x,y:p.y};
+  };
+}
+if(typeof v53StatePoint==='function'){
+  const oldStatePoint=v53StatePoint;
+  v53StatePoint=function(pl){
+    if(!pl)return{x:350,y:450};
+    if(!v53State.has(pl)){
+      const idx=players.indexOf(pl)+1;
+      const p=V54_START[idx]||{x:pl.x,y:pl.y};
+      v53State.set(pl,{x:p.x,y:p.y});
+    }
+    return {...v53State.get(pl)};
+  };
+}
+
+// "parado" means no approach movement: contact remains at current/start position.
+if(typeof v53StepActorContact==='function'){
+  const oldContact=v53StepActorContact;
+  v53StepActorContact=function(step){
+    const pl=v54PlayerFromActor(step.actor);
+    if(!pl){
+      if(/Professor/i.test(step.actor||'')&&professor)return{x:professor.x,y:professor.y};
+      return{x:350,y:450};
+    }
+    const mv=((step.movement?.type||step.movement||'')+' '+(step.movement?.direction||'')).toLowerCase();
+    if(mv.includes('parado')||mv.includes('sem deslocamento')){
+      return v53StatePoint(pl);
+    }
+    return oldContact(step);
+  };
+}
+
+// Fixed example exactly matching the coach's intended numbering.
+function v54Example(){
+  playersEl.value='4';
+  drawCourt();
+
+  timelineSteps=[
+    {
+      actor:'Professor',
+      action:'Lançamento',
+      targetPlayer:'Aluno 1',
+      targetZone:'Zona verde',
+      targetLane:'Esquerda',
+      speed:.9
+    },
+    {
+      actor:'Aluno 1',
+      action:'Forehand neutro',
+      contactZone:'Zona verde',
+      contactLane:'Esquerda',
+      movement:{type:'parado',direction:''},
+      targetPlayer:'Aluno 3',
+      targetLane:'Paralela',
+      targetZone:'Zona verde',
+      recoveryZone:'Zona verde',
+      recoveryLane:'Esquerda',
+      speed:1.1
+    },
+    {
+      actor:'Aluno 3',
+      action:'Backhand / Lob',
+      contactZone:'Zona verde',
+      contactLane:'Esquerda',
+      movement:{type:'parado',direction:''},
+      targetPlayer:'Aluno 2',
+      targetZone:'Zona vermelha',
+      targetLane:'Direita',
+      trajectory:{type:'arco alto',curve:-130},
+      recoveryZone:'Zona verde',
+      recoveryLane:'Esquerda',
+      speed:.9
+    },
+    {
+      actor:'Aluno 2',
+      action:'Smash',
+      contactZone:'Zona vermelha',
+      contactLane:'Direita',
+      movement:{type:'lateral',direction:'direita'},
+      targetPlayer:'Aluno 4',
+      targetZone:'Zona verde',
+      targetLane:'Direita',
+      trajectory:{type:'descendente',curve:38},
+      recoveryZone:'Zona verde',
+      recoveryLane:'Direita',
+      speed:1.8
+    },
+    {
+      actor:'Aluno 4',
+      action:'Voleio forehand',
+      contactZone:'Zona verde',
+      contactLane:'Direita',
+      movement:{type:'aproximação',direction:'frente'},
+      targetZone:'Zona verde',
+      targetLane:'Zona 3',
+      trajectory:{type:'reta',curve:-10},
+      recoveryZone:'Zona verde',
+      recoveryLane:'Direita',
+      speed:1.35
+    }
+  ];
+
+  if(typeof renderTimeline==='function')renderTimeline();
+  if(typeof renderAIPlan==='function')renderAIPlan({timeline:timelineSteps});
+  if(typeof v53PlayTimeline==='function')v53PlayTimeline();
+}
+
+if(typeof previewAttack!=='undefined') previewAttack.onclick=v54Example;
+
+// Ensure initial load is correct.
+if(playersEl){
+  playersEl.value='4';
+  drawCourt();
 }
 
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
