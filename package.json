@@ -1,0 +1,17 @@
+{
+  "name": "jb-treinos-pro",
+  "version": "3.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "openai": "^5.0.0"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
