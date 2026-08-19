@@ -25,6 +25,12 @@ MAPEAMENTO FIXO E OBRIGATÓRIO DOS JOGADORES:
 - Aluno 3 = PARTE DE BAIXO, LADO ESQUERDO.
 - Aluno 4 = PARTE DE BAIXO, LADO DIREITO.
 
+COORDENADAS FIXAS:
+Aluno 1 = x230,y300 (cima/esquerda)
+Aluno 2 = x470,y300 (cima/direita)
+Aluno 3 = x230,y600 (baixo/esquerda)
+Aluno 4 = x470,y600 (baixo/direita)
+
 POSIÇÃO INICIAL OBRIGATÓRIA:
 Todos os quatro jogadores começam SOBRE A LINHA QUE SEPARA A ZONA VERDE DA ZONA AMARELA.
 - Aluno 1: cima/esquerda.
