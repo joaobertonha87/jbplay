@@ -18,41 +18,49 @@ const model = process.env.OPENAI_MODEL || "gpt-5-mini";
 
 const SYSTEM = `
 Você é o motor tático do JB Play, especializado em Beach Tennis.
-Sua prioridade é gerar uma sequência fisicamente coerente: o jogador deve se deslocar até o ponto onde a bola chega, preparar o golpe, rebater e recuperar posição.
 
-Golpes permitidos:
-Voleio forehand, Voleio backhand, Forehand neutro, Forehand acelerado, Backhand neutro, Backhand,
-Smash, Gancho, Lob, Curta, Bandeja, Rainbow, Anômalo, Saque e defesas de forehand/backhand.
+MAPEAMENTO FIXO E OBRIGATÓRIO DOS JOGADORES:
+- Aluno 1 = PARTE DE CIMA, LADO ESQUERDO.
+- Aluno 2 = PARTE DE CIMA, LADO DIREITO.
+- Aluno 3 = PARTE DE BAIXO, LADO ESQUERDO.
+- Aluno 4 = PARTE DE BAIXO, LADO DIREITO.
 
-Zonas por lado:
+POSIÇÃO INICIAL OBRIGATÓRIA:
+Todos os quatro jogadores começam SOBRE A LINHA QUE SEPARA A ZONA VERDE DA ZONA AMARELA.
+- Aluno 1: cima/esquerda.
+- Aluno 2: cima/direita.
+- Aluno 3: baixo/esquerda.
+- Aluno 4: baixo/direita.
+Nunca troque esses números, lados ou posições entre si.
+
+Zonas:
 - Zona verde = definição, próxima à rede.
 - Zona amarela = construção.
-- Zona vermelha = recuperação, mais ao fundo.
+- Zona vermelha = recuperação/fundo.
 
-Regras obrigatórias:
-1. Cada etapa deve indicar ONDE o ator vai pegar/rebater a bola usando contactZone.
-2. Quando houver outro jogador recebendo, informe targetPlayer.
-3. Informe targetZone, ou seja, em qual zona a bola chegará ao recebedor.
-4. Use targetLane para Paralela, Cruzada, Central ou Zona 1-5 quando aplicável.
-5. Depois do golpe, informe recoveryZone.
-6. Se o jogador precisar afastar lateralmente, recuar ou avançar, descreva em movement.
-7. Lob/Rainbow = arco alto; Smash = descendente; Curta = queda próxima da rede.
-8. A bola deve chegar ao ponto de contato do próximo jogador; não gere trajetórias desconectadas.
-9. Em bola viva, distribua as ações entre os alunos e mantenha continuidade.
-10. Gere entre 5 e 14 etapas.
+Regras de movimento:
+1. Cada etapa deve indicar qual aluno atua e onde ele pega/rebate a bola.
+2. Se o professor disser "parado", o aluno rebate sem sair do ponto atual.
+3. Se disser "afastar de lado", movement.type deve ser "lateral".
+4. Se disser "avançar", "recuar" ou "posicionar-se", descreva isso em movement.
+5. O recebedor deve se deslocar para a zona de contato enquanto a bola vem.
+6. A bola deve terminar exatamente onde o próximo jogador irá rebater.
+7. Depois do golpe, use recoveryZone para indicar onde o aluno volta/permanece.
+8. Lob/Rainbow = arco alto; Smash = descendente; Curta = queda próxima da rede.
+9. Nunca altere a identidade Aluno 1/2/3/4.
 
-Exemplo correto:
-Professor lança para Aluno 3 na Zona verde.
-Aluno 3 executa Forehand neutro Paralela para Aluno 1.
-Aluno 1 executa Backhand/Lob para Aluno 4 na Zona vermelha.
-Aluno 4 desloca lateralmente e executa Smash para Aluno 2 na Zona vermelha.
-Aluno 2 executa Defesa de forehand para Zona verde.
+EXEMPLO DE NUMERAÇÃO CORRETA:
+- Professor lança para Aluno 1 na zona verde.
+- Aluno 1, que é de CIMA/ESQUERDA, rebate parado Forehand neutro paralela para Aluno 3.
+- Aluno 3, que é de BAIXO/ESQUERDA, rebate Backhand/Lob para Aluno 2 na zona vermelha.
+- Aluno 2, que é de CIMA/DIREITA, afasta lateralmente e executa Smash para Aluno 4.
+- Aluno 4, que é de BAIXO/DIREITA, posiciona-se na zona verde e executa Voleio forehand para a Zona 3 central do lado de cima.
 
 Responda SOMENTE em JSON válido:
 {
  "title":"string",
  "level":"Iniciante|Intermediário|Avançado",
- "players":2,
+ "players":4,
  "mode":"Sequencial|Simultâneo|Contínuo / bola viva",
  "focus":"Construção de ponto|Definição|Recuperação|Transição ataque/defesa|Direcionamento|Volume / intensidade",
  "direction":"Zona 1|Zona 2|Zona 3|Zona 4|Zona 5|Cruzado|Paralela|Central",
@@ -67,10 +75,10 @@ Responda SOMENTE em JSON válido:
      "contactLane":"Esquerda|Direita|Central|Zona 1|Zona 2|Zona 3|Zona 4|Zona 5",
      "targetPlayer":"Aluno 1|Aluno 2|Aluno 3|Aluno 4|",
      "targetZone":"Zona verde|Zona amarela|Zona vermelha",
-     "targetLane":"Paralela|Cruzada|Central|Zona 1|Zona 2|Zona 3|Zona 4|Zona 5",
+     "targetLane":"Paralela|Cruzada|Central|Esquerda|Direita|Zona 1|Zona 2|Zona 3|Zona 4|Zona 5",
      "recoveryZone":"Zona verde|Zona amarela|Zona vermelha",
      "recoveryLane":"Esquerda|Direita|Central",
-     "movement":{"type":"aproximação|lateral|recuo|avanço|recuperação","direction":"esquerda|direita|frente|fundo"},
+     "movement":{"type":"parado|aproximação|lateral|recuo|avanço|recuperação","direction":"esquerda|direita|frente|fundo|"},
      "trajectory":{"type":"reta|arco baixo|arco alto|curta|descendente","curve":-30},
      "speed":1.2
    }
