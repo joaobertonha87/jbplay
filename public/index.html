@@ -824,13 +824,217 @@ input[type=range]{accent-color:var(--v7-lime)!important}
 }
 </style>
 
+
+<style>
+/* V7.1 — Logo alinhada ao layout + marca d'água */
+.v7-logo-box{
+  background:linear-gradient(180deg,rgba(9,18,26,.96),rgba(6,12,18,.98))!important;
+}
+.v7-logo-box img{
+  width:88%!important;
+  max-height:142px!important;
+  object-fit:contain!important;
+  background:transparent!important;
+  padding:0!important;
+  filter:drop-shadow(0 0 12px rgba(201,255,40,.16))!important;
+}
+.watermark{
+  width:min(58%,390px)!important;
+  opacity:.15!important;
+  filter:none!important;
+}
+.v7-hero:after{
+  content:"";
+  position:absolute;
+  right:6%;
+  bottom:-12%;
+  width:38%;
+  height:85%;
+  background:url('jb-watermark-lime.png') center/contain no-repeat;
+  opacity:.14;
+  pointer-events:none;
+  z-index:1;
+}
+.stage:after{
+  content:"";
+  position:absolute;
+  inset:auto 3% 4% auto;
+  width:42%;
+  height:42%;
+  background:url('jb-watermark-lime.png') center/contain no-repeat;
+  opacity:.08;
+  pointer-events:none;
+  z-index:2;
+}
+.stage{position:sticky!important}
+.court-wrap{position:relative;z-index:1}
+</style>
+
+
+<style>
+/* ===== JB PLAY V8 — DASHBOARD PREMIUM IGUAL À REFERÊNCIA ===== */
+.v7-main{padding:12px 14px 22px!important}
+.v7-topbar{height:54px!important;margin-bottom:10px!important}
+.v7-search{height:40px!important;max-width:420px!important}
+.v7-sidebar{width:auto!important}
+.v7-logo-box{height:150px!important;margin-bottom:14px!important}
+.v7-logo-box img{max-height:128px!important}
+.v7-menu{gap:5px!important}
+.v7-menu-item{padding:10px 12px!important;border-radius:12px!important}
+.v7-menu-item.active{
+  background:linear-gradient(135deg,#d8ff22,#b6ef17)!important;
+  box-shadow:0 0 24px rgba(201,255,40,.25)!important
+}
+
+.v8-top-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 360px;
+  gap:12px;
+  margin-bottom:12px;
+}
+.v8-hero{
+  min-height:275px;
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;
+  background:
+    linear-gradient(90deg,rgba(5,14,22,.96) 0%,rgba(6,20,31,.88) 45%,rgba(7,18,26,.25) 75%,rgba(7,18,26,.08) 100%),
+    url('jb-hero-beach.jpg') right center/cover no-repeat;
+  box-shadow:0 18px 42px rgba(0,0,0,.30);
+  display:flex;
+  align-items:center;
+}
+.v8-hero-content{position:relative;z-index:3;padding:30px 34px;max-width:650px}
+.v8-hero h1{
+  margin:0 0 10px;
+  font-size:clamp(32px,4vw,54px);
+  line-height:.98;
+  letter-spacing:-.04em;
+}
+.v8-hero h1 em{font-style:normal;color:#c9ff28}
+.v8-hero p{font-size:13px;color:#c5d0d8;max-width:520px;margin:0 0 18px}
+.v8-hero-watermark{
+  position:absolute;left:46%;bottom:-15%;
+  width:43%;opacity:.13;pointer-events:none;z-index:2
+}
+.v8-quick{
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;
+  padding:16px;
+  background:linear-gradient(180deg,rgba(14,28,40,.92),rgba(8,17,25,.94));
+  box-shadow:0 18px 42px rgba(0,0,0,.28);
+}
+.v8-panel-title{
+  display:flex;align-items:center;gap:8px;
+  font-size:15px;color:#f5f7fa;
+  padding-bottom:10px;margin-bottom:12px;
+  border-bottom:1px solid rgba(201,255,40,.45)
+}
+.v8-panel-title:first-letter{color:#c9ff28}
+.v8-quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.v8-action{
+  min-height:94px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:7px;
+  padding:10px!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  border-radius:14px!important;
+  background:linear-gradient(180deg,rgba(20,36,49,.92),rgba(11,21,30,.94))!important;
+  color:#f5f7fa!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+}
+.v8-action span{font-size:25px;line-height:1}
+.v8-action b{font-size:10px}
+.v8-action.primary-action{
+  color:#071018!important;
+  background:linear-gradient(135deg,#d7ff22,#b5ee17)!important;
+  box-shadow:0 0 25px rgba(201,255,40,.20)!important
+}
+.v8-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  margin-bottom:12px;
+}
+.v8-stat{
+  min-height:78px;
+  display:flex;align-items:center;gap:12px;
+  padding:13px 16px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+  background:linear-gradient(180deg,rgba(15,29,41,.90),rgba(8,17,25,.94));
+  box-shadow:0 12px 26px rgba(0,0,0,.20);
+}
+.v8-stat>span{
+  width:42px;height:42px;border-radius:12px;
+  display:grid;place-items:center;
+  color:#c9ff28;font-size:20px;
+  background:rgba(201,255,40,.06);
+  border:1px solid rgba(201,255,40,.10)
+}
+.v8-stat small{display:block;color:#9faeba;font-size:10px;margin-bottom:3px}
+.v8-stat b{font-size:22px;color:#fff}
+
+.layout{
+  grid-template-columns:275px minmax(0,1fr) 315px!important;
+  gap:12px!important;
+}
+.card{
+  border-radius:16px!important;
+  background:linear-gradient(180deg,rgba(13,26,38,.92),rgba(8,17,25,.94))!important;
+}
+.controls{padding:12px!important}
+.stage{border-radius:18px!important}
+.stage-head{padding:10px 13px!important}
+.right{gap:10px!important}
+.info,.exercise{padding:12px!important}
+#v6QuickNav{display:none!important}
+.section-title{font-size:10px!important;color:#e6edf2!important}
+.field{margin-bottom:8px!important}
+.field label{font-size:10px!important}
+select,input,textarea{min-height:36px!important}
+button{font-size:10px!important}
+.shot-grid{max-height:180px!important}
+.library-grid,.seq-list,.timeline,.ai-plan{max-height:190px!important}
+
+/* court panel feels like reference */
+#v7-court{
+  box-shadow:0 18px 42px rgba(0,0,0,.28)!important;
+  overflow:hidden;
+}
+#v7-court .stage-head strong:before{
+  content:"▦";color:#c9ff28;margin-right:8px
+}
+.watermark{opacity:.10!important}
+
+/* desktop and tablet */
+@media(max-width:1300px){
+  .v8-top-grid{grid-template-columns:1fr 310px}
+  .v8-action{min-height:82px}
+  .layout{grid-template-columns:255px 1fr!important}
+  .right{grid-column:1/-1!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:900px){
+  .v8-top-grid{grid-template-columns:1fr}
+  .v8-stats{grid-template-columns:repeat(2,1fr)}
+  .v8-quick-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:760px){
+  .v8-hero{min-height:220px}
+  .v8-hero-content{padding:22px}
+  .v8-hero h1{font-size:34px}
+  .v8-quick-grid{grid-template-columns:repeat(2,1fr)}
+  .v8-stats{grid-template-columns:1fr 1fr}
+  .v8-stat{min-height:68px}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
   <div class="v7-shell">
       <aside class="v7-sidebar">
         <div class="v7-logo-box">
-          <img src="jb-logo.jpeg" alt="João Bertonha Beach Tennis">
+          <img src="jb-logo-lime.png" alt="João Bertonha Beach Tennis">
         </div>
         <nav class="v7-menu">
           <button class="v7-menu-item active" data-go="v7-home">⌂ <span>Início</span></button>
@@ -856,15 +1060,38 @@ input[type=range]{accent-color:var(--v7-lime)!important}
           </div>
         </header>
 
-        <section class="v7-hero" id="v7-home">
-          <div>
-            <span class="v7-kicker">JB PLAY • BEACH TENNIS</span>
-            <h1>Treino inteligente.<br><em>Evolução constante.</em></h1>
-            <p>Crie, anime e aplique treinos de Beach Tennis com controle tático, IA e movimentação guiada.</p>
-            <button class="v7-hero-btn" id="v7StartTraining">▶ Começar treino</button>
-          </div>
-          <div class="v7-hero-mark">JB</div>
-        </section>
+        
+<section class="v8-top-grid" id="v7-home">
+  <div class="v8-hero">
+    <div class="v8-hero-content">
+      <span class="v7-kicker">JB PLAY</span>
+      <h1>Treino inteligente.<br><em>Evolução constante.</em></h1>
+      <p>Crie, anime e aplique seus treinos de Beach Tennis de forma profissional.</p>
+      <button class="v7-hero-btn" id="v7StartTraining">▶ Começar treino</button>
+    </div>
+    <img class="v8-hero-watermark" src="jb-watermark-lime.png" alt="">
+  </div>
+
+  <aside class="v8-quick">
+    <div class="v8-panel-title">⚡ <b>Ações Rápidas</b></div>
+    <div class="v8-quick-grid">
+      <button class="v8-action primary-action" data-go="v7-config"><span>＋</span><b>Novo Treino</b></button>
+      <button class="v8-action" data-go="v6-ia"><span>✦</span><b>Treino por IA</b></button>
+      <button class="v8-action" data-go="v6-motor"><span>▶</span><b>Motor</b></button>
+      <button class="v8-action" data-go="v6-linha"><span>↻</span><b>Linha do Tempo</b></button>
+      <button class="v8-action" data-go="v7-court"><span>◫</span><b>Quadra</b></button>
+      <button class="v8-action" data-go="v6-exportar"><span>⇩</span><b>Exportar</b></button>
+    </div>
+  </aside>
+</section>
+
+<section class="v8-stats">
+  <div class="v8-stat"><span>◉</span><div><small>Alunos</small><b id="v8PlayersStat">4</b></div></div>
+  <div class="v8-stat"><span>✦</span><div><small>Fundamentos</small><b>14</b></div></div>
+  <div class="v8-stat"><span>↻</span><div><small>Etapas</small><b id="v8StepsStat">0</b></div></div>
+  <div class="v8-stat"><span>▶</span><div><small>Modo</small><b id="v8ModeStat">Contínuo</b></div></div>
+</section>
+
 
         <div class="layout">
     <aside class="card controls" id="v7-config">
@@ -892,7 +1119,7 @@ input[type=range]{accent-color:var(--v7-lime)!important}
       <div class="stage-head"><strong>Quadra interativa</strong><span>Arraste os jogadores para ajustar posições</span></div>
       <div class="court-wrap" id="courtWrap">
         <svg id="court" viewBox="0 0 700 900" role="img" aria-label="Quadra de beach tennis interativa"></svg>
-        <img class="watermark" src="jb-logo.jpeg" alt="">
+        <img class="watermark" src="jb-watermark-lime.png" alt="">
       </div>
       <div class="zone-legend">
         <div class="legend"><span class="dot" style="background:#d94444"></span>Recuperação</div>
@@ -3132,6 +3359,24 @@ document.querySelectorAll('.v7-menu-item').forEach(btn=>{
 document.getElementById('v7StartTraining')?.addEventListener('click',()=>{
   document.getElementById('v7-court')?.scrollIntoView({behavior:'smooth',block:'start'});
 });
+
+
+// ===== JB PLAY V8 — DASHBOARD INTERAÇÕES =====
+document.querySelectorAll('.v8-action[data-go]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.getElementById(btn.dataset.go)?.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+function v8RefreshStats(){
+  const p=document.getElementById('v8PlayersStat');
+  const s=document.getElementById('v8StepsStat');
+  const m=document.getElementById('v8ModeStat');
+  if(p&&typeof playersEl!=='undefined')p.textContent=playersEl.value||'4';
+  if(s&&typeof timelineSteps!=='undefined')s.textContent=timelineSteps.length;
+  if(m&&typeof modeEl!=='undefined')m.textContent=(modeEl.value||'Contínuo').replace(' / bola viva','');
+}
+setInterval(v8RefreshStats,700);
+v8RefreshStats();
 
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
