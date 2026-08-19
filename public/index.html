@@ -503,19 +503,371 @@ button{
 }
 </style>
 
+
+<style>
+/* ===== JB PLAY V7 — VISUAL PREMIUM / GLASS + LIME ===== */
+:root{
+  --v7-bg:#071019;
+  --v7-bg2:#0b1420;
+  --v7-panel:rgba(13,25,37,.88);
+  --v7-panel2:rgba(17,31,44,.82);
+  --v7-line:rgba(255,255,255,.10);
+  --v7-line-strong:rgba(255,255,255,.16);
+  --v7-text:#f5f7fa;
+  --v7-muted:#95a3af;
+  --v7-lime:#c9ff28;
+  --v7-lime2:#a8e617;
+  --v7-blue:#1f9dff;
+  --v7-radius:18px;
+  --v7-shadow:0 18px 44px rgba(0,0,0,.34);
+}
+html,body{
+  background:
+    radial-gradient(circle at 18% 8%,rgba(89,120,150,.13),transparent 26%),
+    radial-gradient(circle at 78% 12%,rgba(201,255,40,.06),transparent 24%),
+    linear-gradient(160deg,#071019 0%,#0b1118 48%,#080d13 100%)!important;
+}
+body{overflow-x:hidden}
+.app{max-width:none!important;padding:0!important}
+.v7-shell{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:248px minmax(0,1fr);
+  gap:0;
+}
+.v7-sidebar{
+  position:sticky;
+  top:0;
+  height:100vh;
+  padding:16px 14px;
+  border-right:1px solid var(--v7-line);
+  background:
+    linear-gradient(180deg,rgba(18,30,43,.94),rgba(8,15,22,.97)),
+    rgba(8,15,22,.96);
+  backdrop-filter:blur(18px);
+  box-shadow:10px 0 28px rgba(0,0,0,.18);
+  z-index:30;
+  display:flex;
+  flex-direction:column;
+}
+.v7-logo-box{
+  height:165px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--v7-line);
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(255,255,255,.07),transparent 52%),
+    linear-gradient(180deg,rgba(18,31,44,.9),rgba(7,13,19,.9));
+  box-shadow:var(--v7-shadow);
+  margin-bottom:18px;
+}
+.v7-logo-box img{
+  width:82%;
+  max-height:138px;
+  object-fit:contain;
+  filter:drop-shadow(0 12px 20px rgba(0,0,0,.35));
+}
+.v7-menu{display:grid;gap:7px}
+.v7-menu-item{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px!important;
+  border-radius:13px!important;
+  background:transparent!important;
+  color:#edf2f6!important;
+  border:1px solid transparent!important;
+  font-size:13px!important;
+  text-align:left;
+  transition:.18s ease;
+}
+.v7-menu-item:hover{
+  background:rgba(255,255,255,.045)!important;
+  border-color:var(--v7-line)!important;
+}
+.v7-menu-item.active{
+  color:#0b1117!important;
+  background:linear-gradient(135deg,var(--v7-lime),#b5ee21)!important;
+  box-shadow:0 8px 18px rgba(190,244,32,.2);
+}
+.v7-quote{
+  margin-top:auto;
+  border:1px solid var(--v7-line);
+  border-radius:18px;
+  padding:14px;
+  background:linear-gradient(145deg,rgba(20,34,47,.9),rgba(10,17,25,.9));
+}
+.v7-quote small{color:var(--v7-muted);display:block;margin-bottom:5px}
+.v7-quote b{font-size:13px;color:var(--v7-lime);line-height:1.35}
+.v7-main{
+  min-width:0;
+  padding:14px 16px 24px;
+}
+.v7-topbar{
+  height:62px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:12px;
+}
+.v7-search{
+  height:44px;
+  min-width:320px;
+  max-width:460px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 15px;
+  color:#83929f;
+  border:1px solid var(--v7-line);
+  border-radius:15px;
+  background:rgba(17,29,41,.76);
+  backdrop-filter:blur(16px);
+  box-shadow:0 10px 26px rgba(0,0,0,.18);
+  font-size:12px;
+}
+.v7-profile{display:flex;align-items:center;gap:10px;color:#fff}
+.v7-profile small{display:block;color:var(--v7-muted);margin-top:2px}
+.v7-avatar{
+  width:42px;height:42px;border-radius:50%;
+  display:grid;place-items:center;
+  color:#0b1117;font-weight:950;
+  background:linear-gradient(135deg,#fff,var(--v7-lime));
+  box-shadow:0 7px 16px rgba(0,0,0,.22);
+}
+.v7-hero{
+  min-height:220px;
+  border:1px solid var(--v7-line);
+  border-radius:22px;
+  padding:28px 34px;
+  margin-bottom:14px;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  background:
+    linear-gradient(90deg,rgba(7,16,24,.96),rgba(12,28,42,.74) 52%,rgba(29,45,55,.40)),
+    radial-gradient(circle at 82% 45%,rgba(201,255,40,.12),transparent 26%),
+    linear-gradient(135deg,#102131,#0b121a);
+  box-shadow:var(--v7-shadow);
+}
+.v7-hero:before{
+  content:"";
+  position:absolute;
+  right:3%;top:-45%;
+  width:360px;height:360px;border-radius:50%;
+  border:44px solid rgba(255,255,255,.035);
+  transform:rotate(-18deg);
+}
+.v7-hero>div:first-child{position:relative;z-index:2}
+.v7-kicker{
+  display:inline-block;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.15em;
+  color:var(--v7-lime);
+  margin-bottom:8px;
+}
+.v7-hero h1{
+  margin:0 0 10px;
+  font-size:clamp(28px,3.8vw,48px);
+  line-height:1.0;
+  letter-spacing:-.035em;
+}
+.v7-hero h1 em{font-style:normal;color:var(--v7-lime)}
+.v7-hero p{
+  max-width:620px;
+  color:#c5d0d8;
+  font-size:13px;
+  line-height:1.55;
+  margin:0 0 18px;
+}
+.v7-hero-btn{
+  background:linear-gradient(135deg,var(--v7-lime),#b3ed1f)!important;
+  color:#0b1117!important;
+  padding:11px 18px!important;
+  border-radius:999px!important;
+  box-shadow:0 10px 24px rgba(190,244,32,.18);
+}
+.v7-hero-mark{
+  position:absolute;
+  right:5%;
+  bottom:-35px;
+  font-size:190px;
+  font-weight:1000;
+  letter-spacing:-.1em;
+  color:rgba(255,255,255,.035);
+  transform:skewX(-12deg);
+  user-select:none;
+}
+/* Core app visual */
+.layout{
+  grid-template-columns:300px minmax(0,1fr) 330px!important;
+  gap:14px!important;
+}
+.card{
+  background:linear-gradient(180deg,rgba(18,31,44,.88),rgba(10,20,29,.90))!important;
+  border:1px solid var(--v7-line)!important;
+  border-radius:18px!important;
+  box-shadow:0 14px 30px rgba(0,0,0,.22)!important;
+  backdrop-filter:blur(14px);
+}
+.controls,.info,.exercise{padding:14px!important}
+.controls{position:sticky!important;top:14px!important}
+.section-title{
+  color:#f0f4f7!important;
+  letter-spacing:.06em!important;
+}
+.field label{color:#aebbc5!important}
+select,input,textarea{
+  background:rgba(6,14,21,.82)!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  color:#f6f8fa!important;
+  border-radius:11px!important;
+}
+select:focus,input:focus,textarea:focus{
+  border-color:rgba(201,255,40,.55)!important;
+  box-shadow:0 0 0 3px rgba(201,255,40,.08);
+}
+.check{
+  background:rgba(7,15,22,.82)!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+}
+.check input{accent-color:var(--v7-lime)!important}
+.primary{
+  background:linear-gradient(135deg,var(--v7-lime),#afe61c)!important;
+  color:#081015!important;
+}
+.secondary{
+  background:rgba(22,35,47,.82)!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+}
+.ghost{
+  background:rgba(7,15,22,.78)!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+}
+.stage{
+  border:1px solid rgba(255,255,255,.12)!important;
+}
+.stage-head{
+  background:linear-gradient(90deg,rgba(16,30,42,.96),rgba(12,22,31,.96))!important;
+}
+.court-wrap{
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.zone-legend{background:#0c151e!important}
+.pill{
+  background:rgba(201,255,40,.08)!important;
+  border-color:rgba(201,255,40,.16)!important;
+  color:#dff6a7!important;
+}
+.step{
+  border-left-color:var(--v7-lime)!important;
+  background:rgba(6,15,22,.72)!important;
+}
+.timeline-num,.seq-num{
+  background:var(--v7-lime)!important;
+  color:#071018!important;
+}
+.timeline-item,.seq-item,.lib-card,.ai-plan-item,.ai-box,.ai-state{
+  background:rgba(6,15,22,.72)!important;
+  border-color:rgba(255,255,255,.09)!important;
+}
+.live-indicator{color:#d8f6aa!important}
+.live-indicator:before{background:var(--v7-lime)!important}
+/* replace prior yellow accents */
+input[type=range]{accent-color:var(--v7-lime)!important}
+.v7-main .right{gap:14px!important}
+#v6QuickNav{
+  background:rgba(9,18,26,.72);
+  border:1px solid var(--v7-line);
+  border-radius:14px;
+  padding:7px;
+}
+#v6QuickNav button{
+  border-radius:10px!important;
+}
+/* Responsive */
+@media(max-width:1250px){
+  .v7-shell{grid-template-columns:82px minmax(0,1fr)}
+  .v7-sidebar{padding:12px 8px}
+  .v7-logo-box{height:78px}
+  .v7-logo-box img{width:72px}
+  .v7-menu-item{justify-content:center;padding:11px!important}
+  .v7-menu-item span,.v7-quote{display:none}
+  .layout{grid-template-columns:280px 1fr!important}
+  .right{grid-column:1/-1!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:760px){
+  .v7-shell{display:block}
+  .v7-sidebar{
+    position:sticky;top:0;height:auto;
+    flex-direction:row;align-items:center;
+    padding:8px;z-index:50;
+    border-right:0;border-bottom:1px solid var(--v7-line);
+  }
+  .v7-logo-box{display:none}
+  .v7-menu{display:flex;overflow:auto;gap:6px}
+  .v7-menu-item{min-width:48px}
+  .v7-main{padding:8px}
+  .v7-topbar{height:auto}
+  .v7-search{display:none}
+  .v7-profile{margin-left:auto}
+  .v7-hero{min-height:170px;padding:20px}
+  .v7-hero p{font-size:11px}
+  .v7-hero-mark{font-size:120px}
+  .layout{grid-template-columns:1fr!important}
+  .right{display:flex!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
-  <div class="topbar">
-    <div class="brand">
-      <img src="jb-logo.jpeg" alt="JB João Bertonha Beach Tennis">
-      <div><h1>JB Treinos Pro</h1><small>Gerador profissional de treinos para Beach Tennis</small></div>
-    </div>
-    <div class="badge">JOÃO BERTONHA • BEACH TENNIS</div>
-  </div>
+  <div class="v7-shell">
+      <aside class="v7-sidebar">
+        <div class="v7-logo-box">
+          <img src="jb-logo.jpeg" alt="João Bertonha Beach Tennis">
+        </div>
+        <nav class="v7-menu">
+          <button class="v7-menu-item active" data-go="v7-home">⌂ <span>Início</span></button>
+          <button class="v7-menu-item" data-go="v7-config">⚙ <span>Configuração</span></button>
+          <button class="v7-menu-item" data-go="v7-court">◫ <span>Quadra</span></button>
+          <button class="v7-menu-item" data-go="v6-linha">↻ <span>Linha do tempo</span></button>
+          <button class="v7-menu-item" data-go="v6-ia">✦ <span>IA Online</span></button>
+          <button class="v7-menu-item" data-go="v6-motor">▶ <span>Motor</span></button>
+          <button class="v7-menu-item" data-go="v6-exportar">⇩ <span>Exportar</span></button>
+        </nav>
+        <div class="v7-quote">
+          <small>JB PLAY</small>
+          <b>Foco • Evolução • Resultados</b>
+        </div>
+      </aside>
 
-  <div class="layout">
-    <aside class="card controls">
+      <div class="v7-main">
+        <header class="v7-topbar">
+          <div class="v7-search">⌕ <span>Buscar treino, exercício ou fundamento...</span></div>
+          <div class="v7-profile">
+            <div class="v7-avatar">JB</div>
+            <div><b>João Bertonha</b><small>Treinador</small></div>
+          </div>
+        </header>
+
+        <section class="v7-hero" id="v7-home">
+          <div>
+            <span class="v7-kicker">JB PLAY • BEACH TENNIS</span>
+            <h1>Treino inteligente.<br><em>Evolução constante.</em></h1>
+            <p>Crie, anime e aplique treinos de Beach Tennis com controle tático, IA e movimentação guiada.</p>
+            <button class="v7-hero-btn" id="v7StartTraining">▶ Começar treino</button>
+          </div>
+          <div class="v7-hero-mark">JB</div>
+        </section>
+
+        <div class="layout">
+    <aside class="card controls" id="v7-config">
       <div class="section-title">Configuração</div>
       <div class="field"><label>Nível</label><select id="level"><option>Iniciante</option><option selected>Intermediário</option><option>Avançado</option></select></div>
       <div class="field"><label>Nº de alunos</label><select id="players"><option>2</option><option selected>4</option></select></div>
@@ -536,7 +888,7 @@ button{
       </div>
     </aside>
 
-    <main class="card stage">
+    <main class="card stage" id="v7-court">
       <div class="stage-head"><strong>Quadra interativa</strong><span>Arraste os jogadores para ajustar posições</span></div>
       <div class="court-wrap" id="courtWrap">
         <svg id="court" viewBox="0 0 700 900" role="img" aria-label="Quadra de beach tennis interativa"></svg>
@@ -723,6 +1075,8 @@ button{
         <div class="status" id="exportStatus"></div>
       </div>
     </section>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2763,6 +3117,21 @@ if(typeof previewAttack!=='undefined'){
     }else if(oldPreview) oldPreview();
   };
 }
+
+
+// ===== JB PLAY V7 — NAVIGAÇÃO PREMIUM =====
+document.querySelectorAll('.v7-menu-item').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.v7-menu-item').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const id=btn.dataset.go;
+    const target=document.getElementById(id);
+    target?.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+document.getElementById('v7StartTraining')?.addEventListener('click',()=>{
+  document.getElementById('v7-court')?.scrollIntoView({behavior:'smooth',block:'start'});
+});
 
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
