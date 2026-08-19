@@ -234,6 +234,275 @@ input[type=range]{padding:0;accent-color:#f7c53d}
 .v54-start-line{stroke:#f7c53d;stroke-width:3;stroke-dasharray:8 8;opacity:.35}
 </style>
 
+
+<style>
+/* ===== JB PLAY V6 — INTERFACE PROFISSIONAL CLEAN ===== */
+:root{
+  --bg:#0a0f14;
+  --panel:#111820;
+  --panel-soft:#151f29;
+  --line:#26323d;
+  --text:#f5f7f9;
+  --muted:#9aa8b3;
+  --gold:#e8b933;
+  --gold-soft:#f3d879;
+  --ok:#39b46b;
+  --radius:16px;
+  --shadow:0 10px 30px rgba(0,0,0,.22);
+}
+html,body{
+  background:#0a0f14!important;
+}
+.app{
+  max-width:1520px!important;
+  padding:14px!important;
+}
+.topbar{
+  background:rgba(17,24,32,.92);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:12px 14px;
+  margin-bottom:14px!important;
+  box-shadow:var(--shadow);
+}
+.brand img{
+  width:48px!important;height:48px!important;border-radius:12px!important;
+  background:#fff!important;padding:4px!important;box-shadow:none!important;
+}
+.brand h1{
+  font-size:23px!important;
+  font-weight:850;
+  letter-spacing:-.02em!important;
+}
+.brand small{
+  font-size:12px!important;
+  color:var(--muted)!important;
+}
+.badge{
+  background:#141c24!important;
+  border:1px solid #2b3741!important;
+  color:#e9edf0!important;
+  font-size:11px!important;
+  padding:7px 10px!important;
+}
+.layout{
+  grid-template-columns:280px minmax(0,1fr) 320px!important;
+  gap:12px!important;
+  align-items:start;
+}
+.card{
+  background:var(--panel)!important;
+  border:1px solid var(--line)!important;
+  border-radius:var(--radius)!important;
+  box-shadow:var(--shadow)!important;
+}
+.controls{
+  padding:14px!important;
+  top:10px!important;
+}
+.section-title{
+  color:#d8e0e6!important;
+  font-size:11px!important;
+  letter-spacing:.08em!important;
+  margin-bottom:8px!important;
+}
+.field{
+  margin-bottom:10px!important;
+}
+.field label{
+  font-size:11px!important;
+  color:#aebbc5!important;
+  margin-bottom:5px!important;
+}
+select,input,textarea{
+  background:#0d141b!important;
+  border:1px solid #2a3641!important;
+  border-radius:10px!important;
+  padding:9px 10px!important;
+  min-height:38px;
+}
+textarea{
+  min-height:68px!important;
+}
+.shot-grid{
+  grid-template-columns:1fr!important;
+  gap:6px!important;
+  max-height:210px!important;
+}
+.check{
+  padding:8px 9px!important;
+  border-radius:9px!important;
+  background:#0e151c!important;
+  border:1px solid #27333d!important;
+  font-size:11px!important;
+}
+.btns{
+  grid-template-columns:1fr 1fr!important;
+  gap:7px!important;
+}
+button{
+  border-radius:10px!important;
+  padding:9px 10px!important;
+  font-size:11px!important;
+}
+.primary{
+  background:linear-gradient(135deg,#f1c94b,#d99b16)!important;
+  color:#151515!important;
+}
+.secondary{
+  background:#17212a!important;
+  border:1px solid #2f3b46!important;
+  color:#eef2f5!important;
+}
+.ghost{
+  background:#0d141a!important;
+  border:1px solid #2b3741!important;
+}
+.stage{
+  border-radius:18px!important;
+  overflow:hidden!important;
+}
+.stage-head{
+  padding:11px 14px!important;
+  background:#101820;
+}
+.stage-head strong{
+  font-size:13px!important;
+}
+.stage-head span{
+  font-size:10px!important;
+}
+.court-wrap{
+  background:#d8c9aa!important;
+}
+.zone-legend{
+  padding:8px 12px!important;
+  gap:12px!important;
+}
+.legend{
+  font-size:10px!important;
+}
+.right{
+  gap:12px!important;
+}
+.info,.exercise{
+  padding:13px!important;
+}
+.exercise h3{
+  font-size:16px!important;
+  margin-bottom:5px!important;
+}
+.exercise p{
+  font-size:12px!important;
+}
+.pill{
+  font-size:9px!important;
+  padding:5px 7px!important;
+  border-radius:999px!important;
+}
+.steps{
+  gap:6px!important;
+}
+.step{
+  padding:8px 9px!important;
+  border-left-width:2px!important;
+  font-size:11px!important;
+}
+.library-grid{
+  grid-template-columns:1fr!important;
+  gap:6px!important;
+  max-height:220px!important;
+}
+.lib-card{
+  padding:9px!important;
+  border-radius:10px!important;
+}
+.lib-card b{
+  font-size:11px!important;
+}
+.lib-card span{
+  font-size:9px!important;
+}
+.seq-list,.timeline,.ai-plan{
+  max-height:220px!important;
+}
+.timeline-item{
+  grid-template-columns:26px 1fr 58px!important;
+  padding:7px!important;
+  border-radius:10px!important;
+}
+.timeline-num,.seq-num{
+  width:24px!important;height:24px!important;
+  font-size:10px!important;
+}
+.timeline-main b{
+  font-size:11px!important;
+}
+.timeline-main small{
+  font-size:9px!important;
+}
+.editor-palette,.toolbar-4,.toolbar{
+  gap:6px!important;
+}
+.motion-panel{
+  gap:8px!important;
+}
+.motion-grid{
+  gap:6px!important;
+}
+.motion-row{
+  gap:6px!important;
+}
+.ai-box{
+  padding:9px!important;
+  border-radius:11px!important;
+  margin-top:6px!important;
+}
+.ai-state{
+  font-size:10px!important;
+  padding:7px 8px!important;
+}
+.status,.subtle,.coordbox{
+  font-size:10px!important;
+}
+.live-indicator{
+  font-size:9px!important;
+}
+
+/* visual grouping: hide low-priority cards by default */
+.card.info[data-collapsible="true"] .collapsible-body{display:none}
+.card.info[data-collapsible="true"].open .collapsible-body{display:block}
+.card.info[data-collapsible="true"] .section-title{
+  cursor:pointer;
+  position:relative;
+  padding-right:20px;
+  margin-bottom:0!important;
+}
+.card.info[data-collapsible="true"] .section-title:after{
+  content:"＋";
+  position:absolute;right:0;top:-2px;color:#8fa0ac;font-size:14px;
+}
+.card.info[data-collapsible="true"].open .section-title:after{content:"−"}
+
+/* mobile/tablet */
+@media(max-width:1180px){
+  .layout{grid-template-columns:260px 1fr!important}
+  .right{grid-column:1/-1!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:760px){
+  .app{padding:8px!important}
+  .topbar{padding:10px!important}
+  .layout{grid-template-columns:1fr!important}
+  .right{display:flex!important}
+  .controls{order:2!important}
+  .stage{order:1!important}
+  .right{order:3!important}
+  .shot-grid{max-height:170px!important}
+  .brand h1{font-size:19px!important}
+  .brand img{width:42px!important;height:42px!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -282,7 +551,15 @@ input[type=range]{padding:0;accent-color:#f7c53d}
     </main>
 
     <section class="right">
-      <div class="card exercise">
+<div id="v6QuickNav" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:2px">
+  <button class="secondary small" data-target="treino">Treino</button>
+  <button class="secondary small" data-target="linha">Linha do tempo</button>
+  <button class="secondary small" data-target="ia">IA</button>
+  <button class="secondary small" data-target="motor">Motor</button>
+  <button class="secondary small" data-target="exportar">Exportar</button>
+</div>
+
+      <div class="card exercise" id="v6-treino">
         <div class="section-title">Treino gerado</div>
         <h3 id="exTitle">Construção + definição</h3>
         <div class="meta" id="meta"></div>
@@ -290,8 +567,8 @@ input[type=range]{padding:0;accent-color:#f7c53d}
         <div class="steps" id="steps"></div>
         <div class="status" id="status"></div>
       </div>
-      <div class="card info">
-        <div class="section-title">Biblioteca por fundamento</div>
+      <div class="card info" data-collapsible="true">
+        <div class="section-title">Biblioteca por fundamento</div><div class="collapsible-body">
         <div class="library-filter">
           <select id="libFund">
             <option value="Todos">Todos os fundamentos</option>
@@ -300,11 +577,11 @@ input[type=range]{padding:0;accent-color:#f7c53d}
           </select>
           <select id="libLevel"><option>Todos</option><option>Iniciante</option><option selected>Intermediário</option><option>Avançado</option></select>
         </div>
-        <div class="library-grid" id="libraryGrid"></div>
+        <div class="library-grid" id="libraryGrid"></div></div>
       </div>
 
-      <div class="card info">
-        <div class="section-title">Treino próprio / sequências</div>
+      <div class="card info" data-collapsible="true">
+        <div class="section-title">Treino próprio / sequências</div><div class="collapsible-body">
         <div class="builder-row">
           <select id="ownShot"></select>
           <select id="ownTarget"><option>Zona 1</option><option>Zona 2</option><option>Zona 3</option><option>Zona 4</option><option>Zona 5</option><option>Cruzado</option><option>Paralela</option><option>Central</option></select>
@@ -318,31 +595,31 @@ input[type=range]{padding:0;accent-color:#f7c53d}
           <button class="ghost small" id="playSequence">▶ Sequência</button>
           <button class="ghost small" id="clearSequence">Limpar</button>
           <button class="ghost small" id="applySequence">Aplicar na quadra</button>
-        </div>
+        </div></div>
       </div>
 
-      <div class="card info">
-        <div class="section-title">Geração automática por IA</div>
+      <div class="card info" data-collapsible="true">
+        <div class="section-title">Geração automática por IA</div><div class="collapsible-body">
         <div class="ai-box">
           <textarea id="aiPrompt" placeholder="Ex.: treino avançado para 4 alunos, ataque e defesa, começando com forehand neutro, depois gancho e smash, bola viva e alvo nas zonas 2 e 4."></textarea>
           <button class="primary small" id="aiGenerate" style="width:100%;margin-top:8px">Gerar treino inteligente</button>
           <div class="subtle" id="aiHint" style="margin-top:7px">A geração é local nesta versão: interpreta sua prescrição e monta a sequência automaticamente. Pode ser conectada a uma API de IA depois.</div>
-        </div>
+        </div></div>
       </div>
 
-      <div class="card info">
-        <div class="section-title">Editor manual de trajetórias</div>
+      <div class="card info" data-collapsible="true">
+        <div class="section-title">Editor manual de trajetórias</div><div class="collapsible-body">
         <div class="toolbar">
           <button class="secondary small tool-toggle" id="toolBall">Bola</button>
           <button class="secondary small tool-toggle" id="toolMove">Movimento</button>
           <button class="secondary small tool-toggle" id="toolAttack">Ataque</button>
         </div>
-        <p class="subtle">Toque em dois pontos da quadra para criar a trajetória escolhida. Ataque = linha contínua; movimento = tracejada.</p>
+        <p class="subtle">Toque em dois pontos da quadra para criar a trajetória escolhida. Ataque = linha contínua; movimento = tracejada.</p></div>
       </div>
 
       
-      <div class="card info">
-        <div class="section-title">Editor visual profissional</div>
+      <div class="card info" data-collapsible="true">
+        <div class="section-title">Editor visual profissional</div><div class="collapsible-body">
         <div class="editor-palette">
           <button class="secondary small" id="toolSelect">Selecionar</button>
           <button class="secondary small" id="toolCone">+ Cone</button>
@@ -362,10 +639,10 @@ input[type=range]{padding:0;accent-color:#f7c53d}
           </div>
           <div><input id="ballSpeedNum" type="number" min="0.5" max="2.5" step="0.1" value="1.2"></div>
         </div>
-        <div class="coordbox" id="coordbox">Modo seleção ativo.</div>
+        <div class="coordbox" id="coordbox">Modo seleção ativo.</div></div>
       </div>
 
-      <div class="card info">
+      <div class="card info" id="v6-linha">
         <div class="section-title">Linha do tempo da jogada</div>
         <div class="timeline-wrap">
           <div class="timeline-controls">
@@ -377,7 +654,7 @@ input[type=range]{padding:0;accent-color:#f7c53d}
         </div>
       </div>
 
-      <div class="card info">
+      <div class="card info" id="v6-ia">
         <div class="section-title">IA online</div>
         <div class="ai-box">
           <textarea id="onlineAiPrompt" placeholder="Ex.: crie um treino avançado para 4 alunos, 12 minutos, foco em transição defesa-ataque, bola viva, forehand acelerado, gancho e smash. Quero trajetórias e linha do tempo completas."></textarea>
@@ -387,7 +664,7 @@ input[type=range]{padding:0;accent-color:#f7c53d}
       </div>
 
       
-      <div class="card info">
+      <div class="card info" id="v6-motor">
         <div class="section-title">Motor de animação</div>
         <div class="motion-panel">
           <div class="motion-grid">
@@ -425,12 +702,12 @@ input[type=range]{padding:0;accent-color:#f7c53d}
         </div>
       </div>
 
-      <div class="card info">
-        <div class="section-title">Plano gerado pela IA</div>
-        <div class="ai-plan" id="aiPlan"></div>
+      <div class="card info" data-collapsible="true">
+        <div class="section-title">Plano gerado pela IA</div><div class="collapsible-body">
+        <div class="ai-plan" id="aiPlan"></div></div>
       </div>
 
-      <div class="card info">
+      <div class="card info" id="v6-exportar">
         <div class="section-title">Exportar / Aplicar</div>
         <p style="font-size:13px;color:#c9d5dc;line-height:1.45;margin-top:0">Use a quadra como quadro tático durante a aula, grave a animação e compartilhe o exercício com seus alunos.</p>
         <div class="toolbar">
@@ -2122,6 +2399,26 @@ function v55StrictExample(){
 if(typeof previewAttack!=='undefined')previewAttack.onclick=v55StrictExample;
 if(typeof playTimeline!=='undefined')playTimeline.onclick=v55StrictPlay;
 if(typeof animate!=='undefined')animate=v55StrictPlay;
+
+
+// ===== JB PLAY V6 — UX CLEAN =====
+document.querySelectorAll('.card.info[data-collapsible="true"]').forEach(card=>{
+  const title=card.querySelector('.section-title');
+  title?.addEventListener('click',()=>card.classList.toggle('open'));
+});
+document.querySelectorAll('#v6QuickNav button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const map={
+      treino:'v6-treino',
+      linha:'v6-linha',
+      ia:'v6-ia',
+      motor:'v6-motor',
+      exportar:'v6-exportar'
+    };
+    const el=document.getElementById(map[btn.dataset.target]);
+    el?.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
 
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
