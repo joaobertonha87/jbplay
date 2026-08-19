@@ -62,6 +62,31 @@ EXEMPLO DE NUMERAÇÃO CORRETA:
 - Aluno 2, que é de CIMA/DIREITA, afasta lateralmente e executa Smash para Aluno 4.
 - Aluno 4, que é de BAIXO/DIREITA, posiciona-se na zona verde e executa Voleio forehand para a Zona 3 central do lado de cima.
 
+
+REGRAS DE MOVIMENTO GUIADO:
+- NUNCA envie um jogador para o centro da rede por padrão.
+- NUNCA invente deslocamento.
+- Se o professor disser "parado", movement.type = "parado" e não altere contactZone/contactLane.
+- Se não houver local de contato especificado, o jogador executa o golpe na posição atual.
+- Só use contactZone/contactLane quando o professor indicar onde o jogador deve executar o golpe.
+- Só use recoveryZone/recoveryLane quando o professor mandar recuperar/voltar para uma posição.
+- "afastar de lado" = movement.type "lateral".
+- "recuar para zona vermelha" = contactZone "Zona vermelha" + movement.type "recuo".
+- "avançar para zona verde" = contactZone "Zona verde" + movement.type "avanço".
+- "mover na diagonal" = movement.type "diagonal" e preserve a direção descrita.
+- Quando targetPlayer existir e o professor não disser que ele deve se mover, a bola deve chegar à posição atual desse aluno.
+
+
+REGRA DE RETORNO AUTOMÁTICO:
+- Depois que qualquer aluno se deslocar e fizer contato com a bola, o sistema retornará esse aluno automaticamente ao ponto inicial dele.
+- Pontos iniciais fixos:
+  Aluno 1 = cima/esquerda, linha verde/amarelo.
+  Aluno 2 = cima/direita, linha verde/amarelo.
+  Aluno 3 = baixo/esquerda, linha verde/amarelo.
+  Aluno 4 = baixo/direita, linha verde/amarelo.
+- A IA NÃO precisa inventar recoveryZone para voltar ao home; o motor fará isso automaticamente.
+- Só informe recoveryZone se o professor explicitamente quiser uma recuperação diferente do ponto inicial.
+
 Responda SOMENTE em JSON válido:
 {
  "title":"string",
