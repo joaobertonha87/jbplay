@@ -154,6 +154,56 @@ input[type=range]{padding:0;accent-color:#f7c53d}
 .live-indicator:before{content:"";width:8px;height:8px;border-radius:50%;background:#34c26f;box-shadow:0 0 0 4px rgba(52,194,111,.12)}
 @media(max-width:760px){.motion-grid{grid-template-columns:1fr}.motion-row{grid-template-columns:1fr}}
 </style>
+
+<style>
+.v5-active-step{stroke:#f7c53d!important;filter:drop-shadow(0 0 6px rgba(247,197,61,.75))}
+.v5-temp-route{fill:none;stroke-width:6;stroke-linecap:round;opacity:.9}
+.v5-temp-move{fill:none;stroke:#fff;stroke-width:4;stroke-linecap:round;stroke-dasharray:10 10;opacity:.5}
+.v5-step-badge{font-size:11px;font-weight:900;fill:#fff;paint-order:stroke;stroke:#071016;stroke-width:3px}
+</style>
+
+
+<style>
+/* ===== V5.1 - QUADRA ACOMPANHA A ROLAGEM ===== */
+@media (min-width:1101px){
+  .stage{
+    position:sticky;
+    top:12px;
+    align-self:start;
+    max-height:calc(100vh - 24px);
+    display:flex;
+    flex-direction:column;
+  }
+  .court-wrap{
+    flex:1;
+    min-height:0;
+    max-height:calc(100vh - 150px);
+  }
+  .stage-head,
+  .zone-legend{
+    flex:0 0 auto;
+  }
+}
+
+/* Em telas intermediárias, mantém a quadra visível sem atrapalhar o restante */
+@media (min-width:761px) and (max-width:1100px){
+  .stage{
+    position:sticky;
+    top:10px;
+    align-self:start;
+    z-index:5;
+  }
+}
+
+/* No celular/iPhone, evita sticky para não ocupar a tela inteira */
+@media (max-width:760px){
+  .stage{
+    position:static;
+    max-height:none;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1035,6 +1085,128 @@ previewDefense.onclick=()=>{timelineSteps=[
 playTimeline.onclick=playRealisticTimeline;
 renderAIPlan({timeline:timelineSteps});
 ensureEnhancedPlayers();
+
+
+let v5Running=false,v5TempEls=[],v5Ball=null,v5Trail=null;
+function v5Cleanup(){
+  v5TempEls.forEach(x=>x?.remove?.());v5TempEls=[];
+  if(v5Ball){v5Ball.remove();v5Ball=null}
+  if(v5Trail){v5Trail.remove();v5Trail=null}
+}
+function v5Ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
+function v5ActorPlayer(actor){const m=(actor||'').match(/Aluno\s([1-4])/i);return m?(players[+m[1]-1]||null):null}
+function v5ActorPoint(actor){
+  if(/Professor/i.test(actor||'')&&professor)return{x:professor.x,y:professor.y};
+  const p=v5ActorPlayer(actor);return p?{x:p.x,y:p.y}:{x:350,y:450}
+}
+function v5TargetPoint(step){
+  const t=step?.target||'Central';
+  const am=t.match(/Aluno\s([1-4])/i);if(am&&players[+am[1]-1])return{x:players[+am[1]-1].x,y:players[+am[1]-1].y};
+  const z=t.match(/Zona\s([1-5])/i);
+  if(z){const a=v5ActorPoint(step.actor);return{x:150+(+z[1]-1)*100,y:a.y<450?690:210}}
+  const a=v5ActorPoint(step.actor);
+  if(/paralela/i.test(t))return{x:a.x<350?170:530,y:a.y<450?690:210};
+  if(/cruzad/i.test(t))return{x:a.x<350?530:170,y:a.y<450?690:210};
+  if(/defini/i.test(t))return{x:350,y:a.y<450?520:380};
+  if(/constru/i.test(t))return{x:350,y:a.y<450?620:280};
+  return{x:350,y:a.y<450?690:210};
+}
+function v5Profile(action){return typeof profileFor==='function'?profileFor(action||''):{arc:-28,speed:1.1,contact:'frente'}}
+function v5CreatePath(step){
+  const a=v5ActorPoint(step.actor),b=v5TargetPoint(step),p=v5Profile(step.action);
+  let arc=p.arc||0;
+  if(/Smash/i.test(step.action||''))arc=Math.max(20,arc);
+  if(/Lob|Rainbow/i.test(step.action||''))arc=Math.min(-90,arc);
+  if(/Curta/i.test(step.action||''))b.y=a.y<450?500:400;
+  const mx=(a.x+b.x)/2,my=(a.y+b.y)/2+arc;
+  const path=el('path',{d:`M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`,class:'v5-temp-route',
+    stroke:/Avanço|Corrida/i.test(step.action||'')?'#fff':'#4ee9ff','marker-end':'url(#arrow)'});
+  if(/Avanço|Corrida/i.test(step.action||'')){path.classList.add('v5-temp-move');path.removeAttribute('marker-end')}
+  const label=el('text',{x:mx,y:my-10,class:'v5-step-badge'});label.textContent=step.action||'Ação';
+  v5TempEls.push(path,label);return{path,a,b,p};
+}
+function v5SetPlayer(pl,dx,dy,rot=0,racket=0){
+  if(!pl)return;
+  if(pl.bodyEnhanced){
+    pl.bodyEnhanced.body.setAttribute('transform',`translate(${dx} ${dy}) rotate(${rot} ${pl.x} ${pl.y})`);
+    pl.bodyEnhanced.racket.setAttribute('transform',`translate(${dx} ${dy}) rotate(${racket} ${pl.x+18} ${pl.y-4})`);
+  }else pl.g.setAttribute('transform',`translate(${dx} ${dy})`);
+}
+function v5ResetPlayer(pl){
+  if(!pl)return;
+  if(pl.bodyEnhanced){pl.bodyEnhanced.body.removeAttribute('transform');pl.bodyEnhanced.racket.removeAttribute('transform');pl.bodyEnhanced.flash?.setAttribute('opacity','0')}
+  else pl.g.removeAttribute('transform');
+}
+function v5AnimateStep(step){
+  return new Promise(resolve=>{
+    const {path,a,b,p}=v5CreatePath(step),len=path.getTotalLength(),pl=v5ActorPlayer(step.actor);
+    const pace=typeof sessionPace!=='undefined'?(+sessionPace.value||1):1;
+    const dur=1100/Math.max(.45,(+step.speed||p.speed||1)*pace);
+    const mf=/Avanço|Corrida/i.test(step.action||'')?.75:.28;
+    const pts=[];if(!v5Ball)v5Ball=el('circle',{r:10,fill:'#f7c53d',stroke:'#fff','stroke-width':3});
+    if(!v5Trail)v5Trail=el('path',{class:'ball-trail'});
+    let start=null;
+    function frame(ts){
+      if(!start)start=ts;
+      const raw=Math.min(1,(ts-start)/dur),t=v5Ease(raw),pt=path.getPointAtLength(t*len);
+      if(!/Avanço|Corrida/i.test(step.action||'')){
+        v5Ball.setAttribute('cx',pt.x);v5Ball.setAttribute('cy',pt.y);
+        pts.push({x:pt.x,y:pt.y});if(pts.length>14)pts.shift();
+        if(pts.length>1)v5Trail.setAttribute('d',pts.map((q,i)=>`${i?'L':'M'} ${q.x} ${q.y}`).join(' '));
+      }
+      if(pl){
+        const reach=Math.sin(raw*Math.PI),dx=(b.x-a.x)*mf*reach,dy=(b.y-a.y)*mf*reach;
+        let racket=0;
+        if(/Smash|Gancho|Bandeja|Rainbow|Anômalo|Saque/i.test(step.action||''))racket=-55+110*raw;
+        else if(/Forehand/i.test(step.action||''))racket=-35+70*raw;
+        else if(/Backhand/i.test(step.action||''))racket=35-70*raw;
+        else if(/Voleio/i.test(step.action||''))racket=-20+40*raw;
+        v5SetPlayer(pl,dx,dy,(b.x-a.x)*.01*reach,racket);
+        pl.bodyEnhanced?.flash?.setAttribute('opacity',Math.max(0,1-Math.abs(raw-.55)*8));
+      }
+      if(raw<1)requestAnimationFrame(frame);else{
+        v5ResetPlayer(pl);
+        setTimeout(()=>{path.style.opacity='0';resolve()},160);
+      }
+    }
+    requestAnimationFrame(frame);
+  });
+}
+async function v5PlayTimeline(){
+  if(v5Running||!Array.isArray(timelineSteps)||!timelineSteps.length)return;
+  v5Running=true;v5Cleanup();
+  svg.querySelectorAll('path[marker-end="url(#arrow)"], .trajectory-label').forEach(n=>{if(!n.closest('defs'))n.remove()});
+  for(let i=0;i<timelineSteps.length;i++){
+    currentTimelineIndex=i;if(typeof renderTimeline==='function')renderTimeline();
+    await v5AnimateStep(timelineSteps[i]);
+  }
+  currentTimelineIndex=-1;if(typeof renderTimeline==='function')renderTimeline();
+  v5Cleanup();v5Running=false;
+}
+async function v5PreviewAttack(){
+  timelineSteps=[
+    {actor:'Professor',action:'Lançamento',target:'Aluno 1',speed:.9},
+    {actor:'Aluno 1',action:'Forehand acelerado',target:'Aluno 3',speed:1.5},
+    {actor:'Aluno 3',action:'Backhand neutro',target:'Aluno 1',speed:1.1},
+    {actor:'Aluno 1',action:'Avanço',target:'Zona de definição',speed:1},
+    {actor:'Aluno 1',action:'Smash',target:'Zona 3',speed:1.8}
+  ];
+  renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});await v5PlayTimeline();
+}
+async function v5PreviewDefense(){
+  timelineSteps=[
+    {actor:'Professor',action:'Lançamento',target:'Aluno 1',speed:1},
+    {actor:'Aluno 1',action:'Gancho',target:'Aluno 3',speed:1.2},
+    {actor:'Aluno 3',action:'Forehand acelerado',target:'Aluno 1',speed:1.5},
+    {actor:'Aluno 1',action:'Lob',target:'Aluno 3',speed:.9},
+    {actor:'Aluno 1',action:'Avanço',target:'Zona de construção',speed:1}
+  ];
+  renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});await v5PlayTimeline();
+}
+if(typeof playTimeline!=='undefined')playTimeline.onclick=v5PlayTimeline;
+if(typeof previewAttack!=='undefined')previewAttack.onclick=v5PreviewAttack;
+if(typeof previewDefense!=='undefined')previewDefense.onclick=v5PreviewDefense;
+if(typeof animate!=='undefined')animate=v5PlayTimeline;
 
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
