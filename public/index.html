@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
+<meta name="theme-color" content="#0b1116"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="JB Treinos"/>
+<link rel="manifest" href="manifest.webmanifest"/>
+<title>JB Treinos Pro</title>
+<style>
+:root{
+  --bg:#071016;--panel:#0e1820;--panel2:#121f29;--text:#f6f7f9;--muted:#94a7b5;
+  --gold:#f7c53d;--gold2:#ffdf73;--line:#243643;--danger:#d63c3c;--warn:#e8b62f;--ok:#2ea865;
+  --shadow:0 18px 42px rgba(0,0,0,.28);--radius:22px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:linear-gradient(180deg,#071016,#0a131a 50%,#071016);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,select,input,textarea{font:inherit}
+body{min-height:100vh}
+.app{max-width:1440px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom))}
+.topbar{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:16px}
+.brand{display:flex;gap:12px;align-items:center}
+.brand img{width:58px;height:58px;object-fit:contain;border-radius:16px;background:#fff;padding:5px;box-shadow:var(--shadow)}
+.brand h1{font-size:clamp(20px,3vw,30px);margin:0;letter-spacing:.2px}
+.brand small{color:var(--muted);display:block;margin-top:3px}
+.badge{padding:8px 11px;border:1px solid rgba(247,197,61,.35);background:rgba(247,197,61,.08);border-radius:999px;color:var(--gold2);font-weight:800;font-size:12px}
+.layout{display:grid;grid-template-columns:340px minmax(0,1fr) 330px;gap:16px}
+.card{background:linear-gradient(180deg,rgba(18,31,41,.97),rgba(11,22,29,.97));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.controls{padding:16px;align-self:start;position:sticky;top:12px}
+.section-title{font-size:12px;color:var(--gold2);font-weight:900;letter-spacing:.14em;text-transform:uppercase;margin:2px 0 10px}
+.field{margin-bottom:12px}
+.field label{display:block;color:#c8d4dc;font-size:12px;font-weight:800;margin-bottom:6px}
+select,input,textarea{width:100%;background:#09131a;color:#fff;border:1px solid #2a3b47;border-radius:13px;padding:11px 12px;outline:none}
+select:focus,input:focus,textarea:focus{border-color:var(--gold)}
+textarea{resize:vertical;min-height:78px}
+.shot-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:245px;overflow:auto;padding-right:2px}
+.check{display:flex;gap:7px;align-items:center;border:1px solid #263844;background:#0b171e;border-radius:11px;padding:9px;font-size:12px;cursor:pointer}
+.check input{width:auto;accent-color:var(--gold)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+button{border:0;border-radius:13px;padding:11px 12px;font-weight:900;cursor:pointer;touch-action:manipulation}
+.primary{background:linear-gradient(135deg,#ffd85f,#e6a90f);color:#15100a}
+.secondary{background:#172631;color:#eaf1f5;border:1px solid #2f4656}
+.ghost{background:transparent;border:1px solid #314754;color:#dce7ed}
+.danger{background:#432226;color:#ffd8d8;border:1px solid #71363b}
+button:active{transform:translateY(1px)}
+.stage{overflow:hidden}
+.stage-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);gap:12px}
+.stage-head strong{font-size:14px}
+.stage-head span{font-size:12px;color:var(--muted)}
+.court-wrap{position:relative;aspect-ratio:1/1.18;max-height:76vh;background:#e8ddc3;overflow:hidden}
+#court{width:100%;height:100%;display:block;touch-action:none}
+.watermark{position:absolute;inset:50% auto auto 50%;width:min(46%,330px);transform:translate(-50%,-50%);opacity:.07;pointer-events:none;filter:grayscale(1)}
+.zone-legend{display:flex;gap:8px;flex-wrap:wrap;padding:11px 14px;border-top:1px solid var(--line);background:#0b151c}
+.legend{display:flex;gap:7px;align-items:center;font-size:11px;color:#cbd7df}
+.dot{width:11px;height:11px;border-radius:50%}
+.right{display:flex;flex-direction:column;gap:16px}
+.info,.exercise{padding:16px}
+.exercise h3{margin:0 0 6px;font-size:18px}
+.exercise p{margin:5px 0;color:#c5d1d8;font-size:13px;line-height:1.45}
+.exercise .meta{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.pill{font-size:10px;font-weight:900;padding:6px 8px;background:#13242e;border:1px solid #2c414e;border-radius:999px;color:#dce9ef}
+.steps{display:grid;gap:8px;margin-top:10px}
+.step{border-left:3px solid var(--gold);background:#0a151c;border-radius:10px;padding:9px 10px;font-size:12px;line-height:1.35;color:#d4e0e7}
+.toolbar{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}
+.small{padding:9px 8px;font-size:11px}
+.status{font-size:11px;color:var(--muted);margin-top:8px;min-height:16px}
+.player{cursor:grab}
+.player:active{cursor:grabbing}
+@media(max-width:1100px){.layout{grid-template-columns:310px 1fr}.right{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}.controls{position:static}}
+@media(max-width:760px){
+  .app{padding-left:10px;padding-right:10px}
+  .topbar{align-items:flex-start}.badge{display:none}
+  .layout{grid-template-columns:1fr}
+  .right{grid-column:auto;display:flex}
+  .controls{order:2}.stage{order:1}.right{order:3}
+  .court-wrap{aspect-ratio:1/1.3;max-height:none}
+  .shot-grid{max-height:205px}
+}
+@media print{
+ body{background:#fff;color:#000}.app{max-width:none;padding:0}.topbar,.controls,.right,.zone-legend,.stage-head{display:none!important}
+ .layout{display:block}.stage{border:0;box-shadow:none}.court-wrap{height:260mm;max-height:none;aspect-ratio:auto}
+ .watermark{opacity:.08}#court{height:100%;width:100%}
+}
+</style>
+
+<style>
+/* V2 additions */
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:300px;overflow:auto}
+.lib-card{background:#0a151c;border:1px solid #2b3d49;border-radius:12px;padding:10px;cursor:pointer}
+.lib-card:hover{border-color:#f7c53d}
+.lib-card b{display:block;font-size:12px;margin-bottom:4px}
+.lib-card span{font-size:10px;color:#9fb0ba;line-height:1.3}
+.builder-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seq-list{display:grid;gap:8px;max-height:260px;overflow:auto}
+.seq-item{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;background:#0a151c;border:1px solid #2b3d49;border-radius:11px;padding:8px}
+.seq-num{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#f7c53d;color:#111;font-size:11px;font-weight:900}
+.seq-item small{color:#9fb0ba}
+.professor-label{font-size:11px;font-weight:900;fill:#fff}
+.library-filter{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.tool-toggle.active{outline:2px solid #f7c53d}
+.ai-box{background:linear-gradient(180deg,#111d26,#0b151c);border:1px solid #304552;border-radius:14px;padding:10px;margin-top:10px}
+.ai-box textarea{min-height:90px}
+.subtle{font-size:11px;color:#93a6b1}
+@media(max-width:760px){.library-grid{grid-template-columns:1fr}.builder-row,.library-filter{grid-template-columns:1fr}}
+</style>
+
+
+<style>
+/* ===== V3 PRO EDITOR ===== */
+.timeline-wrap{display:grid;gap:8px}
+.timeline-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.timeline{display:grid;gap:7px;max-height:340px;overflow:auto;padding-right:2px}
+.timeline-item{display:grid;grid-template-columns:30px 1fr 72px;gap:8px;align-items:center;background:#09131a;border:1px solid #2a3b47;border-radius:12px;padding:8px}
+.timeline-item.active{border-color:#f7c53d;box-shadow:0 0 0 1px rgba(247,197,61,.25) inset}
+.timeline-num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#f7c53d;color:#111;font-size:11px;font-weight:900}
+.timeline-main b{font-size:12px;display:block}
+.timeline-main small{font-size:10px;color:#97a9b4}
+.timeline-actions{display:flex;gap:5px;justify-content:flex-end}
+.timeline-actions button{padding:6px 7px;font-size:10px}
+.editor-palette{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.editor-palette button.active{outline:2px solid #f7c53d}
+.speed-row{display:grid;grid-template-columns:1fr 90px;gap:8px;align-items:center}
+input[type=range]{padding:0;accent-color:#f7c53d}
+.ai-state{padding:9px 10px;border-radius:11px;background:#0a151c;border:1px solid #2b3d49;font-size:11px;color:#bcd0db;margin-top:8px}
+.ai-state.ok{border-color:#2e7d50;color:#c7f2d7}
+.ai-state.err{border-color:#8a3b3b;color:#ffd0d0}
+.toolbar-4{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}
+.coordbox{font-size:10px;color:#90a4b0;min-height:14px;margin-top:6px}
+@media(max-width:760px){
+  .timeline-controls,.editor-palette,.toolbar-4{grid-template-columns:repeat(2,1fr)}
+  .speed-row{grid-template-columns:1fr}
+}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <img src="jb-logo.jpeg" alt="JB João Bertonha Beach Tennis">
+      <div><h1>JB Treinos Pro</h1><small>Gerador profissional de treinos para Beach Tennis</small></div>
+    </div>
+    <div class="badge">JOÃO BERTONHA • BEACH TENNIS</div>
+  </div>
+
+  <div class="layout">
+    <aside class="card controls">
+      <div class="section-title">Configuração</div>
+      <div class="field"><label>Nível</label><select id="level"><option>Iniciante</option><option selected>Intermediário</option><option>Avançado</option></select></div>
+      <div class="field"><label>Nº de alunos</label><select id="players"><option>2</option><option selected>4</option></select></div>
+      <div class="field"><label>Modo</label><select id="mode"><option>Sequencial</option><option>Simultâneo</option><option selected>Contínuo / bola viva</option></select></div>
+      <div class="field"><label>Objetivo</label><select id="focus"><option>Construção de ponto</option><option>Definição</option><option>Recuperação</option><option>Transição ataque/defesa</option><option>Direcionamento</option><option>Volume / intensidade</option></select></div>
+      <div class="field"><label>Direcionamento principal</label><select id="direction"><option>Zona 1</option><option>Zona 2</option><option selected>Zona 3</option><option>Zona 4</option><option>Zona 5</option><option>Cruzado</option><option>Paralela</option><option>Central</option></select></div>
+
+      <div class="section-title" style="margin-top:16px">Golpes</div>
+      <div class="shot-grid" id="shotGrid"></div>
+
+      <div class="field" style="margin-top:12px"><label>Observação do professor</label><textarea id="notes" placeholder="Ex.: foco em aceleração após bola neutra e recuperação para a linha dos 6 m."></textarea></div>
+
+      <div class="btns">
+        <button class="primary" id="generate">Gerar treino</button>
+        <button class="secondary" id="animate">▶ Animar</button>
+        <button class="secondary" id="addArrow">+ Trajetória</button>
+        <button class="secondary" id="reset">Reposicionar</button>
+      </div>
+    </aside>
+
+    <main class="card stage">
+      <div class="stage-head"><strong>Quadra interativa</strong><span>Arraste os jogadores para ajustar posições</span></div>
+      <div class="court-wrap" id="courtWrap">
+        <svg id="court" viewBox="0 0 700 900" role="img" aria-label="Quadra de beach tennis interativa"></svg>
+        <img class="watermark" src="jb-logo.jpeg" alt="">
+      </div>
+      <div class="zone-legend">
+        <div class="legend"><span class="dot" style="background:#d94444"></span>Recuperação</div>
+        <div class="legend"><span class="dot" style="background:#e6b836"></span>Construção</div>
+        <div class="legend"><span class="dot" style="background:#31a766"></span>Definição</div>
+        <div class="legend"><span class="dot" style="background:#fff;border:1px solid #bbb"></span>Rede / linhas oficiais</div>
+      </div>
+    </main>
+
+    <section class="right">
+      <div class="card exercise">
+        <div class="section-title">Treino gerado</div>
+        <h3 id="exTitle">Construção + definição</h3>
+        <div class="meta" id="meta"></div>
+        <p id="objective"></p>
+        <div class="steps" id="steps"></div>
+        <div class="status" id="status"></div>
+      </div>
+      <div class="card info">
+        <div class="section-title">Biblioteca por fundamento</div>
+        <div class="library-filter">
+          <select id="libFund">
+            <option value="Todos">Todos os fundamentos</option>
+            <option>Voleios</option><option>Forehand</option><option>Backhand</option><option>Smash</option><option>Gancho</option>
+            <option>Lob</option><option>Curta</option><option>Bandeja</option><option>Rainbow</option><option>Anômalo</option><option>Saque</option>
+          </select>
+          <select id="libLevel"><option>Todos</option><option>Iniciante</option><option selected>Intermediário</option><option>Avançado</option></select>
+        </div>
+        <div class="library-grid" id="libraryGrid"></div>
+      </div>
+
+      <div class="card info">
+        <div class="section-title">Treino próprio / sequências</div>
+        <div class="builder-row">
+          <select id="ownShot"></select>
+          <select id="ownTarget"><option>Zona 1</option><option>Zona 2</option><option>Zona 3</option><option>Zona 4</option><option>Zona 5</option><option>Cruzado</option><option>Paralela</option><option>Central</option></select>
+        </div>
+        <div class="builder-row" style="margin-top:8px">
+          <select id="ownPlayer"><option>Aluno 1</option><option>Aluno 2</option><option>Aluno 3</option><option>Aluno 4</option><option>Professor</option></select>
+          <button class="secondary small" id="addSequence">Adicionar etapa</button>
+        </div>
+        <div class="seq-list" id="seqList" style="margin-top:10px"></div>
+        <div class="toolbar">
+          <button class="ghost small" id="playSequence">▶ Sequência</button>
+          <button class="ghost small" id="clearSequence">Limpar</button>
+          <button class="ghost small" id="applySequence">Aplicar na quadra</button>
+        </div>
+      </div>
+
+      <div class="card info">
+        <div class="section-title">Geração automática por IA</div>
+        <div class="ai-box">
+          <textarea id="aiPrompt" placeholder="Ex.: treino avançado para 4 alunos, ataque e defesa, começando com forehand neutro, depois gancho e smash, bola viva e alvo nas zonas 2 e 4."></textarea>
+          <button class="primary small" id="aiGenerate" style="width:100%;margin-top:8px">Gerar treino inteligente</button>
+          <div class="subtle" id="aiHint" style="margin-top:7px">A geração é local nesta versão: interpreta sua prescrição e monta a sequência automaticamente. Pode ser conectada a uma API de IA depois.</div>
+        </div>
+      </div>
+
+      <div class="card info">
+        <div class="section-title">Editor manual de trajetórias</div>
+        <div class="toolbar">
+          <button class="secondary small tool-toggle" id="toolBall">Bola</button>
+          <button class="secondary small tool-toggle" id="toolMove">Movimento</button>
+          <button class="secondary small tool-toggle" id="toolAttack">Ataque</button>
+        </div>
+        <p class="subtle">Toque em dois pontos da quadra para criar a trajetória escolhida. Ataque = linha contínua; movimento = tracejada.</p>
+      </div>
+
+      
+      <div class="card info">
+        <div class="section-title">Editor visual profissional</div>
+        <div class="editor-palette">
+          <button class="secondary small" id="toolSelect">Selecionar</button>
+          <button class="secondary small" id="toolCone">+ Cone</button>
+          <button class="secondary small" id="toolBallObj">+ Bola</button>
+          <button class="secondary small" id="toolCurve">Curva</button>
+        </div>
+        <div class="toolbar-4">
+          <button class="ghost small" id="toolProfessorDrag">Professor</button>
+          <button class="ghost small" id="toolPlayerRun">Corrida</button>
+          <button class="ghost small" id="toolShotLine">Golpe</button>
+          <button class="ghost small" id="deleteSelected">Excluir</button>
+        </div>
+        <div class="speed-row" style="margin-top:10px">
+          <div>
+            <label style="font-size:11px;color:#b8c8d1">Velocidade da bola</label>
+            <input id="ballSpeed" type="range" min="0.5" max="2.5" step="0.1" value="1.2">
+          </div>
+          <div><input id="ballSpeedNum" type="number" min="0.5" max="2.5" step="0.1" value="1.2"></div>
+        </div>
+        <div class="coordbox" id="coordbox">Modo seleção ativo.</div>
+      </div>
+
+      <div class="card info">
+        <div class="section-title">Linha do tempo da jogada</div>
+        <div class="timeline-wrap">
+          <div class="timeline-controls">
+            <button class="secondary small" id="addTimeline">+ Etapa</button>
+            <button class="secondary small" id="playTimeline">▶ Executar</button>
+            <button class="ghost small" id="clearTimeline">Limpar</button>
+          </div>
+          <div class="timeline" id="timeline"></div>
+        </div>
+      </div>
+
+      <div class="card info">
+        <div class="section-title">IA online</div>
+        <div class="ai-box">
+          <textarea id="onlineAiPrompt" placeholder="Ex.: crie um treino avançado para 4 alunos, 12 minutos, foco em transição defesa-ataque, bola viva, forehand acelerado, gancho e smash. Quero trajetórias e linha do tempo completas."></textarea>
+          <button class="primary small" id="onlineAiGenerate" style="width:100%;margin-top:8px">Gerar com IA online</button>
+          <div class="ai-state" id="onlineAiState">A IA usa o endpoint seguro <b>/api/generate-training</b>. A chave fica apenas no servidor.</div>
+        </div>
+      </div>
+
+      <div class="card info">
+        <div class="section-title">Exportar / Aplicar</div>
+        <p style="font-size:13px;color:#c9d5dc;line-height:1.45;margin-top:0">Use a quadra como quadro tático durante a aula, grave a animação e compartilhe o exercício com seus alunos.</p>
+        <div class="toolbar">
+          <button class="secondary small" id="jpg">JPG</button>
+          <button class="secondary small" id="pdf">PDF</button>
+          <button class="secondary small" id="video">Vídeo 12s</button>
+        </div>
+        <div class="toolbar">
+          <button class="ghost small" id="clearArrows">Limpar setas</button>
+          <button class="ghost small" id="save">Salvar treino</button>
+          <button class="ghost small" id="load">Carregar</button>
+        </div>
+        <div class="status" id="exportStatus"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const shots = [
+"Voleio forehand","Voleio backhand","Forehand neutro","Forehand acelerado","Backhand neutro","Backhand",
+"Smash","Gancho","Lob","Curta","Bandeja","Rainbow","Anômalo","Saque"
+];
+const shotGrid = document.getElementById('shotGrid');
+shots.forEach((s,i)=>{
+  const l=document.createElement('label');l.className='check';
+  l.innerHTML=`<input type="checkbox" value="${s}" ${[2,3,6,7].includes(i)?'checked':''}><span>${s}</span>`;
+  shotGrid.appendChild(l);
+});
+
+const svg=document.getElementById('court');
+const NS='http://www.w3.org/2000/svg';
+let players=[], arrows=[], animId=null, animT=0;
+
+function el(name,attrs={},parent=svg){
+  const n=document.createElementNS(NS,name); Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v)); parent.appendChild(n); return n;
+}
+function drawCourt(){
+  svg.innerHTML='';
+  const defs=el('defs');
+  const marker=el('marker',{id:'arrow',markerWidth:8,markerHeight:8,refX:6,refY:3,orient:'auto',markerUnits:'strokeWidth'},defs);
+  el('path',{d:'M0,0 L0,6 L7,3 z',fill:'#ffffff'},marker);
+  const bg=el('g');
+  el('rect',{x:75,y:40,width:550,height:820,rx:10,fill:'#dfd2b7'},bg);
+  // zones on each half (top and bottom)
+  const zones=[
+    [75,40,550,105,'#d94444'],[75,145,550,155,'#e6b836'],[75,300,550,150,'#31a766'],
+    [75,450,550,150,'#31a766'],[75,600,550,155,'#e6b836'],[75,755,550,105,'#d94444']
+  ];
+  zones.forEach(z=>el('rect',{x:z[0],y:z[1],width:z[2],height:z[3],fill:z[4],opacity:.72},bg));
+  // court lines
+  el('rect',{x:75,y:40,width:550,height:820,fill:'none',stroke:'#fff','stroke-width':5});
+  [145,300,450,600,755].forEach(y=>el('line',{x1:75,y1:y,x2:625,y2:y,stroke:'#fff','stroke-width':y===450?8:3,opacity:y===450?1:.85}));
+  // net
+  el('line',{x1:65,y1:450,x2:635,y2:450,stroke:'#101820','stroke-width':12,opacity:.8});
+  el('line',{x1:65,y1:446,x2:635,y2:446,stroke:'#fff','stroke-width':3});
+  // zone numbers top side
+  const zx=[150,250,350,450,550];
+  zx.forEach((x,i)=>{el('circle',{cx:x,cy:410,r:22,fill:'#071016',opacity:.64}); const t=el('text',{x:x,y:417,'text-anchor':'middle',fill:'#fff','font-size':20,'font-weight':900});t.textContent=i+1;});
+  players=[];
+  const n=+document.getElementById('players').value;
+  const pts=n===2?[[250,690],[450,210]]:[[230,690],[470,690],[230,210],[470,210]];
+  pts.forEach((p,i)=>addPlayer(p[0],p[1],i+1));
+}
+function addPlayer(x,y,i){
+  const g=el('g',{class:'player','data-i':i});
+  const c=el('circle',{cx:x,cy:y,r:22,fill:i<=2?'#0b1116':'#fff',stroke:'#f7c53d','stroke-width':5},g);
+  const t=el('text',{x:x,y:y+6,'text-anchor':'middle',fill:i<=2?'#fff':'#0b1116','font-size':17,'font-weight':900},g);t.textContent=i;
+  players.push({g,c,t,x,y});
+  let active=false;
+  g.addEventListener('pointerdown',e=>{active=true;g.setPointerCapture(e.pointerId)});
+  g.addEventListener('pointermove',e=>{
+    if(!active)return; const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY; const q=p.matrixTransform(svg.getScreenCTM().inverse());
+    const nx=Math.max(90,Math.min(610,q.x)), ny=Math.max(55,Math.min(845,q.y));
+    const pl=players[i-1]; pl.x=nx;pl.y=ny;pl.c.setAttribute('cx',nx);pl.c.setAttribute('cy',ny);pl.t.setAttribute('x',nx);pl.t.setAttribute('y',ny+6);
+  });
+  g.addEventListener('pointerup',()=>active=false);g.addEventListener('pointercancel',()=>active=false);
+}
+function addArrow(x1,y1,x2,y2,color='#fff',dash=false){
+  const l=el('path',{d:`M ${x1} ${y1} Q ${(x1+x2)/2+35} ${(y1+y2)/2} ${x2} ${y2}`,fill:'none',stroke:color,'stroke-width':6,'stroke-linecap':'round','marker-end':'url(#arrow)',opacity:.95});
+  if(dash) l.setAttribute('stroke-dasharray','12 10');
+  arrows.push(l); return l;
+}
+function selectedShots(){return [...document.querySelectorAll('#shotGrid input:checked')].map(x=>x.value)}
+function generate(){
+  if(animId){cancelAnimationFrame(animId);animId=null}
+  [...arrows].forEach(a=>a.remove());arrows=[];
+  const s=selectedShots(); const level=levelEl.value, mode=modeEl.value, focus=focusEl.value, dir=directionEl.value;
+  const chosen=s.length?s:["Forehand neutro","Smash"];
+  const palette=['#ffffff','#ffe36a','#4ee9ff','#ff8b6a','#d9a8ff'];
+  // visual pattern
+  const p=players;
+  if(p.length>=2){
+    addArrow(p[0].x,p[0].y,350,520,palette[1]);
+    addArrow(350,520,p[p.length-1].x,p[p.length-1].y,palette[2]);
+    addArrow(p[p.length-1].x,p[p.length-1].y,530,330,palette[3]);
+  }
+  if(p.length===4){
+    addArrow(p[2].x,p[2].y,470,520,palette[4],true);
+    addArrow(470,520,p[1].x,p[1].y,palette[0],true);
+  }
+  exTitle.textContent=`${focus} • ${chosen[0]}${chosen[1]?' + '+chosen[1]:''}`;
+  meta.innerHTML=[level,mode,playersEl.value+' alunos',dir].map(x=>`<span class="pill">${x}</span>`).join('');
+  objective.textContent=`Objetivo: desenvolver ${focus.toLowerCase()} com controle de profundidade, leitura de trajetória e recuperação de posição após cada golpe.`;
+  const move = mode.includes('Contínuo')?'Após rebater, o aluno recompõe a zona e a bola segue viva para o jogador seguinte.':'Execute a sequência e retorne à posição base antes da próxima bola.';
+  const st=[
+    `Professor inicia a bola controlada para o Aluno 1. Primeira ação: ${chosen[0]}.`,
+    chosen[1]?`Segunda ação: ${chosen[1]} direcionado para ${dir}.`:`Direcionar a bola para ${dir}.`,
+    `Movimentação: entrar para a zona de construção/definição conforme a altura da bola e recuperar para a linha de segurança.`,
+    move
+  ];
+  if(chosen[2]) st.splice(2,0,`Terceira ação: ${chosen[2]} com alvo em ${dir}.`);
+  steps.innerHTML=st.map((x,i)=>`<div class="step"><b>${i+1}.</b> ${x}</div>`).join('');
+  status.textContent=document.getElementById('notes').value?`Nota: ${document.getElementById('notes').value}`:'';
+}
+function animate(){
+  if(arrows.length===0) generate();
+  const existing=svg.querySelector('#ballAnim'); if(existing) existing.remove();
+  const ball=el('circle',{id:'ballAnim',cx:players[0]?.x||200,cy:players[0]?.y||700,r:10,fill:'#f7c53d',stroke:'#fff','stroke-width':3});
+  const paths=[...arrows]; if(!paths.length)return;
+  let idx=0, start=null;
+  function tick(ts){
+    if(!start)start=ts; const dur=1200, t=(ts-start)/dur;
+    const path=paths[idx], len=path.getTotalLength(); const pt=path.getPointAtLength(Math.max(0,Math.min(1,t))*len);
+    ball.setAttribute('cx',pt.x);ball.setAttribute('cy',pt.y);
+    if(t>=1){idx=(idx+1)%paths.length;start=ts}
+    animId=requestAnimationFrame(tick)
+  }
+  if(animId)cancelAnimationFrame(animId);animId=requestAnimationFrame(tick);
+}
+function exportSVGJPG(){
+  const clone=svg.cloneNode(true);
+  const wrap=document.getElementById('courtWrap');
+  const xml=new XMLSerializer().serializeToString(clone);
+  const img=new Image(), canvas=document.createElement('canvas'); canvas.width=1400;canvas.height=1800;
+  img.onload=()=>{
+    const ctx=canvas.getContext('2d');ctx.fillStyle='#e8ddc3';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    const logo=new Image(); logo.onload=()=>{
+      ctx.globalAlpha=.07;ctx.drawImage(logo,430,660,540,360);ctx.globalAlpha=1;
+      const a=document.createElement('a');a.download='JB-Treino-Beach-Tennis.jpg';a.href=canvas.toDataURL('image/jpeg',.94);a.click();
+    };logo.src='jb-logo.jpeg';
+  };
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);
+}
+async function recordVideo(){
+  const st=document.getElementById('exportStatus'); st.textContent='Preparando gravação...';
+  const canvas=document.createElement('canvas');canvas.width=700;canvas.height=900;const ctx=canvas.getContext('2d');
+  const stream=canvas.captureStream?.(30); if(!stream){st.textContent='Seu navegador não suporta gravação direta. Use gravação de tela do iPhone/iPad.';return}
+  const candidates=['video/mp4;codecs=h264','video/mp4','video/webm;codecs=vp9','video/webm'];
+  const mime=candidates.find(x=>window.MediaRecorder&&MediaRecorder.isTypeSupported(x))||'';
+  let rec;try{rec=new MediaRecorder(stream,mime?{mimeType:mime}:undefined)}catch(e){st.textContent='Gravação não disponível neste navegador.';return}
+  const chunks=[];rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);
+  rec.onstop=()=>{const blob=new Blob(chunks,{type:mime||'video/webm'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='JB-Treino-Animado.'+(mime.includes('mp4')?'mp4':'webm');a.click();st.textContent='Vídeo gerado.'};
+  rec.start(); animate();
+  let start=performance.now();
+  function frame(){
+    const xml=new XMLSerializer().serializeToString(svg);
+    const img=new Image();img.onload=()=>{ctx.drawImage(img,0,0,700,900)};img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);
+    if(performance.now()-start<12000)requestAnimationFrame(frame);else rec.stop()
+  }frame();st.textContent='Gravando 12 segundos...';
+}
+function save(){
+  localStorage.setItem('jbTreino',JSON.stringify({
+    level:levelEl.value,players:playersEl.value,mode:modeEl.value,focus:focusEl.value,direction:directionEl.value,
+    shots:selectedShots(),notes:notes.value, positions:players.map(p=>({x:p.x,y:p.y}))
+  })); exportStatus.textContent='Treino salvo neste dispositivo.';
+}
+function load(){
+  const d=JSON.parse(localStorage.getItem('jbTreino')||'null'); if(!d){exportStatus.textContent='Nenhum treino salvo.';return}
+  levelEl.value=d.level;playersEl.value=d.players;modeEl.value=d.mode;focusEl.value=d.focus;directionEl.value=d.direction;notes.value=d.notes||'';
+  document.querySelectorAll('#shotGrid input').forEach(i=>i.checked=d.shots.includes(i.value)); drawCourt();
+  if(d.positions) d.positions.forEach((pp,i)=>{const p=players[i];if(!p)return;p.x=pp.x;p.y=pp.y;p.c.setAttribute('cx',pp.x);p.c.setAttribute('cy',pp.y);p.t.setAttribute('x',pp.x);p.t.setAttribute('y',pp.y+6)});
+  generate();exportStatus.textContent='Treino carregado.';
+}
+
+const levelEl=document.getElementById('level'), playersEl=document.getElementById('players'), modeEl=document.getElementById('mode'), focusEl=document.getElementById('focus'), directionEl=document.getElementById('direction');
+const exTitle=document.getElementById('exTitle'),meta=document.getElementById('meta'),objective=document.getElementById('objective'),steps=document.getElementById('steps'),status=document.getElementById('status'),notes=document.getElementById('notes'),exportStatus=document.getElementById('exportStatus');
+
+document.getElementById('generate').onclick=generate;
+document.getElementById('animate').onclick=animate;
+document.getElementById('reset').onclick=()=>{drawCourt();generate()};
+document.getElementById('addArrow').onclick=()=>{const a=players[0],b=players[players.length-1];if(a&&b)addArrow(a.x,a.y,b.x,b.y,'#fff',true)};
+document.getElementById('clearArrows').onclick=()=>{[...arrows].forEach(a=>a.remove());arrows=[]};
+document.getElementById('jpg').onclick=exportSVGJPG;
+document.getElementById('pdf').onclick=()=>window.print();
+document.getElementById('video').onclick=recordVideo;
+document.getElementById('save').onclick=save;document.getElementById('load').onclick=load;
+playersEl.onchange=()=>{drawCourt();generate()};
+drawCourt();generate();
+
+// ===== JB Treinos Pro V2 =====
+let professor=null, basket=null, sequence=[], manualTool=null, manualStart=null;
+
+const exerciseLibrary = [
+ {fund:"Voleios",level:"Iniciante",title:"Voleios controlados 2x2",desc:"Professor alimenta alternado. Controle, base e recuperação." ,shots:["Voleio forehand","Voleio backhand"],focus:"Construção de ponto",dir:"Central"},
+ {fund:"Forehand",level:"Intermediário",title:"Forehand neutro + acelerado",desc:"Construir com bola neutra e acelerar na entrada da zona verde.",shots:["Forehand neutro","Forehand acelerado"],focus:"Transição ataque/defesa",dir:"Zona 3"},
+ {fund:"Backhand",level:"Intermediário",title:"Backhand neutro + paralela",desc:"Controle cruzado e mudança para paralela após bola curta.",shots:["Backhand neutro","Backhand"],focus:"Direcionamento",dir:"Paralela"},
+ {fund:"Smash",level:"Avançado",title:"Smash com recuperação",desc:"Atacar a bola alta, recuperar 3 m e reagir à defesa.",shots:["Smash","Gancho"],focus:"Definição",dir:"Zona 4"},
+ {fund:"Gancho",level:"Avançado",title:"Gancho + contra-ataque",desc:"Defesa de bola alta e retomada ofensiva na bola seguinte.",shots:["Gancho","Forehand acelerado"],focus:"Recuperação",dir:"Zona 2"},
+ {fund:"Lob",level:"Intermediário",title:"Lob de escape",desc:"Usar lob para sair da pressão e reorganizar posicionamento.",shots:["Lob","Bandeja"],focus:"Recuperação",dir:"Zona 5"},
+ {fund:"Curta",level:"Intermediário",title:"Curta + cobertura",desc:"Executar curta e avançar para cobrir a devolução curta.",shots:["Curta","Voleio forehand"],focus:"Definição",dir:"Zona 1"},
+ {fund:"Bandeja",level:"Avançado",title:"Bandeja de construção",desc:"Bandeja profunda com manutenção da rede.",shots:["Bandeja","Smash"],focus:"Construção de ponto",dir:"Central"},
+ {fund:"Rainbow",level:"Avançado",title:"Rainbow de transição",desc:"Ataque por cima com recuperação da zona de definição.",shots:["Rainbow","Smash"],focus:"Definição",dir:"Zona 4"},
+ {fund:"Anômalo",level:"Avançado",title:"Anômalo surpresa",desc:"Uso do anômalo como variação após sequência neutra.",shots:["Forehand neutro","Anômalo"],focus:"Direcionamento",dir:"Cruzado"},
+ {fund:"Saque",level:"Iniciante",title:"Saque + primeira bola",desc:"Saque direcionado e preparação para o primeiro golpe da troca.",shots:["Saque","Voleio forehand"],focus:"Construção de ponto",dir:"Zona 3"},
+];
+
+function addProfessor(){
+  if(professor?.g) professor.g.remove();
+  if(basket?.g) basket.g.remove();
+  const g=el('g',{id:'professor'});
+  const x=40,y=520;
+  el('circle',{cx:x,cy:y,r:19,fill:'#f7c53d',stroke:'#111','stroke-width':4},g);
+  el('line',{x1:x,y1:y+20,x2:x,y2:y+52,stroke:'#fff','stroke-width':6,'stroke-linecap':'round'},g);
+  el('line',{x1:x,y1:y+31,x2:x-18,y2:y+48,stroke:'#fff','stroke-width':5,'stroke-linecap':'round'},g);
+  el('line',{x1:x,y1:y+31,x2:x+18,y2:y+48,stroke:'#fff','stroke-width':5,'stroke-linecap':'round'},g);
+  const tx=el('text',{x:15,y:y+75,class:'professor-label'},g);tx.textContent='PROF.';
+  professor={g,x,y};
+  const bg=el('g',{id:'basket'});
+  el('rect',{x:10,y:610,width:58,height:52,rx:8,fill:'#172631',stroke:'#f7c53d','stroke-width':4},bg);
+  [[22,622],[38,620],[54,626],[26,640],[46,644]].forEach(p=>el('circle',{cx:p[0],cy:p[1],r:6,fill:'#f7c53d',stroke:'#fff','stroke-width':1},bg));
+  basket={g:bg};
+}
+
+const oldDrawCourt=drawCourt;
+drawCourt=function(){ oldDrawCourt(); addProfessor(); }
+
+function renderLibrary(){
+  const f=document.getElementById('libFund').value, l=document.getElementById('libLevel').value;
+  const arr=exerciseLibrary.filter(x=>(f==='Todos'||x.fund===f)&&(l==='Todos'||x.level===l));
+  libraryGrid.innerHTML=arr.map((x,i)=>`<div class="lib-card" data-idx="${exerciseLibrary.indexOf(x)}"><b>${x.title}</b><span>${x.level} • ${x.desc}</span></div>`).join('');
+  libraryGrid.querySelectorAll('.lib-card').forEach(c=>c.onclick=()=>applyLibrary(exerciseLibrary[+c.dataset.idx]));
+}
+function applyLibrary(x){
+  levelEl.value=x.level;focusEl.value=x.focus;directionEl.value=x.dir;
+  document.querySelectorAll('#shotGrid input').forEach(i=>i.checked=x.shots.includes(i.value));
+  generate();status.textContent=`Biblioteca: ${x.title} — ${x.desc}`;
+}
+document.getElementById('libFund').onchange=renderLibrary;
+document.getElementById('libLevel').onchange=renderLibrary;
+
+function setupOwnShots(){
+  ownShot.innerHTML=shots.map(s=>`<option>${s}</option>`).join('');
+}
+function renderSequence(){
+  seqList.innerHTML=sequence.map((s,i)=>`<div class="seq-item"><span class="seq-num">${i+1}</span><div><b>${s.player}: ${s.shot}</b><small>${s.target}</small></div><button class="danger small" data-i="${i}">×</button></div>`).join('');
+  seqList.querySelectorAll('button').forEach(b=>b.onclick=()=>{sequence.splice(+b.dataset.i,1);renderSequence()});
+}
+addSequence.onclick=()=>{sequence.push({player:ownPlayer.value,shot:ownShot.value,target:ownTarget.value});renderSequence()}
+clearSequence.onclick=()=>{sequence=[];renderSequence()}
+applySequence.onclick=()=>{
+  [...arrows].forEach(a=>a.remove());arrows=[];
+  let prev=professor?{x:professor.x,y:professor.y}:players[0];
+  sequence.forEach((s,i)=>{
+    let dest;
+    if(s.target.startsWith('Zona ')){ const z=+s.target.split(' ')[1]; dest={x:150+(z-1)*100,y:(i%2?330:570)}; }
+    else if(s.target==='Paralela') dest={x:prev.x<350?180:520,y:prev.y<450?710:190};
+    else if(s.target==='Cruzado') dest={x:prev.x<350?520:180,y:prev.y<450?710:190};
+    else dest={x:350,y:prev.y<450?710:190};
+    addArrow(prev.x,prev.y,dest.x,dest.y,i%2?'#4ee9ff':'#ffe36a',false);
+    prev=dest;
+  });
+  exTitle.textContent='Treino próprio • sequência personalizada';
+  steps.innerHTML=sequence.map((s,i)=>`<div class="step"><b>${i+1}.</b> ${s.player} executa ${s.shot} para ${s.target}.</div>`).join('');
+}
+playSequence.onclick=()=>{applySequence.onclick();animate()};
+
+function inferPrompt(text){
+  const t=text.toLowerCase();
+  const foundShots=shots.filter(s=>t.includes(s.toLowerCase().replace('ô','o').replace('â','a')) || t.includes(s.toLowerCase()));
+  let lv=t.includes('avanç')?'Avançado':t.includes('inic')?'Iniciante':'Intermediário';
+  let n=t.includes('4 aluno')?'4':'2';
+  let m=t.includes('bola viva')||t.includes('contín')?'Contínuo / bola viva':t.includes('simult')?'Simultâneo':'Sequencial';
+  let f=t.includes('defini')||t.includes('ataque')?'Definição':t.includes('recuper')||t.includes('defesa')?'Recuperação':t.includes('volume')?'Volume / intensidade':'Construção de ponto';
+  let d='Zona 3'; for(let i=1;i<=5;i++) if(t.includes(`zona ${i}`)) d=`Zona ${i}`;
+  if(t.includes('paralela'))d='Paralela'; else if(t.includes('cruzad'))d='Cruzado'; else if(t.includes('central'))d='Central';
+  return {foundShots:foundShots.length?foundShots:["Forehand neutro","Forehand acelerado","Smash"],lv,n,m,f,d};
+}
+aiGenerate.onclick=()=>{
+  const r=inferPrompt(aiPrompt.value);
+  levelEl.value=r.lv;playersEl.value=r.n;modeEl.value=r.m;focusEl.value=r.f;directionEl.value=r.d;
+  document.querySelectorAll('#shotGrid input').forEach(i=>i.checked=r.foundShots.includes(i.value));
+  drawCourt();generate();
+  sequence=r.foundShots.map((s,i)=>({player:`Aluno ${Math.min(i+1,+r.n)}`,shot:s,target:i%2?r.d:'Central'}));renderSequence();applySequence.onclick();
+  aiHint.textContent='Treino montado automaticamente a partir da sua prescrição.';
+};
+
+function setTool(t,btn){
+  manualTool=t;manualStart=null;
+  document.querySelectorAll('.tool-toggle').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+}
+toolBall.onclick=()=>setTool('ball',toolBall);toolMove.onclick=()=>setTool('move',toolMove);toolAttack.onclick=()=>setTool('attack',toolAttack);
+svg.addEventListener('pointerdown',e=>{
+  if(!manualTool || e.target.closest?.('.player')) return;
+  const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(svg.getScreenCTM().inverse());
+  if(!manualStart){manualStart={x:q.x,y:q.y};return}
+  const color=manualTool==='attack'?'#ff8b6a':manualTool==='move'?'#ffffff':'#4ee9ff';
+  addArrow(manualStart.x,manualStart.y,q.x,q.y,color,manualTool==='move');manualStart=null;
+});
+
+function animatePlayersAndBall(){
+  if(arrows.length===0) generate();
+  const routes=[...arrows];
+  if(!routes.length)return;
+  const ballOld=svg.querySelector('#ballAnim'); if(ballOld)ballOld.remove();
+  const ball=el('circle',{id:'ballAnim',r:10,fill:'#f7c53d',stroke:'#fff','stroke-width':3});
+  let idx=0,start=null;
+  function tick(ts){
+    if(!start)start=ts;const dur=1100,t=Math.min(1,(ts-start)/dur);
+    const path=routes[idx],len=path.getTotalLength(),pt=path.getPointAtLength(t*len);
+    ball.setAttribute('cx',pt.x);ball.setAttribute('cy',pt.y);
+    const mover=players[idx%players.length];
+    if(mover){
+      const targetY = mover.y<450?Math.min(410,mover.y+45):Math.max(490,mover.y-45);
+      const nx=mover.x + Math.sin(t*Math.PI)*18*(idx%2?1:-1), ny=mover.y + (targetY-mover.y)*Math.sin(t*Math.PI);
+      mover.c.setAttribute('cx',nx);mover.c.setAttribute('cy',ny);mover.t.setAttribute('x',nx);mover.t.setAttribute('y',ny+6);
+    }
+    if(t>=1){
+      if(mover){mover.c.setAttribute('cx',mover.x);mover.c.setAttribute('cy',mover.y);mover.t.setAttribute('x',mover.x);mover.t.setAttribute('y',mover.y+6)}
+      idx=(idx+1)%routes.length;start=ts;
+    }
+    animId=requestAnimationFrame(tick);
+  }
+  if(animId)cancelAnimationFrame(animId);animId=requestAnimationFrame(tick);
+}
+animate=function(){animatePlayersAndBall()}
+
+setupOwnShots();renderLibrary();drawCourt();generate();
+
+
+// ===== V3: PROFESSIONAL VISUAL EDITOR + ONLINE AI =====
+let editorMode='select';
+let visualObjects=[];
+let selectedObject=null;
+let curvePoints=[];
+let timelineSteps=[];
+let currentTimelineIndex=-1;
+
+function setEditorMode(mode, btn){
+  editorMode=mode; curvePoints=[];
+  document.querySelectorAll('#toolSelect,#toolCone,#toolBallObj,#toolCurve,#toolProfessorDrag,#toolPlayerRun,#toolShotLine').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  coordbox.textContent='Modo: '+mode;
+}
+toolSelect.onclick=()=>setEditorMode('select',toolSelect);
+toolCone.onclick=()=>setEditorMode('cone',toolCone);
+toolBallObj.onclick=()=>setEditorMode('ballobj',toolBallObj);
+toolCurve.onclick=()=>setEditorMode('curve',toolCurve);
+toolProfessorDrag.onclick=()=>setEditorMode('professor',toolProfessorDrag);
+toolPlayerRun.onclick=()=>setEditorMode('run',toolPlayerRun);
+toolShotLine.onclick=()=>setEditorMode('shot',toolShotLine);
+ballSpeed.oninput=()=>ballSpeedNum.value=ballSpeed.value;
+ballSpeedNum.oninput=()=>ballSpeed.value=Math.max(.5,Math.min(2.5,+ballSpeedNum.value||1.2));
+
+function svgPointFromEvent(e){
+  const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY;
+  return p.matrixTransform(svg.getScreenCTM().inverse());
+}
+function moveVisualObject(o,x,y){
+  const dx=x-o.x,dy=y-o.y; o.x=x;o.y=y;
+  [...o.element.children].forEach(ch=>{
+    ['cx','x1','x2','x'].forEach(a=>{if(ch.hasAttribute(a)) ch.setAttribute(a,+ch.getAttribute(a)+dx)});
+    ['cy','y1','y2','y'].forEach(a=>{if(ch.hasAttribute(a)) ch.setAttribute(a,+ch.getAttribute(a)+dy)});
+  });
+}
+function makeDraggable(g,obj){
+  let active=false,offX=0,offY=0;
+  g.style.cursor='grab';
+  g.addEventListener('pointerdown',e=>{
+    if(editorMode!=='select' && editorMode!=='professor') return;
+    e.stopPropagation();active=true;selectedObject=obj;g.setPointerCapture(e.pointerId);
+    const q=svgPointFromEvent(e);offX=q.x-obj.x;offY=q.y-obj.y;
+  });
+  g.addEventListener('pointermove',e=>{
+    if(!active)return; const q=svgPointFromEvent(e);
+    moveVisualObject(obj,Math.max(12,Math.min(688,q.x-offX)),Math.max(12,Math.min(888,q.y-offY)));
+  });
+  g.addEventListener('pointerup',()=>active=false);
+  g.addEventListener('pointercancel',()=>active=false);
+}
+function addCone(x,y){
+  const g=el('g',{class:'visual-object'});
+  el('path',{d:`M ${x} ${y-18} L ${x-15} ${y+16} L ${x+15} ${y+16} Z`,fill:'#ff8b35',stroke:'#fff','stroke-width':3},g);
+  el('rect',{x:x-21,y:y+14,width:42,height:7,rx:3,fill:'#fff'},g);
+  const o={type:'cone',element:g,x,y}; visualObjects.push(o);makeDraggable(g,o);return o;
+}
+function addBallObject(x,y){
+  const g=el('g',{class:'visual-object'});
+  el('circle',{cx:x,cy:y,r:10,fill:'#f7c53d',stroke:'#fff','stroke-width':3},g);
+  const o={type:'ball',element:g,x,y};visualObjects.push(o);makeDraggable(g,o);return o;
+}
+function addCurve(points,kind='ball'){
+  if(points.length<2)return;
+  let pathD;
+  if(points.length===2){
+    const [a,b]=points;pathD=`M ${a.x} ${a.y} Q ${(a.x+b.x)/2+45} ${(a.y+b.y)/2-25} ${b.x} ${b.y}`;
+  } else {
+    const [a,m,b]=points;pathD=`M ${a.x} ${a.y} Q ${m.x} ${m.y} ${b.x} ${b.y}`;
+  }
+  const path=el('path',{d:pathD,fill:'none',stroke:kind==='run'?'#fff':kind==='shot'?'#ff8066':'#4ee9ff',
+    'stroke-width':kind==='run'?5:6,'stroke-linecap':'round','marker-end':'url(#arrow)',opacity:.95});
+  if(kind==='run') path.setAttribute('stroke-dasharray','11 9');
+  arrows.push(path);return path;
+}
+deleteSelected.onclick=()=>{
+  if(!selectedObject)return;
+  selectedObject.element.remove();
+  visualObjects=visualObjects.filter(o=>o!==selectedObject);
+  selectedObject=null;
+};
+
+svg.addEventListener('pointerdown',e=>{
+  if(e.target.closest?.('.player') || e.target.closest?.('#professor')) return;
+  const q=svgPointFromEvent(e);
+  if(editorMode==='cone'){addCone(q.x,q.y);setEditorMode('select',toolSelect);return}
+  if(editorMode==='ballobj'){addBallObject(q.x,q.y);setEditorMode('select',toolSelect);return}
+  if(['curve','run','shot'].includes(editorMode)){
+    curvePoints.push({x:q.x,y:q.y});
+    coordbox.textContent=`${editorMode}: ponto ${curvePoints.length} em ${Math.round(q.x)}, ${Math.round(q.y)}`;
+    if(curvePoints.length===3 || (editorMode!=='curve' && curvePoints.length===2)){
+      addCurve(curvePoints,editorMode==='curve'?'ball':editorMode);
+      curvePoints=[];coordbox.textContent='Trajetória criada.';
+    }
+  }
+}, true);
+
+function renderTimeline(){
+  timeline.innerHTML=timelineSteps.map((s,i)=>`
+    <div class="timeline-item ${i===currentTimelineIndex?'active':''}">
+      <span class="timeline-num">${i+1}</span>
+      <div class="timeline-main"><b>${s.actor} → ${s.action}</b><small>${s.target||''}${s.speed?' • '+s.speed+'x':''}</small></div>
+      <div class="timeline-actions">
+        <button class="ghost" data-up="${i}">↑</button>
+        <button class="danger" data-del="${i}">×</button>
+      </div>
+    </div>`).join('');
+  timeline.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{timelineSteps.splice(+b.dataset.del,1);renderTimeline()});
+  timeline.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.up;if(i>0){[timelineSteps[i-1],timelineSteps[i]]=[timelineSteps[i],timelineSteps[i-1]];renderTimeline()}
+  });
+}
+function addDefaultTimelineStep(){
+  const examples=[
+    {actor:'Professor',action:'Lançamento',target:'Aluno 1',speed:1.0},
+    {actor:'Aluno 1',action:'Forehand acelerado',target:'Zona 4',speed:1.4},
+    {actor:'Aluno 3',action:'Backhand neutro',target:'Zona 2',speed:1.1},
+    {actor:'Aluno 1',action:'Gancho',target:'Zona 5',speed:1.2},
+    {actor:'Aluno 1',action:'Avanço',target:'Zona de definição',speed:1.0},
+    {actor:'Aluno 1',action:'Smash',target:'Zona 3',speed:1.8}
+  ];
+  timelineSteps.push(examples[timelineSteps.length%examples.length]);renderTimeline();
+}
+addTimeline.onclick=addDefaultTimelineStep;
+clearTimeline.onclick=()=>{timelineSteps=[];currentTimelineIndex=-1;renderTimeline()};
+
+function resolveTargetPoint(target,actor){
+  if(!target)return {x:350,y:450};
+  const m=target.match(/Zona\s([1-5])/i);
+  if(m){const z=+m[1],actorTop=/Aluno [34]/.test(actor);return {x:150+(z-1)*100,y:actorTop?690:210}}
+  if(/Aluno 1/i.test(target))return players[0]||{x:230,y:690};
+  if(/Aluno 2/i.test(target))return players[1]||{x:470,y:690};
+  if(/Aluno 3/i.test(target))return players[2]||{x:230,y:210};
+  if(/Aluno 4/i.test(target))return players[3]||{x:470,y:210};
+  if(/defini/i.test(target))return {x:350,y:520};
+  return {x:350,y:450};
+}
+function actorPoint(actor){
+  if(/Professor/i.test(actor) && professor)return {x:professor.x,y:professor.y};
+  const m=actor.match(/Aluno\s([1-4])/i);
+  if(m && players[+m[1]-1]) return players[+m[1]-1];
+  return {x:350,y:450};
+}
+function buildTimelineVisuals(){
+  [...arrows].forEach(a=>a.remove());arrows=[];
+  timelineSteps.forEach((s,i)=>{
+    const a=actorPoint(s.actor),b=resolveTargetPoint(s.target,s.actor);
+    addArrow(a.x,a.y,b.x,b.y,/Avanço|Corrida/i.test(s.action)?'#fff':i%2?'#4ee9ff':'#ffe36a',/Avanço|Corrida/i.test(s.action));
+  });
+  steps.innerHTML=timelineSteps.map((s,i)=>`<div class="step"><b>${i+1}.</b> ${s.actor}: ${s.action}${s.target?' → '+s.target:''}.</div>`).join('');
+}
+async function playTimelineSequence(){
+  if(!timelineSteps.length){for(let i=0;i<6;i++)addDefaultTimelineStep()}
+  buildTimelineVisuals();
+  const globalSpeed=Math.max(.5,+ballSpeed.value||1.2),routes=[...arrows];
+  const old=svg.querySelector('#ballAnim');if(old)old.remove();
+  const ball=el('circle',{id:'ballAnim',r:10,fill:'#f7c53d',stroke:'#fff','stroke-width':3});
+  let i=0;
+  function one(){
+    if(i>=routes.length){currentTimelineIndex=-1;renderTimeline();return}
+    currentTimelineIndex=i;renderTimeline();
+    const path=routes[i],len=path.getTotalLength(),step=timelineSteps[i]||{},duration=1200/((step.speed||1)*globalSpeed);
+    const mover=/Aluno\s([1-4])/i.exec(step.actor),pl=mover?players[+mover[1]-1]:null,sx=pl?.x,sy=pl?.y;
+    let start=null;
+    function frame(ts){
+      if(!start)start=ts;const t=Math.min(1,(ts-start)/duration),pt=path.getPointAtLength(t*len);
+      ball.setAttribute('cx',pt.x);ball.setAttribute('cy',pt.y);
+      if(pl){
+        const wobble=Math.sin(t*Math.PI),nx=sx+(pt.x-sx)*.18*wobble,ny=sy+(pt.y-sy)*.18*wobble;
+        pl.c.setAttribute('cx',nx);pl.c.setAttribute('cy',ny);pl.t.setAttribute('x',nx);pl.t.setAttribute('y',ny+6);
+      }
+      if(t<1)requestAnimationFrame(frame);else{
+        if(pl){pl.c.setAttribute('cx',sx);pl.c.setAttribute('cy',sy);pl.t.setAttribute('x',sx);pl.t.setAttribute('y',sy+6)}
+        i++;setTimeout(one,120);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  one();
+}
+playTimeline.onclick=playTimelineSequence;
+
+async function generateWithOnlineAI(){
+  const prompt=onlineAiPrompt.value.trim();
+  if(!prompt){onlineAiState.className='ai-state err';onlineAiState.textContent='Descreva o treino que deseja gerar.';return}
+  onlineAiState.className='ai-state';onlineAiState.textContent='Gerando treino com IA...';
+  try{
+    const res=await fetch('/api/generate-training',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt,context:{
+        level:levelEl.value,players:+playersEl.value,mode:modeEl.value,focus:focusEl.value,availableShots:shots
+      }})
+    });
+    if(!res.ok)throw new Error(await res.text());
+    const data=await res.json();
+    if(data.level)levelEl.value=data.level;
+    if(data.players){playersEl.value=String(data.players);drawCourt()}
+    if(data.mode)modeEl.value=data.mode;
+    if(data.focus)focusEl.value=data.focus;
+    if(data.direction)directionEl.value=data.direction;
+    if(Array.isArray(data.shots))document.querySelectorAll('#shotGrid input').forEach(i=>i.checked=data.shots.includes(i.value));
+    if(Array.isArray(data.timeline)){
+      timelineSteps=data.timeline.map(x=>({actor:x.actor||'Professor',action:x.action||'Lançamento',target:x.target||'Centro',speed:+x.speed||1}));
+      renderTimeline();buildTimelineVisuals();
+    }
+    exTitle.textContent=data.title||'Treino gerado por IA';
+    objective.textContent=data.objective||'Treino gerado automaticamente.';
+    if(data.notes)status.textContent=data.notes;
+    onlineAiState.className='ai-state ok';onlineAiState.textContent='Treino gerado pela IA e aplicado à quadra.';
+  }catch(err){
+    console.error(err);
+    onlineAiState.className='ai-state err';
+    onlineAiState.textContent='IA online indisponível. Verifique servidor e OPENAI_API_KEY.';
+  }
+}
+onlineAiGenerate.onclick=generateWithOnlineAI;
+
+timelineSteps=[
+  {actor:'Professor',action:'Lançamento',target:'Aluno 1',speed:1.0},
+  {actor:'Aluno 1',action:'Forehand acelerado',target:'Zona 4',speed:1.4},
+  {actor:'Aluno 3',action:'Backhand neutro',target:'Zona 2',speed:1.1},
+  {actor:'Aluno 1',action:'Gancho',target:'Zona 5',speed:1.2},
+  {actor:'Aluno 1',action:'Avanço',target:'Zona de definição',speed:1.0},
+  {actor:'Aluno 1',action:'Smash',target:'Zona 3',speed:1.8}
+];
+renderTimeline();
+setEditorMode('select',toolSelect);
+
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
