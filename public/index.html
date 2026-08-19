@@ -204,6 +204,18 @@ input[type=range]{padding:0;accent-color:#f7c53d}
 }
 </style>
 
+
+<style>
+/* ===== JB PLAY V5.2 — MOTOR BOLA VIVA ===== */
+.v52-route{fill:none;stroke:#54e5ff;stroke-width:5.5;stroke-linecap:round;opacity:.95}
+.v52-run{fill:none;stroke:#fff;stroke-width:3.5;stroke-linecap:round;stroke-dasharray:8 9;opacity:.42}
+.v52-trail{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;opacity:.22}
+.v52-contact-ring{fill:none;stroke:#f7c53d;stroke-width:4;opacity:0}
+.v52-phase-label{font-size:10px;font-weight:900;fill:#fff;paint-order:stroke;stroke:#071016;stroke-width:3px}
+.v52-player-shadow{fill:#000;opacity:.12}
+.v52-active-player{filter:drop-shadow(0 0 7px rgba(247,197,61,.75))}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1207,6 +1219,282 @@ if(typeof playTimeline!=='undefined')playTimeline.onclick=v5PlayTimeline;
 if(typeof previewAttack!=='undefined')previewAttack.onclick=v5PreviewAttack;
 if(typeof previewDefense!=='undefined')previewDefense.onclick=v5PreviewDefense;
 if(typeof animate!=='undefined')animate=v5PlayTimeline;
+
+
+// ===== JB PLAY V5.2 — MOTOR BOLA VIVA / MOVIMENTO NATURAL =====
+let v52Running=false;
+let v52Els=[];
+let v52Ball=null;
+let v52Trail=null;
+
+function v52Clean(){
+  v52Els.forEach(x=>x?.remove?.()); v52Els=[];
+  if(v52Ball){v52Ball.remove();v52Ball=null}
+  if(v52Trail){v52Trail.remove();v52Trail=null}
+  players.forEach(p=>{
+    p?.g?.classList?.remove('v52-active-player');
+    if(p?.bodyEnhanced){
+      p.bodyEnhanced.body.removeAttribute('transform');
+      p.bodyEnhanced.racket.removeAttribute('transform');
+      p.bodyEnhanced.flash?.setAttribute('opacity','0');
+    }else p?.g?.removeAttribute('transform');
+  });
+}
+
+function v52EaseInOut(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
+function v52EaseOut(t){return 1-Math.pow(1-t,3)}
+function v52EaseIn(t){return t*t}
+
+function v52ActorPlayer(actor){
+  const m=(actor||'').match(/Aluno\s([1-4])/i);
+  return m ? (players[+m[1]-1]||null) : null;
+}
+function v52ActorPoint(actor){
+  if(/Professor/i.test(actor||'') && professor) return {x:professor.x,y:professor.y};
+  const p=v52ActorPlayer(actor);
+  return p ? {x:p.x,y:p.y} : {x:350,y:450};
+}
+function v52TargetPoint(step){
+  const target=step?.target||'Central';
+  const m=target.match(/Aluno\s([1-4])/i);
+  if(m && players[+m[1]-1]) return {x:players[+m[1]-1].x,y:players[+m[1]-1].y};
+
+  const z=target.match(/Zona\s([1-5])/i);
+  if(z){
+    const a=v52ActorPoint(step.actor), x=150+(+z[1]-1)*100;
+    return {x,y:a.y<450?690:210};
+  }
+
+  const a=v52ActorPoint(step.actor);
+  if(/paralela/i.test(target)) return {x:a.x<350?170:530,y:a.y<450?690:210};
+  if(/cruzad/i.test(target)) return {x:a.x<350?530:170,y:a.y<450?690:210};
+  if(/defini/i.test(target)) return {x:350,y:a.y<450?535:365};
+  if(/constru/i.test(target)) return {x:350,y:a.y<450?630:270};
+  if(/recuper/i.test(target)) return {x:a.x,y:a.y<450?770:130};
+  return {x:350,y:a.y<450?690:210};
+}
+function v52Profile(action){
+  return typeof profileFor==='function'
+    ? profileFor(action||'')
+    : {arc:-28,speed:1.1,contact:'frente',recovery:.35};
+}
+
+function v52ContactPoint(step){
+  const pl=v52ActorPlayer(step.actor);
+  if(!pl) return v52ActorPoint(step.actor);
+  const p=v52Profile(step.action);
+  const side = /Backhand/i.test(step.action||'') ? -1 : 1;
+  if(p.contact==='alto') return {x:pl.x+side*14,y:pl.y-34};
+  if(p.contact==='baixo') return {x:pl.x+side*16,y:pl.y+14};
+  if(p.contact==='lateral') return {x:pl.x+side*22,y:pl.y-4};
+  return {x:pl.x+side*18,y:pl.y-8};
+}
+
+function v52Path(step, startOverride=null){
+  const a=startOverride||v52ActorPoint(step.actor);
+  const b=v52TargetPoint(step);
+  const p=v52Profile(step.action);
+  let arc=p.arc||0;
+  if(step?.trajectory && typeof step.trajectory.curve==='number') arc=step.trajectory.curve;
+  if(/Smash/i.test(step.action||'')) arc=Math.max(24,arc);
+  if(/Lob|Rainbow/i.test(step.action||'')) arc=Math.min(-100,arc);
+  if(/Curta/i.test(step.action||'')) b.y=a.y<450?500:400;
+
+  const mx=(a.x+b.x)/2, my=(a.y+b.y)/2+arc;
+  const path=el('path',{
+    d:`M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`,
+    class:/Avanço|Corrida|Recuperação/i.test(step.action||'')?'v52-run':'v52-route'
+  });
+  const label=el('text',{x:mx,y:my-10,class:'v52-phase-label'});
+  label.textContent=step.action||'Ação';
+  v52Els.push(path,label);
+  return {path,a,b,p};
+}
+
+function v52SetPlayer(pl,dx,dy,lean=0,racket=0,scale=1){
+  if(!pl)return;
+  pl.g.classList.add('v52-active-player');
+  if(pl.bodyEnhanced){
+    pl.bodyEnhanced.body.setAttribute(
+      'transform',
+      `translate(${dx} ${dy}) rotate(${lean} ${pl.x} ${pl.y}) scale(${scale})`
+    );
+    pl.bodyEnhanced.racket.setAttribute(
+      'transform',
+      `translate(${dx} ${dy}) rotate(${racket} ${pl.x+18} ${pl.y-4})`
+    );
+  }else{
+    pl.g.setAttribute('transform',`translate(${dx} ${dy}) scale(${scale})`);
+  }
+}
+function v52ResetPlayer(pl){
+  if(!pl)return;
+  pl.g.classList.remove('v52-active-player');
+  if(pl.bodyEnhanced){
+    pl.bodyEnhanced.body.removeAttribute('transform');
+    pl.bodyEnhanced.racket.removeAttribute('transform');
+    pl.bodyEnhanced.flash?.setAttribute('opacity','0');
+  }else pl.g.removeAttribute('transform');
+}
+
+function v52RacketAngle(action,t){
+  if(/Smash|Gancho|Bandeja|Rainbow|Anômalo|Saque/i.test(action||'')) return -70+140*t;
+  if(/Forehand/i.test(action||'')) return -48+96*t;
+  if(/Backhand/i.test(action||'')) return 48-96*t;
+  if(/Voleio/i.test(action||'')) return -26+52*t;
+  if(/Lob|Curta/i.test(action||'')) return 35-70*t;
+  return -18+36*t;
+}
+
+function v52MovePlayerPhase(pl,from,to,phase,action){
+  if(!pl)return;
+  const dx=to.x-from.x,dy=to.y-from.y;
+  let factor=0,lean=0,scale=1,racket=0;
+
+  if(phase<.28){ // aproximação
+    const t=v52EaseOut(phase/.28);
+    factor=.55*t;
+    lean=Math.max(-8,Math.min(8,dx*.018));
+    racket=/Backhand/i.test(action||'')?24:-24;
+  } else if(phase<.48){ // preparação
+    const t=(phase-.28)/.20;
+    factor=.55+.15*t;
+    lean=Math.max(-10,Math.min(10,dx*.02));
+    scale=1+.025*Math.sin(t*Math.PI);
+    racket=/Backhand/i.test(action||'')?38:-38;
+  } else if(phase<.66){ // golpe
+    const t=(phase-.48)/.18;
+    factor=.70+.08*Math.sin(t*Math.PI);
+    lean=Math.max(-12,Math.min(12,dx*.022));
+    racket=v52RacketAngle(action,t);
+    scale=1.03;
+    if(pl.bodyEnhanced?.flash){
+      pl.bodyEnhanced.flash.setAttribute('opacity',Math.max(0,1-Math.abs(t-.55)*5));
+    }
+  } else { // recuperação
+    const t=v52EaseIn((phase-.66)/.34);
+    factor=.78*(1-t);
+    lean=Math.max(-6,Math.min(6,-dx*.012*t));
+    racket=0;
+  }
+  v52SetPlayer(pl,dx*factor,dy*factor,lean,racket,scale);
+}
+
+function v52AnimateBallOnPath(path,duration,ballVisible=true){
+  return new Promise(resolve=>{
+    const len=path.getTotalLength(),pts=[];
+    if(!v52Ball) v52Ball=el('circle',{r:10,fill:'#f7c53d',stroke:'#fff','stroke-width':3});
+    if(!v52Trail) v52Trail=el('path',{class:'v52-trail'});
+    v52Ball.setAttribute('opacity',ballVisible?1:0);
+    let start=null;
+    function frame(ts){
+      if(!start)start=ts;
+      const raw=Math.min(1,(ts-start)/duration),t=v52EaseInOut(raw),pt=path.getPointAtLength(t*len);
+      if(ballVisible){
+        v52Ball.setAttribute('cx',pt.x);v52Ball.setAttribute('cy',pt.y);
+        pts.push({x:pt.x,y:pt.y});if(pts.length>12)pts.shift();
+        if(pts.length>1)v52Trail.setAttribute('d',pts.map((q,i)=>`${i?'L':'M'} ${q.x} ${q.y}`).join(' '));
+      }
+      if(raw<1)requestAnimationFrame(frame);else resolve();
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+async function v52AnimateAction(step,startOverride=null){
+  const pl=v52ActorPlayer(step.actor);
+  const from=v52ActorPoint(step.actor);
+  const contact=v52ContactPoint(step);
+  const {path,p}=v52Path(step,startOverride||contact);
+
+  // transient run line for player approach
+  let runPath=null;
+  if(pl && !/Avanço|Corrida|Recuperação/i.test(step.action||'')){
+    const mx=(from.x+contact.x)/2,my=(from.y+contact.y)/2;
+    runPath=el('path',{d:`M ${from.x} ${from.y} Q ${mx} ${my} ${contact.x} ${contact.y}`,class:'v52-run'});
+    v52Els.push(runPath);
+  }
+
+  const pace=typeof sessionPace!=='undefined'?(+sessionPace.value||1):1;
+  const ps=typeof playerSpeed!=='undefined'?(+playerSpeed.value||1):1;
+  const dur=1150/Math.max(.45,(+step.speed||p.speed||1)*pace);
+
+  let start=null;
+  await new Promise(resolve=>{
+    function frame(ts){
+      if(!start)start=ts;
+      const raw=Math.min(1,(ts-start)/dur);
+      if(pl) v52MovePlayerPhase(pl,from,contact,raw,step.action);
+      if(raw<1)requestAnimationFrame(frame);else resolve();
+    }
+    requestAnimationFrame(frame);
+  });
+
+  // ball flight starts at the actual contact point
+  await v52AnimateBallOnPath(path,Math.max(420,dur*.72),!/Avanço|Corrida|Recuperação/i.test(step.action||''));
+
+  v52ResetPlayer(pl);
+  if(runPath) runPath.style.opacity='0';
+  path.style.opacity='0';
+  setTimeout(()=>{runPath?.remove();path.remove()},120);
+
+  return v52TargetPoint(step);
+}
+
+async function v52PlayTimeline(){
+  if(v52Running || !Array.isArray(timelineSteps) || !timelineSteps.length)return;
+  v52Running=true;v52Clean();
+
+  // remove old clutter
+  svg.querySelectorAll('path[marker-end="url(#arrow)"], .trajectory-label').forEach(n=>{
+    if(!n.closest('defs'))n.remove();
+  });
+
+  let ballStart=null;
+  for(let i=0;i<timelineSteps.length;i++){
+    currentTimelineIndex=i;
+    if(typeof renderTimeline==='function')renderTimeline();
+
+    const step=timelineSteps[i];
+
+    // for first professor feed, start from professor; subsequent shots start from actor contact
+    ballStart = await v52AnimateAction(step, ballStart);
+
+    // after each action, clear previous trail so each phase is readable
+    if(v52Trail) v52Trail.setAttribute('d','');
+    await new Promise(r=>setTimeout(r,110));
+  }
+
+  currentTimelineIndex=-1;
+  if(typeof renderTimeline==='function')renderTimeline();
+  v52Clean();v52Running=false;
+}
+
+async function v52PreviewAttack(){
+  timelineSteps=[
+    {actor:'Professor',action:'Lançamento',target:'Aluno 1',speed:.9},
+    {actor:'Aluno 1',action:'Forehand acelerado',target:'Aluno 3',speed:1.5},
+    {actor:'Aluno 3',action:'Backhand neutro',target:'Aluno 1',speed:1.1},
+    {actor:'Aluno 1',action:'Avanço',target:'Zona de definição',speed:1},
+    {actor:'Aluno 1',action:'Smash',target:'Zona 3',speed:1.8}
+  ];
+  renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});await v52PlayTimeline();
+}
+async function v52PreviewDefense(){
+  timelineSteps=[
+    {actor:'Professor',action:'Lançamento',target:'Aluno 1',speed:1},
+    {actor:'Aluno 1',action:'Gancho',target:'Aluno 3',speed:1.2},
+    {actor:'Aluno 3',action:'Forehand acelerado',target:'Aluno 1',speed:1.5},
+    {actor:'Aluno 1',action:'Lob',target:'Aluno 3',speed:.9},
+    {actor:'Aluno 1',action:'Recuperação',target:'Zona de construção',speed:1}
+  ];
+  renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});await v52PlayTimeline();
+}
+
+if(typeof playTimeline!=='undefined')playTimeline.onclick=v52PlayTimeline;
+if(typeof previewAttack!=='undefined')previewAttack.onclick=v52PreviewAttack;
+if(typeof previewDefense!=='undefined')previewDefense.onclick=v52PreviewDefense;
+if(typeof animate!=='undefined')animate=v52PlayTimeline;
 
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
