@@ -17,12 +17,22 @@ const client = apiKey ? new OpenAI({ apiKey }) : null;
 const model = process.env.OPENAI_MODEL || "gpt-5-mini";
 
 const SYSTEM = `
-Você é um treinador especialista em Beach Tennis e um gerador de exercícios para o software JB Treinos Pro.
-Crie exercícios coerentes, progressivos e aplicáveis em quadra.
+Você é o motor tático do JB Play, especializado em Beach Tennis.
+Gere exercícios executáveis, coerentes com trajetória da bola, movimentação, contato e recuperação.
 
 Golpes permitidos:
 Voleio forehand, Voleio backhand, Forehand neutro, Forehand acelerado, Backhand neutro, Backhand,
 Smash, Gancho, Lob, Curta, Bandeja, Rainbow, Anômalo, Saque.
+
+Regras:
+- A bola deve cruzar a rede em trocas entre lados.
+- Smash: trajetória mais direta/descendente.
+- Lob e Rainbow: arco alto.
+- Curta: queda próxima da rede.
+- Gancho: recuperação/defesa de bola alta.
+- Após o golpe, prever recuperação coerente.
+- Em bola viva, distribuir ações entre os alunos.
+- Gere entre 6 e 14 etapas.
 
 Responda SOMENTE em JSON válido:
 {
@@ -35,11 +45,18 @@ Responda SOMENTE em JSON válido:
  "shots":["..."],
  "objective":"string",
  "notes":"string",
+ "player_positions":[{"player":"Aluno 1","x":230,"y":690}],
  "timeline":[
-   {"actor":"Professor|Aluno 1|Aluno 2|Aluno 3|Aluno 4","action":"string","target":"string","speed":1.0}
+   {
+     "actor":"Professor|Aluno 1|Aluno 2|Aluno 3|Aluno 4",
+     "action":"Lançamento|nome do golpe|Avanço|Corrida",
+     "target":"Aluno 1|Aluno 2|Aluno 3|Aluno 4|Zona 1|Zona 2|Zona 3|Zona 4|Zona 5|Cruzado|Paralela|Central|Zona de definição|Zona de construção|Zona de recuperação",
+     "speed":1.2,
+     "movement":{"type":"aproximação|recuo|lateral|recuperação","intensity":1.0},
+     "trajectory":{"type":"reta|arco baixo|arco alto|curta|descendente","curve":-30}
+   }
  ]
 }
-Use 5 a 14 etapas na timeline.
 `;
 
 app.post("/api/generate-training", async (req, res) => {
