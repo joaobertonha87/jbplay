@@ -1,0 +1,12 @@
+CORREÇÃO PARA EXPRESS 5 / RENDER
+
+Corrigido o erro:
+PathError: Missing parameter name at index 1: *
+
+A rota:
+app.get("*", ...)
+
+foi substituída por:
+app.get("/{*splat}", ...)
+
+Depois de enviar estes arquivos ao GitHub, faça um novo deploy no Render.

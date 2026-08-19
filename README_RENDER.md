@@ -99,3 +99,14 @@ JB_Treinos_Pro_Render_Ready/
 ## Observação sobre o plano gratuito
 
 Em planos gratuitos, o serviço pode entrar em suspensão após um período sem uso e demorar alguns segundos para responder no primeiro acesso. Para uso diário em aula, um plano pago reduz esse atraso.
+
+
+## Correção do deploy no Render
+
+Esta versão corrige a rota coringa incompatível com Express 5.
+
+Depois de atualizar o GitHub:
+1. Abra **Deploys** no Render.
+2. Clique em **Deploy latest commit**.
+3. Aguarde o status ficar **Live**.
+4. Teste `/health`.
