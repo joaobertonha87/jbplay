@@ -2420,6 +2420,350 @@ document.querySelectorAll('#v6QuickNav button').forEach(btn=>{
   });
 });
 
+
+// ===== JB PLAY V6.1 — MOVIMENTO GUIADO / SEM DESTINO ALEATÓRIO =====
+const V61_HOME={
+  1:{x:230,y:300,side:'top',lane:'left'},
+  2:{x:470,y:300,side:'top',lane:'right'},
+  3:{x:230,y:600,side:'bottom',lane:'left'},
+  4:{x:470,y:600,side:'bottom',lane:'right'}
+};
+let v61Running=false;
+
+function v61Id(actor){
+  const m=(actor||'').match(/Aluno\s*([1-4])/i);
+  return m?+m[1]:0;
+}
+function v61Player(actor){const id=v61Id(actor);return id?players[id-1]:null}
+function v61State(pl){
+  if(!pl)return{x:350,y:450};
+  if(!v53State.has(pl)){
+    const id=players.indexOf(pl)+1,p=V61_HOME[id]||{x:pl.x,y:pl.y};
+    v53State.set(pl,{x:p.x,y:p.y});
+  }
+  return {...v53State.get(pl)};
+}
+function v61ZoneY(id,zone){
+  const top=id<=2, s=(zone||'').toLowerCase();
+  if(s.includes('vermel')||s.includes('recuper'))return top?95:805;
+  if(s.includes('amarel')||s.includes('constru'))return top?220:680;
+  if(s.includes('verde')||s.includes('defini'))return top?365:535;
+  if(s.includes('linha verde')||s.includes('linha entre'))return top?300:600;
+  return null;
+}
+function v61LaneX(id,lane,currentX){
+  const s=(lane||'').toLowerCase();
+  if(!s)return currentX;
+  const zm=s.match(/zona\s*([1-5])/i);
+  if(zm)return 150+(+zm[1]-1)*100;
+  if(s.includes('central')||s.includes('centro'))return 350;
+  if(s.includes('esquer'))return 230;
+  if(s.includes('direit'))return 470;
+  return currentX;
+}
+function v61ResolveContact(step){
+  const pl=v61Player(step.actor);
+  if(!pl){
+    if(/Professor/i.test(step.actor||'')&&professor)return{x:professor.x,y:professor.y};
+    return{x:350,y:450};
+  }
+  const id=v61Id(step.actor), cur=v61State(pl);
+  const mv=((step.movement?.type||'')+' '+(step.movement?.direction||'')).toLowerCase();
+
+  // Regra principal: se não houver comando de movimento/local, fica exatamente onde está.
+  if(!step.contactZone && !step.contactLane && !mv.trim())return cur;
+  if(mv.includes('parado')||mv.includes('sem deslocamento'))return cur;
+
+  let x=v61LaneX(id,step.contactLane,cur.x);
+  let y=v61ZoneY(id,step.contactZone);
+  if(y==null)y=cur.y;
+
+  if(mv.includes('lateral')){
+    if(mv.includes('esquer'))x=Math.max(115,x-70);
+    else if(mv.includes('direit'))x=Math.min(585,x+70);
+    else x=id===1||id===3?Math.max(115,x-70):Math.min(585,x+70);
+  }
+  if(mv.includes('recu')||mv.includes('fundo')){
+    y=id<=2?Math.max(70,y-70):Math.min(830,y+70);
+  }
+  if(mv.includes('avan')||mv.includes('frente')){
+    y=id<=2?Math.min(420,y+70):Math.max(480,y-70);
+  }
+  if(mv.includes('diagonal')){
+    if(mv.includes('esquer'))x=Math.max(115,x-55);
+    if(mv.includes('direit'))x=Math.min(585,x+55);
+    if(mv.includes('fundo'))y=id<=2?Math.max(70,y-55):Math.min(830,y+55);
+    if(mv.includes('frente'))y=id<=2?Math.min(420,y+55):Math.max(480,y-55);
+  }
+  return{x,y};
+}
+function v61ReceiverPoint(step,nextStep){
+  const recv=v61Player(step.targetPlayer||nextStep?.actor);
+  if(recv){
+    const id=players.indexOf(recv)+1,cur=v61State(recv);
+    // Se o usuário não especificou onde o recebedor deve ir, ele NÃO se move.
+    if(!step.targetZone && !step.targetLane && !nextStep?.contactZone && !nextStep?.contactLane && !nextStep?.movement){
+      return{player:recv,point:cur};
+    }
+    const zone=step.targetZone||nextStep?.contactZone||'';
+    const lane=step.targetLane||nextStep?.contactLane||'';
+    let x=v61LaneX(id,lane,cur.x);
+    let y=v61ZoneY(id,zone); if(y==null)y=cur.y;
+    const mv=((nextStep?.movement?.type||'')+' '+(nextStep?.movement?.direction||'')).toLowerCase();
+    if(mv.includes('lateral')){
+      if(mv.includes('esquer'))x=Math.max(115,x-70);
+      else if(mv.includes('direit'))x=Math.min(585,x+70);
+    }
+    if(mv.includes('recu')||mv.includes('fundo'))y=id<=2?Math.max(70,y-60):Math.min(830,y+60);
+    if(mv.includes('avan')||mv.includes('frente'))y=id<=2?Math.min(420,y+60):Math.max(480,y-60);
+    return{player:recv,point:{x,y}};
+  }
+
+  // Alvo sem recebedor: só usa o que foi especificado. Nunca usa centro da rede automaticamente.
+  const actorId=v61Id(step.actor),actorPl=v61Player(step.actor),cur=actorPl?v61State(actorPl):{x:350,y:450};
+  const oppTop=actorId>=3;
+  let y;
+  const zone=(step.targetZone||'').toLowerCase();
+  if(zone.includes('vermel'))y=oppTop?95:805;
+  else if(zone.includes('amarel'))y=oppTop?220:680;
+  else if(zone.includes('verde'))y=oppTop?365:535;
+  else y=oppTop?365:535;
+  let x=v61LaneX(oppTop?1:3,step.targetLane,cur.x);
+  return{player:null,point:{x,y}};
+}
+function v61Recovery(pl,step,contact){
+  // Só recupera/move novamente se o comando disser para recuperar.
+  if(!pl||!step.recoveryZone&&!step.recoveryLane)return contact;
+  const id=players.indexOf(pl)+1;
+  let x=v61LaneX(id,step.recoveryLane,contact.x);
+  let y=v61ZoneY(id,step.recoveryZone);if(y==null)y=contact.y;
+  return{x,y};
+}
+async function v61Play(){
+  if(v61Running||!timelineSteps?.length)return;
+  v61Running=true;
+  v53ResetVisuals();
+  players.forEach((pl,i)=>{
+    const p=V61_HOME[i+1];
+    pl.x=p.x;pl.y=p.y;
+    pl.c.setAttribute('cx',p.x);pl.c.setAttribute('cy',p.y);
+    pl.t.setAttribute('x',p.x);pl.t.setAttribute('y',p.y+6);
+    v53SetState(pl,p);
+  });
+
+  const pace=+sessionPace.value||1, ps=+playerSpeed.value||1;
+  for(let i=0;i<timelineSteps.length;i++){
+    const s=timelineSteps[i],next=timelineSteps[i+1];
+    currentTimelineIndex=i;renderTimeline?.();
+    const actor=v61Player(s.actor),contact=v61ResolveContact(s);
+
+    if(actor){
+      const from=v61State(actor);
+      const dist=Math.hypot(contact.x-from.x,contact.y-from.y);
+      if(dist>4)await v53AnimateMove(actor,from,contact,Math.max(340,620/(ps*pace)),'movimento especificado');
+      v53SetState(actor,contact);
+      await v53AnimateSwing(actor,s.action,contact,Math.max(240,360/pace));
+    }
+
+    const recv=v61ReceiverPoint(s,next);
+    const start=/Professor/i.test(s.actor||'')?(professor?{x:professor.x,y:professor.y}:contact):contact;
+    const path=v53BallPath(start,recv.point,s.action,s.trajectory);
+    const prof=v53Profile(s.action),flight=Math.max(440,860/((+s.speed||prof.speed||1)*pace));
+
+    // Recebedor só se move se o destino calculado for diferente do seu ponto atual.
+    const recvMove=recv.player && Math.hypot(recv.point.x-v61State(recv.player).x,recv.point.y-v61State(recv.player).y)>4
+      ? v53AnimateMove(recv.player,v61State(recv.player),recv.point,Math.max(360,flight*.9),'recepção especificada')
+      : Promise.resolve();
+
+    const recPoint=actor?v61Recovery(actor,s,contact):null;
+    const recovery=actor&&recPoint&&Math.hypot(recPoint.x-contact.x,recPoint.y-contact.y)>4
+      ? v53AnimateMove(actor,contact,recPoint,Math.max(340,flight*.78),'recuperação especificada')
+      : Promise.resolve();
+
+    await Promise.all([v53AnimateBall(path,flight),recvMove,recovery]);
+    if(recv.player)v53SetState(recv.player,recv.point);
+    if(actor&&recPoint)v53SetState(actor,recPoint);
+    path.style.opacity='0';
+    if(v53Trail)v53Trail.setAttribute('d','');
+    await new Promise(r=>setTimeout(r,100));
+  }
+  currentTimelineIndex=-1;renderTimeline?.();
+  v53ResetVisuals();v61Running=false;
+}
+
+function v61Example(){
+  playersEl.value='4';drawCourt();
+  timelineSteps=[
+    {actor:'Professor',action:'Lançamento',targetPlayer:'Aluno 1',speed:.9},
+    {actor:'Aluno 1',action:'Forehand neutro',movement:{type:'parado'},targetPlayer:'Aluno 3',targetLane:'Paralela',speed:1.1},
+    {actor:'Aluno 3',action:'Backhand / Lob',movement:{type:'parado'},targetPlayer:'Aluno 2',targetZone:'Zona vermelha',targetLane:'Cruzada',trajectory:{type:'arco alto',curve:-145},speed:.9},
+    {actor:'Aluno 2',action:'Smash',contactZone:'Zona vermelha',movement:{type:'lateral',direction:'direita'},targetPlayer:'Aluno 4',trajectory:{type:'descendente',curve:42},speed:1.8},
+    {actor:'Aluno 4',action:'Voleio forehand',movement:{type:'parado'},targetZone:'Zona verde',targetLane:'Zona 3',trajectory:{type:'reta',curve:-8},speed:1.35}
+  ];
+  renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});v61Play();
+}
+
+if(typeof previewAttack!=='undefined')previewAttack.onclick=v61Example;
+if(typeof playTimeline!=='undefined')playTimeline.onclick=v61Play;
+if(typeof animate!=='undefined')animate=v61Play;
+
+
+// ===== JB PLAY V6.2 — RETORNO AUTOMÁTICO AO PONTO INICIAL =====
+// Regra fixa:
+// Após qualquer deslocamento + contato com a bola, o aluno retorna automaticamente
+// ao ponto inicial definido na linha verde/amarelo.
+const V62_HOME={
+  1:{x:230,y:300}, // A1 cima/esquerda
+  2:{x:470,y:300}, // A2 cima/direita
+  3:{x:230,y:600}, // A3 baixo/esquerda
+  4:{x:470,y:600}  // A4 baixo/direita
+};
+let v62Running=false;
+
+function v62Player(actor){
+  const m=(actor||'').match(/Aluno\s*([1-4])/i);
+  return m ? players[+m[1]-1] : null;
+}
+function v62Home(pl){
+  const id=players.indexOf(pl)+1;
+  return V62_HOME[id] ? {...V62_HOME[id]} : {x:pl.x,y:pl.y};
+}
+function v62State(pl){
+  if(!v53State.has(pl))v53State.set(pl,v62Home(pl));
+  return {...v53State.get(pl)};
+}
+async function v62ReturnHome(pl,from,duration){
+  if(!pl)return;
+  const home=v62Home(pl);
+  const dist=Math.hypot(home.x-from.x,home.y-from.y);
+  if(dist<=4){
+    v53SetState(pl,home);
+    return;
+  }
+  await v53AnimateMove(pl,from,home,duration,'retorno automático');
+  v53SetState(pl,home);
+}
+
+async function v62Play(){
+  if(v62Running||!timelineSteps?.length)return;
+  v62Running=true;
+  v53ResetVisuals();
+
+  // Sempre começa nos quatro pontos iniciais.
+  players.forEach((pl,i)=>{
+    const p=V62_HOME[i+1];
+    pl.x=p.x;pl.y=p.y;
+    pl.c.setAttribute('cx',p.x);pl.c.setAttribute('cy',p.y);
+    pl.t.setAttribute('x',p.x);pl.t.setAttribute('y',p.y+6);
+    v53SetState(pl,p);
+  });
+
+  const pace=+sessionPace.value||1;
+  const ps=+playerSpeed.value||1;
+
+  for(let i=0;i<timelineSteps.length;i++){
+    const s=timelineSteps[i],next=timelineSteps[i+1];
+    currentTimelineIndex=i;renderTimeline?.();
+
+    const actor=v62Player(s.actor);
+    const contact=(typeof v61ResolveContact==='function')
+      ? v61ResolveContact(s)
+      : (actor?v62State(actor):(professor?{x:professor.x,y:professor.y}:{x:40,y:520}));
+
+    // 1. jogador vai ao local EXATO pedido (ou fica parado)
+    if(actor){
+      const from=v62State(actor);
+      const dist=Math.hypot(contact.x-from.x,contact.y-from.y);
+      if(dist>4){
+        await v53AnimateMove(actor,from,contact,Math.max(340,620/(ps*pace)),'ida para a bola');
+      }else{
+        v53SetState(actor,contact);
+      }
+
+      // 2. executa o golpe nesse local
+      await v53AnimateSwing(actor,s.action,contact,Math.max(240,360/pace));
+    }
+
+    // 3. calcula destino da bola/recebedor
+    const recv=(typeof v61ReceiverPoint==='function')
+      ? v61ReceiverPoint(s,next)
+      : {player:null,point:{x:350,y:450}};
+
+    const start=/Professor/i.test(s.actor||'')
+      ? (professor?{x:professor.x,y:professor.y}:contact)
+      : contact;
+
+    const path=v53BallPath(start,recv.point,s.action,s.trajectory);
+    const prof=v53Profile(s.action);
+    const flight=Math.max(440,860/((+s.speed||prof.speed||1)*pace));
+
+    // 4. recebedor se desloca enquanto a bola vem, se necessário
+    const recvMove=recv.player && Math.hypot(recv.point.x-v62State(recv.player).x,recv.point.y-v62State(recv.player).y)>4
+      ? v53AnimateMove(recv.player,v62State(recv.player),recv.point,Math.max(360,flight*.9),'recepção')
+      : Promise.resolve();
+
+    // 5. ator retorna AUTOMATICAMENTE para o ponto inicial logo após o contato
+    const autoReturn=actor
+      ? v62ReturnHome(actor,contact,Math.max(360,flight*.82))
+      : Promise.resolve();
+
+    await Promise.all([
+      v53AnimateBall(path,flight),
+      recvMove,
+      autoReturn
+    ]);
+
+    if(recv.player){
+      // recebedor permanece no ponto onde pegou a bola até executar sua própria etapa;
+      // depois, no fim da etapa dele, volta ao home automaticamente.
+      v53SetState(recv.player,recv.point);
+    }
+
+    path.style.opacity='0';
+    if(v53Trail)v53Trail.setAttribute('d','');
+    await new Promise(r=>setTimeout(r,100));
+  }
+
+  currentTimelineIndex=-1;renderTimeline?.();
+
+  // Garantia final: todos voltam ao home
+  const returns=players.map(pl=>v62ReturnHome(pl,v62State(pl),360));
+  await Promise.all(returns);
+
+  v53ResetVisuals();
+  players.forEach((pl,i)=>{
+    const p=V62_HOME[i+1];
+    pl.x=p.x;pl.y=p.y;
+    pl.c.setAttribute('cx',p.x);pl.c.setAttribute('cy',p.y);
+    pl.t.setAttribute('x',p.x);pl.t.setAttribute('y',p.y+6);
+    v53SetState(pl,p);
+  });
+
+  v62Running=false;
+}
+
+if(typeof playTimeline!=='undefined')playTimeline.onclick=v62Play;
+if(typeof animate!=='undefined')animate=v62Play;
+
+// mantém o exemplo atual, mas usa o novo motor
+if(typeof previewAttack!=='undefined'){
+  const oldPreview=previewAttack.onclick;
+  previewAttack.onclick=()=>{
+    if(typeof v61Example==='function'){
+      playersEl.value='4';
+      drawCourt();
+      timelineSteps=[
+        {actor:'Professor',action:'Lançamento',targetPlayer:'Aluno 1',speed:.9},
+        {actor:'Aluno 1',action:'Forehand neutro',movement:{type:'parado'},targetPlayer:'Aluno 3',targetLane:'Paralela',speed:1.1},
+        {actor:'Aluno 3',action:'Backhand / Lob',movement:{type:'parado'},targetPlayer:'Aluno 2',targetZone:'Zona vermelha',targetLane:'Cruzada',trajectory:{type:'arco alto',curve:-145},speed:.9},
+        {actor:'Aluno 2',action:'Smash',contactZone:'Zona vermelha',movement:{type:'lateral',direction:'direita'},targetPlayer:'Aluno 4',trajectory:{type:'descendente',curve:42},speed:1.8},
+        {actor:'Aluno 4',action:'Voleio forehand',movement:{type:'parado'},targetZone:'Zona verde',targetLane:'Zona 3',trajectory:{type:'reta',curve:-8},speed:1.35}
+      ];
+      renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});v62Play();
+    }else if(oldPreview) oldPreview();
+  };
+}
+
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
 </body>
