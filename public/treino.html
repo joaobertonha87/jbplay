@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="JB Treinos"/>
 <link rel="manifest" href="manifest.webmanifest"/>
-<title>JB Treinos Pro</title>
+<title>JB Treinos Pro • V16.2</title>
 <style>
 :root{
   --bg:#071016;--panel:#0e1820;--panel2:#121f29;--text:#f6f7f9;--muted:#94a7b5;
@@ -2985,19 +2985,94 @@ function jbLocalTrainingFallback(prompt){
   return {title:'Treino gerado pela IA local',level:adv?'Avançado':'Intermediário',players:playerCount,mode:continuous?'Contínuo / bola viva':'Sequencial',focus:has('defesa')?'Transição ataque/defesa':has('smash')?'Definição':'Construção de ponto',objective:'Execução automática baseada na prescrição informada.',notes:'Gerado pelo motor local de contingência porque a IA online não respondeu.',timeline:seq};
 }
 
-function jbApplyAITraining(data){
+function jbV162Text(v){return (v||'').toString().trim()}
+function jbV162Id(v){const m=jbV162Text(v).match(/Aluno\s*([1-4])/i);return m?+m[1]:0}
+function jbV162ParallelTarget(id){return ({1:'Aluno 3',2:'Aluno 4',3:'Aluno 1',4:'Aluno 2'})[id]||''}
+function jbV162CrossTarget(id){return ({1:'Aluno 4',2:'Aluno 3',3:'Aluno 2',4:'Aluno 1'})[id]||''}
+function jbV162Trajectory(action,tr={}){
+  const a=jbV162Text(action).toLowerCase(), out={...(tr||{})};
+  if(!out.type){
+    if(/lob|rainbow/.test(a))out.type='arco alto';
+    else if(/smash/.test(a))out.type='descendente';
+    else if(/curta/.test(a))out.type='curta';
+    else if(/gancho|bandeja|defesa/.test(a))out.type='arco baixo';
+    else out.type='reta';
+  }
+  if(out.curve==null){
+    if(out.type==='arco alto')out.curve=-135;
+    else if(out.type==='descendente')out.curve=42;
+    else if(out.type==='curta')out.curve=-38;
+    else if(out.type==='arco baixo')out.curve=-28;
+    else out.curve=-12;
+  }
+  return out;
+}
+function jbV162Speed(action,v){
+  const n=+v;if(Number.isFinite(n)&&n>0)return Math.max(.55,Math.min(2.2,n));
+  const a=jbV162Text(action).toLowerCase();
+  if(/smash/.test(a))return 1.8;if(/lob|rainbow/.test(a))return .9;if(/curta/.test(a))return .85;if(/acelerado/.test(a))return 1.55;return 1.15;
+}
+function jbV162NormalizePlan(data,prompt=''){
+  const out={...(data||{})};
+  const raw=Array.isArray(out.timeline)?out.timeline:[];
+  const promptTxt=jbV162Text(prompt).toLowerCase();
+  const continuous=/bola viva|cont[ií]nuo|volume/.test(promptTxt)||/cont[ií]nuo|bola viva/i.test(out.mode||'');
+  let steps=raw.map((x,i)=>{
+    const s={...(x||{})};
+    s.actor=jbV162Text(s.actor)||'Professor';
+    s.action=jbV162Text(s.action)||(/professor/i.test(s.actor)?'Lançamento':'Golpe');
+    s.contactZone=jbV162Text(s.contactZone||s.receiveZone);
+    s.contactLane=jbV162Text(s.contactLane||s.lane);
+    s.targetPlayer=jbV162Text(s.targetPlayer);
+    s.targetZone=jbV162Text(s.targetZone);
+    s.targetLane=jbV162Text(s.targetLane);
+    s.recoveryZone=jbV162Text(s.recoveryZone);
+    s.recoveryLane=jbV162Text(s.recoveryLane);
+    s.movement=(s.movement&&typeof s.movement==='object')?{...s.movement}:{type:'parado',direction:''};
+    s.movement.type=jbV162Text(s.movement.type)||'parado';
+    s.movement.direction=jbV162Text(s.movement.direction);
+    s.trajectory=jbV162Trajectory(s.action,s.trajectory);
+    s.speed=jbV162Speed(s.action,s.speed);
+    s.order=i+1;
+    return s;
+  });
+  for(let i=0;i<steps.length;i++){
+    const s=steps[i],next=steps[i+1];
+    if(/Professor/i.test(s.actor)&&!s.targetPlayer&&next&&jbV162Id(next.actor))s.targetPlayer=next.actor;
+    const id=jbV162Id(s.actor),lane=s.targetLane.toLowerCase();
+    if(id&&!s.targetPlayer){
+      if(lane.includes('paral'))s.targetPlayer=jbV162ParallelTarget(id);
+      else if(lane.includes('cruz'))s.targetPlayer=jbV162CrossTarget(id);
+    }
+    if(continuous&&id&&next&&jbV162Id(next.actor)&&!s.targetPlayer)s.targetPlayer=next.actor;
+    if(/curta/i.test(s.action)&&!s.targetZone)s.targetZone='Zona verde';
+  }
+  if(steps.length&&jbV162Id(steps[0].actor)&&/professor|lan[cç]a|alimenta/.test(promptTxt)){
+    steps.unshift({actor:'Professor',action:'Lançamento',contactZone:'',contactLane:'',targetPlayer:steps[0].actor,targetZone:steps[0].contactZone||'',targetLane:steps[0].contactLane||'',recoveryZone:'',recoveryLane:'',movement:{type:'parado',direction:''},trajectory:{type:'arco baixo',curve:-24},speed:1,order:0});
+    steps.forEach((s,i)=>s.order=i+1);
+  }
+  out.timeline=steps;
+  out.players=Math.max(2,Math.min(4,+out.players||(+playersEl.value||4)));
+  out.mode=out.mode||(continuous?'Contínuo / bola viva':'Sequencial');
+  out.confidence=Number.isFinite(+out.confidence)?+out.confidence:null;
+  out.warnings=Array.isArray(out.warnings)?out.warnings:[];
+  return out;
+}
+
+function jbApplyAITraining(data,prompt=""){
+  data=jbV162NormalizePlan(data,prompt);
   if(data.players){playersEl.value=String(data.players);drawCourt()}
   if(data.level)levelEl.value=data.level;
   if(data.mode)modeEl.value=data.mode;
   if(data.focus)focusEl.value=data.focus;
   if(data.direction && typeof directionEl!=='undefined')directionEl.value=data.direction;
   if(Array.isArray(data.timeline)){
-    timelineSteps=data.timeline.map(x=>({actor:x.actor||'Professor',action:x.action||'Lançamento',contactZone:x.contactZone||x.receiveZone||'',contactLane:x.contactLane||x.lane||'',targetPlayer:x.targetPlayer||'',targetZone:x.targetZone||'',targetLane:x.targetLane||'',recoveryZone:x.recoveryZone||'',recoveryLane:x.recoveryLane||'',movement:x.movement||{},trajectory:x.trajectory||{},speed:+x.speed||1}));
+    timelineSteps=data.timeline.map((x,i)=>({actor:x.actor||'Professor',action:x.action||'Lançamento',contactZone:x.contactZone||x.receiveZone||'',contactLane:x.contactLane||x.lane||'',targetPlayer:x.targetPlayer||'',targetZone:x.targetZone||'',targetLane:x.targetLane||'',recoveryZone:x.recoveryZone||'',recoveryLane:x.recoveryLane||'',movement:x.movement||{},trajectory:x.trajectory||{},speed:+x.speed||1,order:x.order||i+1}));
     renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});buildTimelineVisuals?.();
   }
   exTitle.textContent=data.title||'Treino tático por IA';
   objective.textContent=data.objective||'Treino montado automaticamente.';
-  if(data.notes && typeof status!=='undefined')status.textContent=data.notes;
+  if(typeof status!=='undefined'){const conf=data.confidence!=null?` • confiança ${Math.round(data.confidence*100)}%`:'';const warn=data.warnings?.length?` • ${data.warnings.length} aviso(s)`:'';status.textContent=(data.notes||'Prescrição interpretada e aplicada.')+conf+warn;}
 }
 
 if(typeof onlineAiGenerate!=='undefined'){
@@ -3009,16 +3084,18 @@ if(typeof onlineAiGenerate!=='undefined'){
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),65000);
     try{
-      const res=await fetch('/api/generate-training',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({prompt,context:{level:levelEl.value,players:+playersEl.value,mode:modeEl.value,focus:focusEl.value,availableShots:shots,request:'include contactZone, contactLane, targetPlayer, targetZone, targetLane, recoveryZone, movement and trajectory for every timeline step'}})});
+      const res=await fetch('/api/generate-training',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({prompt,context:{level:levelEl.value,players:+playersEl.value,mode:modeEl.value,focus:focusEl.value,availableShots:shots,request:'Return an executable prescription. Preserve exact player identities and order. Include contactZone/contactLane only when movement or contact location is specified; resolve parallel/cross targets; chain ball-live steps; include trajectory/speed/confidence/warnings.'}})});
       clearTimeout(timer);
       if(!res.ok)throw new Error('API '+res.status+': '+(await res.text()));
       const data=await res.json();
       if(!data || !Array.isArray(data.timeline) || !data.timeline.length)throw new Error('A API respondeu sem timeline.');
-      jbApplyAITraining(data);
-      onlineAiState.className='ai-state ok';onlineAiState.textContent='Treino gerado pela IA online e aplicado à quadra.';
+      jbApplyAITraining(data,prompt);
+      onlineAiState.className='ai-state ok';
+      const n=timelineSteps.length,conf=data.confidence!=null?` • ${Math.round(data.confidence*100)}% de confiança`:'';
+      onlineAiState.textContent=`Prescrição interpretada pela IA: ${n} etapa(s) aplicada(s) à quadra${conf}.`;
     }catch(e){
       clearTimeout(timer);console.error('JB IA online:',e);
-      const local=jbLocalTrainingFallback(prompt);jbApplyAITraining(local);
+      const local=jbLocalTrainingFallback(prompt);jbApplyAITraining(local,prompt);
       onlineAiState.className='ai-state ok';
       onlineAiState.textContent=e && e.name==='AbortError'?'IA online demorou para responder. Treino gerado pelo motor local de contingência.':'IA online indisponível. Treino gerado pelo motor local de contingência.';
     }finally{onlineAiGenerate.disabled=false;}

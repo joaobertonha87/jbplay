@@ -1,0 +1,15 @@
+JB PLAY V16.1 — CORREÇÃO IA ONLINE
+
+Correções:
+- Timeout de 18s para a IA online: não fica mais travado em “montando...”.
+- Fallback local: se /api/generate-training falhar, a prescrição ainda vira treino e timeline.
+- package.json adicionado para o Render executar o servidor Node.
+- server.js ajustado para servir os arquivos na raiz do repositório atual.
+- render.yaml incluído como configuração de referência para Web Service.
+
+Para IA online real no Render:
+- O serviço precisa ser Web Service Node, não Static Site.
+- Build Command: npm install
+- Start Command: npm start
+- Environment: OPENAI_API_KEY=<sua chave>
+- Opcional: OPENAI_MODEL=gpt-5-mini

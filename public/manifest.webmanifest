@@ -1,4 +1,16 @@
 {
-  "name":"JB Play V16","short_name":"JB Play","start_url":"./index.html","display":"standalone","background_color":"#071016","theme_color":"#cfff20",
-  "icons":[{"src":"jb-logo-lime.png","sizes":"512x512","type":"image/png","purpose":"any"}]
+  "name": "JB Play V16.2",
+  "short_name": "JB Play",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#071016",
+  "theme_color": "#cfff20",
+  "icons": [
+    {
+      "src": "jb-logo-lime.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }

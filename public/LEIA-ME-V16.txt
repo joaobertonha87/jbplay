@@ -1,0 +1,14 @@
+JB PLAY V16 — SMART SIMULATOR
+
+Principais evoluções:
+- Motor de bola 3D por fundamento: altura, velocidade, curva e sombra dinâmica.
+- Bola viva encadeada: o fim de uma trajetória alimenta a jogada seguinte.
+- Movimentação inteligente por tipo de golpe + recuperação automática ao ponto base.
+- Câmera automática com modos seguir ação, contato ou aberta.
+- Editor avançado de trajetória por etapa: tipo, curva e altura 3D.
+- Modo Aula com fila de exercícios, duração e séries, persistido no navegador.
+- Scout → Treino: lê o Scout local e sugere o fundamento prioritário, podendo gerar um bloco de treino.
+- Modo Apresentação em tela cheia para uso no iPad.
+- Preserva login, Scout, IA, timeline, editor e Arena 3D das versões anteriores.
+
+Observação: o motor mantém a lógica do Beach Tennis sem quique de bola por padrão.

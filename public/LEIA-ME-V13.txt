@@ -1,0 +1,10 @@
+JB PLAY V13 — ARENA 3D PRO
+
+Integração visual do conceito 3D ao módulo Treinos:
+- nova opção Arena 3D Pro;
+- areia com textura e volume visual;
+- paredes laterais e profundidade da arena;
+- postes e rede com malha e espessura;
+- branding JB Play / João Bertonha nas paredes;
+- professor, cesto, jogadores, trajetórias e animações preservados;
+- Login e Scout preservados.

@@ -1,0 +1,9 @@
+JB PLAY V14 — MOTION 3D
+
+Evoluções sobre a V13:
+- Jogadores vetoriais redesenhados em camadas, integrados ao motor de golpes.
+- Corpo e raquete passam a responder visualmente a forehand, backhand, smash, overhead, voleio, lob e curta.
+- Bola com glow, rastro e sombra dinâmica para leitura de altura.
+- Professor com gesto animado antes do lançamento.
+- Nova perspectiva 3D Cinemática, além de Superior/2D, Isométrica, Arena 3D Pro e 3D baixa.
+- Preservados login, Scout, editor, linha do tempo, retorno automático e geração de treino.
