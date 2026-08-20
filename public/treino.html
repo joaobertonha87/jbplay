@@ -83,6 +83,56 @@ button:active{transform:translateY(1px)}
  .layout{display:block}.stage{border:0;box-shadow:none}.court-wrap{height:260mm;max-height:none;aspect-ratio:auto}
  .watermark{opacity:.08}#court{height:100%;width:100%}
 }
+
+/* ===== JB PLAY V11 • QUADRA VISUAL PRO ===== */
+#v7-court{background:linear-gradient(180deg,#132934 0%,#0b1820 100%)!important}
+.court-wrap{background:linear-gradient(145deg,#172d35,#071117)!important;border:1px solid rgba(207,255,32,.22);box-shadow:inset 0 0 70px rgba(0,0,0,.45)}
+#court{filter:drop-shadow(0 18px 24px rgba(0,0,0,.38))}
+.jb-human-player{filter:drop-shadow(0 5px 5px rgba(0,0,0,.38));cursor:grab}
+.jb-human-player:active{cursor:grabbing}
+
+
+/* ===== JB PLAY V12 • PERSPECTIVAS PRO ===== */
+.court-view-controls{display:flex;align-items:center;gap:8px;margin-left:auto;margin-right:10px}
+.court-view-controls label{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#9fb2b9}
+.court-view-controls select{background:#08141a;color:#eff7f8;border:1px solid rgba(207,255,32,.28);border-radius:10px;padding:8px 10px;font-weight:800;outline:none}
+.court-wrap{perspective:1200px;transform-style:preserve-3d;overflow:visible!important;padding:26px 18px 44px}
+#court{transform-origin:50% 52%;transition:transform .45s cubic-bezier(.2,.7,.2,1),filter .45s;will-change:transform}
+#court[data-perspective="top"]{transform:none;filter:drop-shadow(0 18px 24px rgba(0,0,0,.38))}
+#court[data-perspective="iso"]{transform:perspective(1200px) rotateX(54deg) rotateZ(-0.7deg) scale(.93,1.06) translateY(-12px);filter:drop-shadow(0 42px 34px rgba(0,0,0,.56))}
+#court[data-perspective="low"]{transform:perspective(1000px) rotateX(66deg) scale(.88,1.12) translateY(-42px);filter:drop-shadow(0 55px 42px rgba(0,0,0,.62))}
+#court[data-perspective="pro"]{transform:perspective(1450px) rotateX(58deg) rotateZ(-.35deg) scale(.91,1.09) translateY(-28px);filter:drop-shadow(0 58px 46px rgba(0,0,0,.68)) brightness(1.04) saturate(1.08)}
+#courtWrap{isolation:isolate;background:radial-gradient(ellipse at 50% 24%,rgba(207,255,32,.08),transparent 38%),linear-gradient(180deg,#11222a 0%,#071016 100%)!important;border-radius:18px;box-shadow:inset 0 0 95px #000,0 26px 70px rgba(0,0,0,.45)}
+#courtWrap:after{content:"JB PLAY • JOÃO BERTONHA BEACH TENNIS";position:absolute;left:7%;right:7%;bottom:7px;height:28px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#1a2428,#070b0d);border:1px solid rgba(207,255,32,.23);border-radius:3px 3px 11px 11px;color:rgba(207,255,32,.54);font-size:10px;font-weight:900;letter-spacing:.24em;text-shadow:0 0 12px rgba(207,255,32,.25);transform:perspective(800px) rotateX(-56deg);transform-origin:top;pointer-events:none;z-index:1}
+#courtWrap.pro-arena:before{content:"";position:absolute;inset:3% 4% 6%;border:1px solid rgba(255,255,255,.08);border-radius:14px;box-shadow:inset 18px 0 30px rgba(0,0,0,.35),inset -18px 0 30px rgba(0,0,0,.35),0 0 30px rgba(207,255,32,.04);pointer-events:none;z-index:0}
+#courtWrap.pro-arena{background:radial-gradient(circle at 50% 16%,rgba(207,255,32,.06),transparent 28%),linear-gradient(160deg,#182a31 0%,#081116 58%,#030607 100%)!important}
+#courtWrap.pro-arena .watermark{opacity:.025!important}
+
+#courtWrap:before{content:"";position:absolute;inset:10% 7% 5%;background:radial-gradient(ellipse at center,rgba(207,255,32,.08),transparent 62%);pointer-events:none;z-index:0}
+#courtWrap .watermark{z-index:3;opacity:.055}
+.prof-realistic{filter:drop-shadow(0 6px 5px rgba(0,0,0,.45))}
+.basket-realistic{filter:drop-shadow(0 5px 4px rgba(0,0,0,.4))}
+@media(max-width:800px){.stage-head{flex-wrap:wrap}.court-view-controls{order:3;width:100%;margin:8px 0 0}.court-view-controls select{flex:1}}
+
+
+/* ===== JB PLAY V14 • MOTION / CINEMATIC 3D ===== */
+.jb-v14-athlete{cursor:grab;filter:drop-shadow(0 7px 7px rgba(0,0,0,.46));transform-box:fill-box;transform-origin:center}
+.jb-v14-athlete:active{cursor:grabbing}
+.jb-v14-athlete.v53-active .v14-halo ellipse:first-child{opacity:.20}
+.v14-racket{transform-box:fill-box;transform-origin:center}
+.v14-strike{mix-blend-mode:screen}
+.v14-ball-trail{stroke:#eaff4f!important;stroke-width:7!important;opacity:.82!important;fill:none!important;stroke-linecap:round}
+.v14-ball{mix-blend-mode:screen}
+.cinema-arena{background:radial-gradient(circle at 50% 32%,rgba(207,255,32,.09),transparent 38%),linear-gradient(145deg,#111c21,#030709)!important;box-shadow:inset 0 0 110px rgba(0,0,0,.72),0 24px 55px rgba(0,0,0,.48)!important}
+.cinema-arena #court{filter:drop-shadow(0 30px 25px rgba(0,0,0,.55)) contrast(1.07) saturate(1.08)}
+#court[data-perspective="cinema"]{transform:perspective(1250px) rotateX(50deg) rotateZ(-1.5deg) scale(.93);transform-origin:50% 51%;transition:transform .45s ease,filter .45s ease}
+#court[data-perspective="cinema"] .jb-v14-athlete{filter:drop-shadow(0 11px 8px rgba(0,0,0,.62))}
+#court[data-perspective="cinema"] #net3d{filter:drop-shadow(0 10px 7px rgba(0,0,0,.58))}
+.pose-smash .v14-body,.pose-overhead .v14-body{filter:drop-shadow(0 0 4px rgba(207,255,32,.28))}
+.pose-backhand .v14-badge{transform:translate(-5px,-1px)}
+.pose-forehand .v14-badge{transform:translate(4px,-1px)}
+.v14-prof-feed{filter:drop-shadow(0 8px 8px rgba(0,0,0,.48))}
+
 </style>
 
 <style>
@@ -1040,6 +1090,18 @@ body{background:transparent!important}
 .app{min-height:auto!important}
 </style>
 
+
+<style id="jb-v15-style">
+/* ===== JB PLAY V15 • TECHNIQUE MOTION ===== */
+.v15-phase-tag{font-size:11px;font-weight:1000;letter-spacing:1.2px;fill:#eaff4f;paint-order:stroke;stroke:#071016;stroke-width:4px;pointer-events:none}
+.v15-tech-ring{fill:none;stroke:#eaff4f;stroke-width:3;opacity:0;filter:url(#v14Glow);pointer-events:none}
+.v15-foot-ring{fill:none;stroke:#fff;stroke-width:2;stroke-dasharray:5 5;opacity:.0;pointer-events:none}
+.v15-impact-star{fill:#fff8a8;opacity:0;filter:url(#v14Glow);pointer-events:none}
+#court[data-perspective="cinema"] .v15-phase-tag{font-size:12px}
+.jb-v14-athlete.v15-contact .v14-halo{filter:drop-shadow(0 0 10px rgba(234,255,79,.95))}
+.jb-v14-athlete.v15-finish .v14-halo{opacity:.72}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1128,7 +1190,7 @@ body{background:transparent!important}
     </aside>
 
     <main class="card stage" id="v7-court">
-      <div class="stage-head"><strong>Quadra interativa</strong><span>Arraste os jogadores para ajustar posições</span></div>
+      <div class="stage-head"><strong>Quadra interativa</strong><div class="court-view-controls"><label for="courtPerspective">Perspectiva</label><select id="courtPerspective"><option value="top">Superior / 2D</option><option value="iso">3D isométrica</option><option value="pro" selected>Arena 3D Pro</option><option value="cinema">3D Cinemática</option><option value="low">3D baixa</option></select></div><span>Arraste os jogadores para ajustar posições • Arena 3D Pro • Motion V14</span></div>
       <div class="court-wrap" id="courtWrap">
         <svg id="court" viewBox="0 0 700 900" role="img" aria-label="Quadra de beach tennis interativa"></svg>
         <img class="watermark" src="jb-watermark-lime.png" alt="">
@@ -1343,8 +1405,37 @@ function drawCourt(){
   const defs=el('defs');
   const marker=el('marker',{id:'arrow',markerWidth:8,markerHeight:8,refX:6,refY:3,orient:'auto',markerUnits:'strokeWidth'},defs);
   el('path',{d:'M0,0 L0,6 L7,3 z',fill:'#ffffff'},marker);
-  const bg=el('g');
-  el('rect',{x:75,y:40,width:550,height:820,rx:10,fill:'#dfd2b7'},bg);
+  const v14Glow=el('filter',{id:'v14Glow',x:'-100%',y:'-100%',width:'300%',height:'300%'},defs);
+  el('feGaussianBlur',{stdDeviation:'4',result:'blur'},v14Glow);
+  const merge=el('feMerge',{},v14Glow);el('feMergeNode',{in:'blur'},merge);el('feMergeNode',{in:'SourceGraphic'},merge);
+  const v14Soft=el('filter',{id:'v14SoftShadow',x:'-50%',y:'-50%',width:'200%',height:'200%'},defs);
+  el('feGaussianBlur',{stdDeviation:'6'},v14Soft);
+
+
+  // textura volumétrica de areia
+  const sandFilter=el('filter',{id:'sandNoise',x:'-10%',y:'-10%',width:'120%',height:'120%'},defs);
+  el('feTurbulence',{type:'fractalNoise',baseFrequency:'.045',numOctaves:'3',seed:'12',result:'noise'},sandFilter);
+  el('feColorMatrix',{in:'noise',type:'matrix',values:'1 0 0 0 .08  0 1 0 0 .055  0 0 1 0 .02  0 0 0 .34 0',result:'sand'},sandFilter);
+  const sandPattern=el('pattern',{id:'sandPattern',width:'70',height:'70',patternUnits:'userSpaceOnUse'},defs);
+  el('rect',{width:70,height:70,fill:'#c99655'},sandPattern);
+  el('circle',{cx:10,cy:14,r:2.2,fill:'#e2b873',opacity:.58},sandPattern);
+  el('circle',{cx:35,cy:22,r:1.6,fill:'#8d6739',opacity:.38},sandPattern);
+  el('circle',{cx:57,cy:46,r:2.4,fill:'#e9c47f',opacity:.44},sandPattern);
+  el('path',{d:'M4 57 Q18 50 31 58 T62 55',fill:'none',stroke:'#8b6538','stroke-width':1.3,opacity:.32},sandPattern);
+
+  const bg=el('g',{id:'arena3d'});
+  // caixa/arena com profundidade visual
+  el('path',{d:'M38 15 L662 15 L650 890 L50 890 Z',fill:'#0c1418',stroke:'#26343a','stroke-width':5},bg);
+  el('path',{d:'M38 15 L75 40 L75 860 L50 890 Z',fill:'#111b20',stroke:'#2a363b','stroke-width':3},bg);
+  el('path',{d:'M662 15 L625 40 L625 860 L650 890 Z',fill:'#0a1115',stroke:'#263238','stroke-width':3},bg);
+  el('path',{d:'M38 15 L662 15 L625 40 L75 40 Z',fill:'#151f23',stroke:'#313e43','stroke-width':3},bg);
+  el('path',{d:'M50 890 L650 890 L625 860 L75 860 Z',fill:'#05090b',stroke:'#1d292e','stroke-width':3},bg);
+  // areia externa e espessura
+  el('rect',{x:55,y:25,width:590,height:850,rx:15,fill:'url(#sandPattern)',stroke:'#1f2b30','stroke-width':5},bg);
+  el('rect',{x:55,y:25,width:590,height:850,rx:15,fill:'#d6a55f',opacity:.18,filter:'url(#sandNoise)'},bg);
+  // quadra elevada levemente sobre a areia
+  el('rect',{x:75,y:40,width:550,height:820,rx:6,fill:'#d8c49d',stroke:'#f2eadb','stroke-width':7},bg);
+  el('path',{d:'M75 860 L625 860 L617 872 L83 872 Z',fill:'#83745e',opacity:.82},bg);
   // zones on each half (top and bottom)
   const zones=[
     [75,40,550,105,'#d94444'],[75,145,550,155,'#e6b836'],[75,300,550,150,'#31a766'],
@@ -1354,9 +1445,24 @@ function drawCourt(){
   // court lines
   el('rect',{x:75,y:40,width:550,height:820,fill:'none',stroke:'#fff','stroke-width':5});
   [145,300,450,600,755].forEach(y=>el('line',{x1:75,y1:y,x2:625,y2:y,stroke:'#fff','stroke-width':y===450?8:3,opacity:y===450?1:.85}));
-  // net
-  el('line',{x1:65,y1:450,x2:635,y2:450,stroke:'#101820','stroke-width':12,opacity:.8});
-  el('line',{x1:65,y1:446,x2:635,y2:446,stroke:'#fff','stroke-width':3});
+  // postes e rede em perspectiva / mini cenário 3D
+  const net=el('g',{id:'net3d'});
+  el('rect',{x:57,y:417,width:16,height:70,rx:5,fill:'#182126',stroke:'#cfff20','stroke-width':2},net);
+  el('rect',{x:627,y:417,width:16,height:70,rx:5,fill:'#182126',stroke:'#cfff20','stroke-width':2},net);
+  el('ellipse',{cx:65,cy:418,rx:8,ry:4,fill:'#d7dee1'},net);
+  el('ellipse',{cx:635,cy:418,rx:8,ry:4,fill:'#d7dee1'},net);
+  el('rect',{x:66,y:432,width:568,height:36,fill:'#0d1417',opacity:.88,stroke:'#dce2e4','stroke-width':2},net);
+  for(let x=72;x<632;x+=13) el('line',{x1:x,y1:434,x2:x,y2:466,stroke:'#879297','stroke-width':1,opacity:.55},net);
+  for(let y=438;y<467;y+=7) el('line',{x1:68,y1:y,x2:632,y2:y,stroke:'#879297','stroke-width':1,opacity:.48},net);
+  el('line',{x1:65,y1:431,x2:635,y2:431,stroke:'#f4f6f6','stroke-width':5},net);
+  el('line',{x1:65,y1:469,x2:635,y2:469,stroke:'#070b0d','stroke-width':4,opacity:.75},net);
+  el('rect',{x:59,y:438,width:12,height:23,rx:2,fill:'#cfff20',opacity:.7},net);
+  el('rect',{x:629,y:438,width:12,height:23,rx:2,fill:'#cfff20',opacity:.7},net);
+
+  // branding discreto nas paredes da arena
+  let wt=el('text',{x:350,y:32,'text-anchor':'middle',fill:'#cfff20','font-size':18,'font-weight':900,opacity:.5},bg);wt.textContent='JOÃO BERTONHA • BEACH TENNIS';
+  let wl=el('text',{x:48,y:450,'text-anchor':'middle',fill:'#cfff20','font-size':12,'font-weight':900,opacity:.38,transform:'rotate(-90 48 450)'},bg);wl.textContent='JB PLAY';
+  let wr=el('text',{x:652,y:450,'text-anchor':'middle',fill:'#cfff20','font-size':12,'font-weight':900,opacity:.38,transform:'rotate(90 652 450)'},bg);wr.textContent='JB PLAY';
   // zone numbers top side
   const zx=[150,250,350,450,550];
   zx.forEach((x,i)=>{el('circle',{cx:x,cy:410,r:22,fill:'#071016',opacity:.64}); const t=el('text',{x:x,y:417,'text-anchor':'middle',fill:'#fff','font-size':20,'font-weight':900});t.textContent=i+1;});
@@ -1366,16 +1472,68 @@ function drawCourt(){
   pts.forEach((p,i)=>addPlayer(p[0],p[1],i+1));
 }
 function addPlayer(x,y,i){
-  const g=el('g',{class:'player','data-i':i});
-  const c=el('circle',{cx:x,cy:y,r:22,fill:i<=2?'#0b1116':'#fff',stroke:'#f7c53d','stroke-width':5},g);
-  const t=el('text',{x:x,y:y+6,'text-anchor':'middle',fill:i<=2?'#fff':'#0b1116','font-size':17,'font-weight':900},g);t.textContent=i;
-  players.push({g,c,t,x,y});
+  const g=el('g',{class:'player jb-v14-athlete','data-i':i});
+
+  // halo + sombra de contato com a areia
+  const halo=el('g',{class:'v14-halo'},g);
+  el('ellipse',{cx:x,cy:y+31,rx:31,ry:12,fill:'#cfff20',opacity:.10},halo);
+  el('ellipse',{cx:x,cy:y+31,rx:29,ry:11,fill:'none',stroke:'#cfff20','stroke-width':3.5,opacity:.95},halo);
+  el('ellipse',{cx:x,cy:y+28,rx:18,ry:6,fill:'#000',opacity:.34},g);
+
+  // corpo principal em grupo próprio: o motor de animação já sabe inclinar/mover este grupo
+  const body=el('g',{class:'player-body v14-body'},g);
+  const skin=i%2?'#d5a06e':'#c88f62';
+  const shirt='#11191e', lime='#cfff20';
+
+  // pernas / panturrilha / tênis em postura esportiva
+  el('line',{x1:x-6,y1:y+9,x2:x-16,y2:y+27,stroke:skin,'stroke-width':7,'stroke-linecap':'round'},body);
+  el('line',{x1:x+5,y1:y+9,x2:x+17,y2:y+26,stroke:skin,'stroke-width':7,'stroke-linecap':'round'},body);
+  el('line',{x1:x-16,y1:y+27,x2:x-23,y2:y+31,stroke:'#f4f6f7','stroke-width':5,'stroke-linecap':'round'},body);
+  el('line',{x1:x+17,y1:y+26,x2:x+25,y2:y+30,stroke:'#f4f6f7','stroke-width':5,'stroke-linecap':'round'},body);
+  // short
+  el('path',{d:`M ${x-12} ${y+1} L ${x+12} ${y+1} L ${x+14} ${y+13} L ${x+3} ${y+12} L ${x} ${y+7} L ${x-3} ${y+12} L ${x-14} ${y+13} Z`,fill:'#171f24',stroke:'#05090b','stroke-width':1.5},body);
+  // camisa com painel lime discreto
+  el('path',{d:`M ${x-13} ${y-20} Q ${x} ${y-27} ${x+13} ${y-20} L ${x+10} ${y+4} Q ${x} ${y+8} ${x-10} ${y+4} Z`,fill:shirt,stroke:'#26343b','stroke-width':2},body);
+  el('path',{d:`M ${x-10} ${y-18} Q ${x} ${y-23} ${x+10} ${y-18} L ${x+7} ${y-14} Q ${x} ${y-17} ${x-7} ${y-14} Z`,fill:lime,opacity:.78},body);
+  // braço não dominante
+  el('line',{x1:x-9,y1:y-13,x2:x-18,y2:y-1,stroke:skin,'stroke-width':5.5,'stroke-linecap':'round'},body);
+  el('line',{x1:x-18,y1:y-1,x2:x-12,y2:y+5,stroke:skin,'stroke-width':4.5,'stroke-linecap':'round'},body);
+  // braço dominante conecta visualmente com raquete
+  el('line',{x1:x+9,y1:y-13,x2:x+18,y2:y-3,stroke:skin,'stroke-width':5.5,'stroke-linecap':'round'},body);
+  el('line',{x1:x+18,y1:y-3,x2:x+23,y2:y+2,stroke:skin,'stroke-width':4.5,'stroke-linecap':'round'},body);
+  // cabeça + cabelo/boné
+  el('circle',{cx:x,cy:y-31,r:8.5,fill:skin,stroke:'#071016','stroke-width':1.8},body);
+  el('path',{d:`M ${x-8} ${y-34} Q ${x} ${y-41} ${x+9} ${y-34} L ${x+14} ${y-32} L ${x-8} ${y-31} Z`,fill:i%2?'#f3f5f6':'#10171c',stroke:'#071016','stroke-width':1},body);
+  // pequena marca JB no peito
+  const chest=el('text',{x:x,y:y-6,'text-anchor':'middle',fill:lime,'font-size':7,'font-weight':900,opacity:.9},body);chest.textContent='JB';
+
+  // raquete em grupo separado para animação por golpe
+  const racket=el('g',{class:'racket v14-racket'},g);
+  el('line',{x1:x+22,y1:y+1,x2:x+33,y2:y-11,stroke:'#dce2e5','stroke-width':3.5,'stroke-linecap':'round'},racket);
+  el('ellipse',{cx:x+38,cy:y-17,rx:9,ry:12,fill:'#151e23',stroke:lime,'stroke-width':2.5,transform:`rotate(28 ${x+38} ${y-17})`},racket);
+  for(let yy=-5;yy<=5;yy+=5) el('circle',{cx:x+38+(yy/5)*2,cy:y-17+yy,r:1.15,fill:'#aeb9be',opacity:.9},racket);
+
+  // flash no ponto de contato, acionado pelo motor existente
+  const flash=el('circle',{cx:x+42,cy:y-20,r:15,class:'strike-flash v14-strike',fill:'#f7ff86',opacity:0,filter:'url(#v14Glow)'},g);
+
+  // número flutuante
+  const badge=el('g',{class:'v14-badge'},g);
+  el('circle',{cx:x+27,cy:y-34,r:14.5,fill:'#071016',stroke:lime,'stroke-width':2},badge);
+  const t=el('text',{x:x+27,y:y-29,'text-anchor':'middle',fill:'#fff','font-size':14,'font-weight':900},badge);t.textContent=i;
+
+  // âncora lógica invisível usada pelas versões anteriores do motor
+  const c=el('circle',{cx:x,cy:y,r:31,fill:'transparent',stroke:'none'},g);
+  players.push({g,c,t,x,y,baseX:x,baseY:y,tx:0,ty:0,bodyEnhanced:{body,racket,flash},v14:{halo,badge}});
+
   let active=false;
   g.addEventListener('pointerdown',e=>{active=true;g.setPointerCapture(e.pointerId)});
   g.addEventListener('pointermove',e=>{
-    if(!active)return; const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY; const q=p.matrixTransform(svg.getScreenCTM().inverse());
-    const nx=Math.max(90,Math.min(610,q.x)), ny=Math.max(55,Math.min(845,q.y));
-    const pl=players[i-1]; pl.x=nx;pl.y=ny;pl.c.setAttribute('cx',nx);pl.c.setAttribute('cy',ny);pl.t.setAttribute('x',nx);pl.t.setAttribute('y',ny+6);
+    if(!active)return;
+    const r=svg.getBoundingClientRect();
+    const q={x:(e.clientX-r.left)/Math.max(1,r.width)*700,y:(e.clientY-r.top)/Math.max(1,r.height)*900};
+    const nx=Math.max(90,Math.min(610,q.x)),ny=Math.max(70,Math.min(830,q.y));
+    const pl=players[i-1];pl.x=nx;pl.y=ny;pl.tx=nx-pl.baseX;pl.ty=ny-pl.baseY;
+    pl.g.setAttribute('transform',`translate(${pl.tx} ${pl.ty})`);
   });
   g.addEventListener('pointerup',()=>active=false);g.addEventListener('pointercancel',()=>active=false);
 }
@@ -1511,22 +1669,64 @@ const exerciseLibrary = [
 function addProfessor(){
   if(professor?.g) professor.g.remove();
   if(basket?.g) basket.g.remove();
-  const g=el('g',{id:'professor'});
-  const x=40,y=520;
-  el('circle',{cx:x,cy:y,r:19,fill:'#f7c53d',stroke:'#111','stroke-width':4},g);
-  el('line',{x1:x,y1:y+20,x2:x,y2:y+52,stroke:'#fff','stroke-width':6,'stroke-linecap':'round'},g);
-  el('line',{x1:x,y1:y+31,x2:x-18,y2:y+48,stroke:'#fff','stroke-width':5,'stroke-linecap':'round'},g);
-  el('line',{x1:x,y1:y+31,x2:x+18,y2:y+48,stroke:'#fff','stroke-width':5,'stroke-linecap':'round'},g);
-  const tx=el('text',{x:15,y:y+75,class:'professor-label'},g);tx.textContent='PROF.';
+  const g=el('g',{id:'professor',class:'prof-realistic'});
+  const x=43,y=515;
+  // halo discreto e sombra
+  el('ellipse',{cx:x,cy:y+43,rx:28,ry:9,fill:'#000',opacity:.30},g);
+  el('ellipse',{cx:x,cy:y+43,rx:32,ry:11,fill:'none',stroke:'#cfff20','stroke-width':3,opacity:.48},g);
+  // pernas / tênis
+  el('line',{x1:x-5,y1:y+15,x2:x-12,y2:y+37,stroke:'#d29a68','stroke-width':7,'stroke-linecap':'round'},g);
+  el('line',{x1:x+5,y1:y+15,x2:x+12,y2:y+37,stroke:'#d29a68','stroke-width':7,'stroke-linecap':'round'},g);
+  el('line',{x1:x-12,y1:y+37,x2:x-20,y2:y+41,stroke:'#eef1f2','stroke-width':5,'stroke-linecap':'round'},g);
+  el('line',{x1:x+12,y1:y+37,x2:x+20,y2:y+41,stroke:'#eef1f2','stroke-width':5,'stroke-linecap':'round'},g);
+  // shorts e camisa preta profissional
+  el('path',{d:`M ${x-11} ${y+4} L ${x+11} ${y+4} L ${x+14} ${y+18} L ${x+2} ${y+17} L ${x} ${y+11} L ${x-2} ${y+17} L ${x-14} ${y+18} Z`,fill:'#172027',stroke:'#071016','stroke-width':2},g);
+  el('path',{d:`M ${x-13} ${y-20} Q ${x} ${y-27} ${x+13} ${y-20} L ${x+10} ${y+7} L ${x-10} ${y+7} Z`,fill:'#10171c',stroke:'#cfff20','stroke-width':2},g);
+  // cabeça e boné
+  el('circle',{cx:x,cy:y-31,r:8,fill:'#d29a68',stroke:'#091015','stroke-width':2},g);
+  el('path',{d:`M ${x-9} ${y-34} Q ${x} ${y-40} ${x+9} ${y-34} L ${x+14} ${y-32} L ${x-8} ${y-31} Z`,fill:'#f2f4f5',stroke:'#111','stroke-width':1},g);
+  // braço alimentando bola + raquete
+  el('line',{x1:x+9,y1:y-13,x2:x+24,y2:y-7,stroke:'#d29a68','stroke-width':6,'stroke-linecap':'round'},g);
+  el('line',{x1:x+24,y1:y-7,x2:x+34,y2:y-17,stroke:'#d29a68','stroke-width':5,'stroke-linecap':'round'},g);
+  el('line',{x1:x+33,y1:y-16,x2:x+43,y2:y-29,stroke:'#d7dde0','stroke-width':3},g);
+  el('ellipse',{cx:x+48,cy:y-35,rx:8,ry:12,fill:'#171f24',stroke:'#cfff20','stroke-width':2,transform:`rotate(28 ${x+48} ${y-35})`},g);
+  el('line',{x1:x-10,y1:y-11,x2:x-23,y2:y-4,stroke:'#d29a68','stroke-width':5,'stroke-linecap':'round'},g);
+  el('circle',{cx:x-27,cy:y-2,r:5,fill:'#e6ee45',stroke:'#fff','stroke-width':1},g);
+  const tx=el('text',{x:7,y:y+67,class:'professor-label',fill:'#cfff20'},g);tx.textContent='PROFESSOR';
   professor={g,x,y};
-  const bg=el('g',{id:'basket'});
-  el('rect',{x:10,y:610,width:58,height:52,rx:8,fill:'#172631',stroke:'#f7c53d','stroke-width':4},bg);
-  [[22,622],[38,620],[54,626],[26,640],[46,644]].forEach(p=>el('circle',{cx:p[0],cy:p[1],r:6,fill:'#f7c53d',stroke:'#fff','stroke-width':1},bg));
+
+  const bg=el('g',{id:'basket',class:'basket-realistic'});
+  const bx=8,by=603;
+  // estrutura metálica
+  el('line',{x1:bx+9,y1:by+48,x2:bx+4,y2:by+70,stroke:'#b8c1c5','stroke-width':4},bg);
+  el('line',{x1:bx+51,y1:by+48,x2:bx+56,y2:by+70,stroke:'#b8c1c5','stroke-width':4},bg);
+  el('line',{x1:bx+5,y1:by+70,x2:bx+58,y2:by+70,stroke:'#86939a','stroke-width':4},bg);
+  el('circle',{cx:bx+7,cy:by+73,r:4,fill:'#dfe5e7',stroke:'#111','stroke-width':1},bg);
+  el('circle',{cx:bx+56,cy:by+73,r:4,fill:'#dfe5e7',stroke:'#111','stroke-width':1},bg);
+  // cesta em tela
+  el('path',{d:`M ${bx} ${by} L ${bx+62} ${by} L ${bx+54} ${by+50} L ${bx+8} ${by+50} Z`,fill:'#17232a',stroke:'#cfff20','stroke-width':3},bg);
+  for(let yy=by+10;yy<by+48;yy+=10) el('line',{x1:bx+7,y1:yy,x2:bx+55,y2:yy,stroke:'#6d7a80','stroke-width':1,opacity:.65},bg);
+  [[14,10],[28,8],[44,12],[20,24],[36,22],[50,27],[13,37],[31,36],[46,40]].forEach(([dx,dy])=>el('circle',{cx:bx+dx,cy:by+dy,r:6,fill:'#dfe946',stroke:'#fff','stroke-width':1},bg));
   basket={g:bg};
 }
 
 const oldDrawCourt=drawCourt;
-drawCourt=function(){ oldDrawCourt(); addProfessor(); }
+drawCourt=function(){ oldDrawCourt(); addProfessor(); applyCourtPerspective(); }
+
+function applyCourtPerspective(){
+  const sel=document.getElementById('courtPerspective');
+  const mode=sel?sel.value:(localStorage.getItem('jbCourtPerspective')||'pro');
+  svg.setAttribute('data-perspective',mode);
+  const cw=document.getElementById('courtWrap'); if(cw) cw.classList.toggle('pro-arena',mode==='pro'||mode==='iso'||mode==='cinema'); cw.classList.toggle('cinema-arena',mode==='cinema');
+  if(sel && sel.value!==mode) sel.value=mode;
+  localStorage.setItem('jbCourtPerspective',mode);
+}
+const courtPerspectiveEl=document.getElementById('courtPerspective');
+if(courtPerspectiveEl){
+  courtPerspectiveEl.value=localStorage.getItem('jbCourtPerspective')||'pro';
+  courtPerspectiveEl.addEventListener('change',applyCourtPerspective);
+  applyCourtPerspective();
+}
 
 function renderLibrary(){
   const f=document.getElementById('libFund').value, l=document.getElementById('libLevel').value;
@@ -2569,18 +2769,24 @@ function v53BallPath(start,end,action,trajectory){
   v53Els.push(path,label);return path;
 }
 function v53AnimateBall(path,duration){
-  if(!v53Ball)v53Ball=el('circle',{r:10,fill:'#f7c53d',stroke:'#fff','stroke-width':3});
-  if(!v53Trail)v53Trail=el('path',{class:'v53-trail'});
+  if(!v53Ball)v53Ball=el('circle',{r:10,fill:'#eaff4f',stroke:'#fff','stroke-width':2.5,filter:'url(#v14Glow)',class:'v14-ball'});
+  if(!v53Trail)v53Trail=el('path',{class:'v53-trail v14-ball-trail',filter:'url(#v14Glow)'});
+  let shadow=svg.querySelector('#v14BallShadow');
+  if(!shadow)shadow=el('ellipse',{id:'v14BallShadow',rx:10,ry:4,fill:'#000',opacity:.28,filter:'url(#v14SoftShadow)'});
   const len=path.getTotalLength(),pts=[];
   return new Promise(resolve=>{
     let start=null;
     function frame(ts){
       if(!start)start=ts;
       const raw=Math.min(1,(ts-start)/duration),t=v53Ease(raw),pt=path.getPointAtLength(t*len);
+      const h=Math.sin(Math.PI*t); // leitura visual de altura
       v53Ball.setAttribute('cx',pt.x);v53Ball.setAttribute('cy',pt.y);v53Ball.setAttribute('opacity','1');
-      pts.push({x:pt.x,y:pt.y});if(pts.length>12)pts.shift();
+      v53Ball.setAttribute('r',String(9+2.4*h));
+      shadow.setAttribute('cx',pt.x);shadow.setAttribute('cy',pt.y+16+28*h);shadow.setAttribute('opacity',String(.30-.16*h));
+      shadow.setAttribute('rx',String(10+8*h));shadow.setAttribute('ry',String(4+2*h));
+      pts.push({x:pt.x,y:pt.y});if(pts.length>15)pts.shift();
       if(pts.length>1)v53Trail.setAttribute('d',pts.map((q,i)=>`${i?'L':'M'} ${q.x} ${q.y}`).join(' '));
-      if(raw<1)requestAnimationFrame(frame);else resolve();
+      if(raw<1)requestAnimationFrame(frame);else{shadow.setAttribute('opacity','0');resolve();}
     }requestAnimationFrame(frame);
   });
 }
@@ -2966,6 +3172,8 @@ async function v55StrictPlay(){
     }
     const target=v55Point(s,'target') || {x:350,y:450};
     const recv=s.targetPlayer?v55P(s.targetPlayer):null;
+    if(/Professor/i.test(s.actor||'')) await v14ProfessorFeed(s.action);
+
     const start=/Professor/i.test(s.actor||'')?(professor?{x:professor.x,y:professor.y}:contact):contact;
     const path=v53BallPath(start,target,s.action,s.trajectory);
     const prof=v53Profile(s.action),flight=Math.max(440,860/((+s.speed||prof.speed||1)*pace));
@@ -3237,6 +3445,37 @@ async function v62ReturnHome(pl,from,duration){
   v53SetState(pl,home);
 }
 
+async function v14ProfessorFeed(action='Lançamento'){
+  if(!professor?.g)return;
+  const g=professor.g;
+  g.classList.add('v14-prof-feed');
+  let hand=g.querySelector('.v14-prof-ball');
+  if(!hand){hand=el('circle',{class:'v14-prof-ball',cx:16,cy:513,r:5,fill:'#eaff4f',stroke:'#fff','stroke-width':1.5,filter:'url(#v14Glow)'},g);}
+  hand.setAttribute('opacity','1');
+  return new Promise(resolve=>{
+    let st=null;
+    function frame(ts){
+      if(!st)st=ts;const t=Math.min(1,(ts-st)/330),e=Math.sin(Math.PI*t);
+      g.setAttribute('transform',`rotate(${-4*e} ${professor.x} ${professor.y})`);
+      hand.setAttribute('transform',`translate(${18*e} ${-12*e})`);
+      if(t<1)requestAnimationFrame(frame);else{g.removeAttribute('transform');hand.setAttribute('opacity','0');hand.removeAttribute('transform');g.classList.remove('v14-prof-feed');resolve();}
+    }requestAnimationFrame(frame);
+  });
+}
+function v14PoseName(action=''){
+  if(/Smash/i.test(action))return 'smash';
+  if(/Gancho|Bandeja|Rainbow|Anômalo|Saque/i.test(action))return 'overhead';
+  if(/Backhand/i.test(action))return 'backhand';
+  if(/Forehand/i.test(action))return 'forehand';
+  if(/Voleio/i.test(action))return 'volley';
+  if(/Lob|Curta/i.test(action))return 'touch';
+  return 'ready';
+}
+function v14SetPoseClass(pl,action){
+  if(!pl?.g)return;['ready','forehand','backhand','smash','overhead','volley','touch'].forEach(x=>pl.g.classList.remove('pose-'+x));
+  pl.g.classList.add('pose-'+v14PoseName(action));
+}
+
 async function v62Play(){
   if(v62Running||!timelineSteps?.length)return;
   v62Running=true;
@@ -3258,7 +3497,7 @@ async function v62Play(){
     const s=timelineSteps[i],next=timelineSteps[i+1];
     currentTimelineIndex=i;renderTimeline?.();
 
-    const actor=v62Player(s.actor);
+    const actor=v62Player(s.actor); if(actor)v14SetPoseClass(actor,s.action);
     const contact=(typeof v61ResolveContact==='function')
       ? v61ResolveContact(s)
       : (actor?v62State(actor):(professor?{x:professor.x,y:professor.y}:{x:40,y:520}));
@@ -3281,6 +3520,8 @@ async function v62Play(){
     const recv=(typeof v61ReceiverPoint==='function')
       ? v61ReceiverPoint(s,next)
       : {player:null,point:{x:350,y:450}};
+
+    if(/Professor/i.test(s.actor||'')) await v14ProfessorFeed(s.action);
 
     const start=/Professor/i.test(s.actor||'')
       ? (professor?{x:professor.x,y:professor.y}:contact)
@@ -3392,5 +3633,130 @@ v8RefreshStats();
 
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
+
+<script id="jb-v15-technique-motion">
+// ===== JB PLAY V15 — TECHNIQUE MOTION =====
+(function(){
+  const V15_PROFILES={
+    forehand:{prepBody:-8,contactBody:8,finishBody:14,prepRack:-62,contactRack:12,finishRack:86,lift:-2},
+    backhand:{prepBody:9,contactBody:-8,finishBody:-14,prepRack:68,contactRack:-10,finishRack:-88,lift:-2},
+    smash:{prepBody:-4,contactBody:3,finishBody:10,prepRack:-118,contactRack:-48,finishRack:55,lift:-10},
+    overhead:{prepBody:-5,contactBody:4,finishBody:9,prepRack:-102,contactRack:-38,finishRack:48,lift:-8},
+    volley:{prepBody:-3,contactBody:5,finishBody:7,prepRack:-28,contactRack:5,finishRack:32,lift:-1},
+    touch:{prepBody:-2,contactBody:2,finishBody:3,prepRack:-22,contactRack:1,finishRack:18,lift:1},
+    defense:{prepBody:7,contactBody:-4,finishBody:-7,prepRack:48,contactRack:8,finishRack:-35,lift:3},
+    serve:{prepBody:-8,contactBody:5,finishBody:13,prepRack:-125,contactRack:-42,finishRack:70,lift:-12},
+    ready:{prepBody:-2,contactBody:2,finishBody:4,prepRack:-18,contactRack:0,finishRack:20,lift:0}
+  };
+  function kind(action=''){
+    if(/Saque/i.test(action))return 'serve';
+    if(/Smash/i.test(action))return 'smash';
+    if(/Gancho|Bandeja|Rainbow|Anômalo/i.test(action))return 'overhead';
+    if(/Backhand/i.test(action))return 'backhand';
+    if(/Forehand|Drive|Topspin|Slice/i.test(action))return 'forehand';
+    if(/Voleio|Swing volley|Fast hands/i.test(action))return 'volley';
+    if(/Defesa|Leque|Arco superior/i.test(action))return 'defense';
+    if(/Lob|Curta/i.test(action))return 'touch';
+    return 'ready';
+  }
+  function easeInOut(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
+  function mix(a,b,t){return a+(b-a)*t}
+  function phaseAt(t){return t<.34?'PREPARAÇÃO':t<.64?'CONTATO':'FINALIZAÇÃO'}
+  function ensureHUD(pl,contact){
+    let tag=svg.querySelector('#v15PhaseTag');
+    if(!tag) tag=el('text',{id:'v15PhaseTag',class:'v15-phase-tag','text-anchor':'middle'});
+    let ring=svg.querySelector('#v15TechRing');
+    if(!ring) ring=el('ellipse',{id:'v15TechRing',class:'v15-tech-ring',rx:34,ry:13});
+    let foot=svg.querySelector('#v15FootRing');
+    if(!foot) foot=el('ellipse',{id:'v15FootRing',class:'v15-foot-ring',rx:26,ry:9});
+    let star=svg.querySelector('#v15ImpactStar');
+    if(!star) star=el('circle',{id:'v15ImpactStar',class:'v15-impact-star',r:7});
+    tag.setAttribute('x',contact.x);tag.setAttribute('y',contact.y-62);
+    ring.setAttribute('cx',contact.x);ring.setAttribute('cy',contact.y+31);
+    foot.setAttribute('cx',contact.x);foot.setAttribute('cy',contact.y+31);
+    star.setAttribute('cx',contact.x+42);star.setAttribute('cy',contact.y-20);
+    return {tag,ring,foot,star};
+  }
+
+  // Substitui o swing simples da V14 por três fases técnicas reais.
+  window.v53AnimateSwing=function(pl,action,contact,duration=390){
+    if(!pl)return Promise.resolve();
+    const type=kind(action),pr=V15_PROFILES[type]||V15_PROFILES.ready;
+    if(typeof v14SetPoseClass==='function')v14SetPoseClass(pl,action);
+    const hud=ensureHUD(pl,contact);
+    const dx=contact.x-pl.x,dy=contact.y-pl.y;
+    return new Promise(resolve=>{
+      let start=null,lastPhase='';
+      function frame(ts){
+        if(!start)start=ts;
+        const raw=Math.min(1,(ts-start)/duration),e=easeInOut(raw);
+        let bodyAngle,rackAngle,scale,lift;
+        if(raw<.34){
+          const q=easeInOut(raw/.34);
+          bodyAngle=mix(0,pr.prepBody,q); rackAngle=mix(0,pr.prepRack,q); scale=mix(1,1.025,q); lift=mix(0,pr.lift*.45,q);
+        }else if(raw<.64){
+          const q=easeInOut((raw-.34)/.30);
+          bodyAngle=mix(pr.prepBody,pr.contactBody,q); rackAngle=mix(pr.prepRack,pr.contactRack,q); scale=1.025+Math.sin(q*Math.PI)*.035; lift=mix(pr.lift*.45,pr.lift,q);
+        }else{
+          const q=easeInOut((raw-.64)/.36);
+          bodyAngle=mix(pr.contactBody,pr.finishBody,q); rackAngle=mix(pr.contactRack,pr.finishRack,q); scale=mix(1.025,1,q); lift=mix(pr.lift,0,q);
+        }
+        if(pl.bodyEnhanced){
+          pl.bodyEnhanced.body.setAttribute('transform',`translate(${dx} ${dy+lift}) rotate(${bodyAngle} ${pl.x} ${pl.y}) scale(${scale})`);
+          pl.bodyEnhanced.racket.setAttribute('transform',`translate(${dx} ${dy+lift}) rotate(${rackAngle} ${pl.x+18} ${pl.y-4})`);
+          if(pl.bodyEnhanced.flash){
+            const hit=Math.max(0,1-Math.abs(raw-.53)*11);
+            pl.bodyEnhanced.flash.setAttribute('opacity',String(hit));
+          }
+        }
+        const ph=phaseAt(raw);
+        if(ph!==lastPhase){hud.tag.textContent=ph;lastPhase=ph;}
+        const isContact=raw>=.46&&raw<=.62;
+        pl.g.classList.toggle('v15-contact',isContact);
+        pl.g.classList.toggle('v15-finish',raw>.64);
+        hud.tag.setAttribute('opacity',String(raw<.96?1:(1-raw)*25));
+        hud.ring.setAttribute('opacity',String(isContact?.95:raw<.34?.25:.15));
+        hud.ring.setAttribute('rx',String(31+18*Math.max(0,1-Math.abs(raw-.53)*7)));
+        hud.ring.setAttribute('ry',String(11+6*Math.max(0,1-Math.abs(raw-.53)*7)));
+        hud.foot.setAttribute('opacity',String(raw<.34?.28:0));
+        hud.star.setAttribute('opacity',String(Math.max(0,1-Math.abs(raw-.53)*13)));
+        if(raw<1)requestAnimationFrame(frame);else{
+          pl.g.classList.remove('v15-contact','v15-finish');
+          if(pl.bodyEnhanced?.flash)pl.bodyEnhanced.flash.setAttribute('opacity','0');
+          hud.tag.setAttribute('opacity','0');hud.ring.setAttribute('opacity','0');hud.foot.setAttribute('opacity','0');hud.star.setAttribute('opacity','0');
+          // Mantém o jogador exatamente no ponto de contato para a lógica de retorno automático.
+          if(typeof v53ApplyPlayer==='function')v53ApplyPlayer(pl,contact,0,0,1);
+          resolve();
+        }
+      }
+      requestAnimationFrame(frame);
+    });
+  };
+
+  // Retorno com split-step visual ao chegar ao ponto inicial.
+  if(typeof window.v62ReturnHome==='function'){
+    const previousReturn=window.v62ReturnHome;
+    window.v62ReturnHome=async function(pl,from,duration){
+      await previousReturn(pl,from,duration);
+      if(!pl)return;
+      const home=typeof v62Home==='function'?v62Home(pl):{x:pl.x,y:pl.y};
+      const ring=el('ellipse',{cx:home.x,cy:home.y+31,rx:20,ry:7,class:'v15-tech-ring',opacity:.7});
+      return new Promise(resolve=>{
+        let st=null;
+        function f(ts){if(!st)st=ts;const t=Math.min(1,(ts-st)/220);ring.setAttribute('rx',String(20+18*t));ring.setAttribute('ry',String(7+6*t));ring.setAttribute('opacity',String(.65*(1-t)));if(t<1)requestAnimationFrame(f);else{ring.remove();resolve();}}
+        requestAnimationFrame(f);
+      });
+    };
+  }
+
+  // Marca versão no painel sem alterar a lógica do app.
+  const versionNote=document.createElement('div');
+  versionNote.id='v15VersionNote';
+  versionNote.textContent='V15 • TECHNIQUE MOTION';
+  versionNote.style.cssText='position:fixed;right:12px;bottom:10px;z-index:20;font:800 10px system-ui;color:#cfff20;background:rgba(7,16,22,.72);border:1px solid rgba(207,255,32,.28);padding:6px 9px;border-radius:9px;pointer-events:none;letter-spacing:.8px';
+  document.body.appendChild(versionNote);
+})();
+</script>
+
 </body>
 </html>
