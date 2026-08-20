@@ -131,8 +131,8 @@ app.post("/api/generate-training", async (req, res) => {
     { role: "user", content: `Pedido do professor: ${prompt}` }
   ]
 }, {
-  timeout: 15000,
-  maxRetries: 0
+  timeout: 60000,
+  maxRetries: 1
 });
 
 console.log("JB PLAY IA: resposta recebida da OpenAI");
