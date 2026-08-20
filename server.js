@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json({ limit: "1mb" }));
-app.use(express.static(__dirname, { index: "index.html" }));
+app.use(express.static(path.join(__dirname, "public"), { index: "index.html" }));
 
 app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Treinos Pro" }));
 
@@ -141,7 +141,7 @@ app.post("/api/generate-training", async (req, res) => {
 });
 
 app.get("/{*splat}", (_req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"))
 });
 
 const port = process.env.PORT || 3000;
