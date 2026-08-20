@@ -1,0 +1,20 @@
+JB PLAY V5.4.1 — SEQUÊNCIA CORRIGIDA APÓS RENUMERAÇÃO
+
+Mapeamento fixo:
+Aluno 1 = cima/esquerda
+Aluno 2 = cima/direita
+Aluno 3 = baixo/esquerda
+Aluno 4 = baixo/direita
+
+Sequência de referência corrigida:
+Professor -> Aluno 1
+Aluno 1 Forehand neutro paralela -> Aluno 3
+Aluno 3 Backhand/Lob -> Aluno 2 na zona vermelha
+Aluno 2 desloca lateral e Smash -> Aluno 4
+Aluno 4 Voleio forehand -> Zona 3 central do lado de cima
+
+Atualize:
+1. public/index.html
+2. server.js
+
+Não altere a OPENAI_API_KEY no Render.

@@ -1,0 +1,19 @@
+JB PLAY V8 — DASHBOARD PREMIUM
+
+Esta versão aproxima o JB Play do layout enviado:
+- menu lateral escuro com logo lime;
+- barra superior;
+- hero com imagem de Beach Tennis;
+- painel de Ações Rápidas;
+- cards de indicadores;
+- quadra central em painel premium;
+- verde-limão como cor principal;
+- marca d'água integrada;
+- ferramentas continuam funcionais.
+
+Atualize no GitHub:
+1) public/index.html
+2) public/jb-hero-beach.jpg
+3) mantenha jb-logo-lime.png e jb-watermark-lime.png
+
+Não altere server.js nem OPENAI_API_KEY.

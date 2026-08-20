@@ -1,0 +1,20 @@
+JB PLAY V6.2 — RETORNO AUTOMÁTICO AO PONTO INICIAL
+
+Nova regra fixa:
+- todos começam na linha verde/amarelo;
+- se um aluno vai buscar uma bola em outra zona, ele executa o golpe lá;
+- imediatamente depois do contato, retorna automaticamente ao ponto inicial;
+- o recebedor pode se deslocar para pegar a bola e só retorna ao home depois de executar o próprio golpe;
+- ao final da sequência, todos ficam novamente alinhados nos pontos iniciais.
+
+Pontos iniciais:
+A1 = cima/esquerda (230,300)
+A2 = cima/direita (470,300)
+A3 = baixo/esquerda (230,600)
+A4 = baixo/direita (470,600)
+
+Atualize:
+1) public/index.html
+2) server.js
+
+Não altere OPENAI_API_KEY.

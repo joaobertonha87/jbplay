@@ -1,0 +1,16 @@
+JB PLAY V5.3 — POSICIONAMENTO REAL DOS JOGADORES
+
+Atualizar no GitHub:
+1. public/index.html  -> substituir pelo index.html deste pacote.
+2. server.js          -> substituir pelo server.js deste pacote.
+
+O que mudou:
+- cada jogador tem uma zona real de contato;
+- o recebedor começa a se deslocar enquanto a bola vem;
+- jogador pode avançar, recuar e deslocar lateralmente;
+- a bola termina exatamente onde o próximo jogador irá rebater;
+- recuperação após o golpe;
+- IA gera contactZone, targetPlayer, targetZone e recoveryZone;
+- botão Ataque usa o exemplo Professor -> Aluno 3 -> Aluno 1 -> Aluno 4 -> Aluno 2.
+
+A OPENAI_API_KEY continua somente no Render. Não altere a chave.

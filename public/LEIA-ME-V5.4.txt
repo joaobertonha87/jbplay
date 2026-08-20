@@ -1,0 +1,20 @@
+JB PLAY V5.4 — MAPEAMENTO FIXO DOS ALUNOS
+
+REGRA FIXA:
+Aluno 1 = cima/esquerda
+Aluno 2 = cima/direita
+Aluno 3 = baixo/esquerda
+Aluno 4 = baixo/direita
+
+POSIÇÃO INICIAL:
+Todos começam na linha que separa verde/amarelo.
+- cima: y=300
+- baixo: y=600
+- esquerda: x=230
+- direita: x=470
+
+Atualize no GitHub:
+1) public/index.html
+2) server.js
+
+A chave OPENAI_API_KEY continua no Render e não deve ser alterada.

@@ -1,0 +1,5 @@
+V5.5 — Coordenadas físicas fixas.
+A1=230,300; A2=470,300; A3=230,600; A4=470,600.
+Todos começam na linha verde/amarelo.
+O exemplo usa pontos de contato e destinos físicos fixos.
+Atualize public/index.html e server.js. Não altere OPENAI_API_KEY.

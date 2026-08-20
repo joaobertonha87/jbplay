@@ -1,0 +1,21 @@
+JB PLAY V9 — PLATAFORMA UNIFICADA TREINOS + SCOUT
+
+Arquivos principais:
+- index.html = plataforma principal com botões Treinos / Scout.
+- treino.html = módulo completo de treinos JB Play.
+- scout.html = JB Scout Pro integrado e recolorido no padrão premium.
+- jb-logo-lime.png / jb-watermark-lime.png = identidade visual.
+- jb-hero-beach.jpg = banner do módulo de treinos.
+- server.js = backend atual da IA.
+
+No GitHub:
+Substitua o conteúdo da pasta public pelos arquivos deste pacote que pertencem ao front-end:
+index.html, treino.html, scout.html, jb-logo-lime.png, jb-watermark-lime.png, jb-hero-beach.jpg e demais assets já existentes.
+
+Mantenha server.js na raiz do projeto.
+Não altere OPENAI_API_KEY no Render.
+
+Alternância:
+- botão Treinos abre o gerador;
+- botão Scout abre o rastreador estatístico;
+- o último módulo aberto fica salvo no navegador.

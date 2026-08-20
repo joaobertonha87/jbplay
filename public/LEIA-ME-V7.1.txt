@@ -1,0 +1,15 @@
+JB PLAY V7.1 — LOGO NO MESMO PADRÃO DO LAYOUT
+
+Inclui:
+- jb-logo-lime.png: logo principal com dourado convertido para verde-limão e fundo transparente.
+- jb-watermark-lime.png: versão suave para marca d'água.
+- sidebar usando a nova logo.
+- marca d'água na quadra e também no hero/dashboard.
+
+Atualização no GitHub:
+1. Substitua public/index.html
+2. Envie também para public/:
+   - jb-logo-lime.png
+   - jb-watermark-lime.png
+
+Não altere server.js nem OPENAI_API_KEY.
