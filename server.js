@@ -125,12 +125,17 @@ app.post("/api/generate-training", async (req, res) => {
        console.log("JB PLAY IA: chave encontrada - chamando OpenAI...");
 
     const response = await client.responses.create({
-      model,
-      input: [
-        { role: "system", content: SYSTEM },
-        { role: "user", content: `Pedido do professor: ${prompt}\nContexto atual: ${JSON.stringify(context || {})}` }
-      ]
-    });
+  model,
+  input: [
+    { role: "system", content: SYSTEM },
+    { role: "user", content: `Pedido do professor: ${prompt}` }
+  ]
+}, {
+  timeout: 15000,
+  maxRetries: 0
+});
+
+console.log("JB PLAY IA: resposta recebida da OpenAI");
 
     const text = (response.output_text || "").trim();
     const clean = text.replace(/^```json\s*/i, "").replace(/```$/,"").trim();
