@@ -3007,7 +3007,7 @@ if(typeof onlineAiGenerate!=='undefined'){
     onlineAiGenerate.disabled=true;
     onlineAiState.className='ai-state';onlineAiState.textContent='IA montando deslocamentos, zonas de contato e trajetórias...';
     const controller=new AbortController();
-    const timer=setTimeout(()=>controller.abort(),18000);
+    const timer=setTimeout(()=>controller.abort(),65000);
     try{
       const res=await fetch('/api/generate-training',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({prompt,context:{level:levelEl.value,players:+playersEl.value,mode:modeEl.value,focus:focusEl.value,availableShots:shots,request:'include contactZone, contactLane, targetPlayer, targetZone, targetLane, recoveryZone, movement and trajectory for every timeline step'}})});
       clearTimeout(timer);
