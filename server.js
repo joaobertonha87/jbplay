@@ -118,10 +118,11 @@ Responda SOMENTE em JSON válido:
 `;
 
 app.post("/api/generate-training", async (req, res) => {
-  try {
+  try {console.log("🤖 JB PLAY IA: requisição recebida");
     const { prompt, context } = req.body || {};
     if (!prompt) return res.status(400).send("Prompt ausente.");
     if (!client) return res.status(503).send("OPENAI_API_KEY não configurada no servidor.");
+       console.log("JB PLAY IA: chave encontrada - chamando OpenAI...");
 
     const response = await client.responses.create({
       model,
