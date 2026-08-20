@@ -1102,6 +1102,28 @@ body{background:transparent!important}
 .jb-v14-athlete.v15-finish .v14-halo{opacity:.72}
 </style>
 
+
+<style id="jb-v16-style">
+/* ===== JB PLAY V16 — SMART SIMULATOR ===== */
+.v16-card{border:1px solid rgba(207,255,32,.18);background:linear-gradient(145deg,rgba(13,29,36,.96),rgba(6,16,22,.96));box-shadow:0 16px 34px rgba(0,0,0,.18)}
+.v16-badge{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(207,255,32,.34);background:rgba(207,255,32,.08);color:#dfff68;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:900;letter-spacing:.05em}
+.v16-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.v16-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.v16-switch{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border:1px solid rgba(255,255,255,.08);border-radius:11px;background:rgba(255,255,255,.025)}
+.v16-switch label{font-size:11px;color:#d5e1e7;font-weight:800}.v16-switch input{width:18px;height:18px;accent-color:#cfff20}
+.v16-field label{display:block;font-size:10px;color:#91a6b1;margin-bottom:5px;font-weight:800}.v16-field select,.v16-field input{width:100%}
+.v16-library-tools{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.v16-chip{border:1px solid rgba(255,255,255,.11);background:#0d1c23;color:#c8d7de;border-radius:999px;padding:6px 9px;font-size:10px;font-weight:800}.v16-chip.active{border-color:#cfff20;color:#eaff84;background:rgba(207,255,32,.09)}
+.v16-list{display:grid;gap:7px;margin-top:8px}.v16-row{padding:9px 10px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.025);font-size:11px;color:#d6e0e5}.v16-row b{color:#fff}.v16-row small{display:block;color:#8fa3ad;margin-top:3px}
+#v16PhysicsState{font-size:10px;color:#a9bbc4;margin-top:8px;line-height:1.4}
+.v16-contact-halo{pointer-events:none;mix-blend-mode:screen}.v16-ball-shadow{pointer-events:none;filter:blur(1px)}
+body.v16-presentation .v7-sidebar,body.v16-presentation .v7-topbar,body.v16-presentation .v8-quick,body.v16-presentation #v7-config,body.v16-presentation .right,body.v16-presentation .v8-dashboard{display:none!important}
+body.v16-presentation .layout{display:block!important;max-width:none!important;padding:0!important;margin:0!important}
+body.v16-presentation #v7-court{position:fixed!important;inset:0!important;z-index:9990!important;border-radius:0!important;padding:14px!important;background:#071016!important}
+body.v16-presentation #courtWrap{height:calc(100vh - 72px)!important;max-height:none!important}
+body.v16-presentation .stage-head{font-size:13px}.v16-present-exit{display:none;position:fixed;right:18px;top:18px;z-index:10000}
+body.v16-presentation .v16-present-exit{display:block}
+@media(max-width:700px){.v16-grid,.v16-grid-3{grid-template-columns:1fr}}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1293,6 +1315,54 @@ body{background:transparent!important}
           <div><input id="ballSpeedNum" type="number" min="0.5" max="2.5" step="0.1" value="1.2"></div>
         </div>
         <div class="coordbox" id="coordbox">Modo seleção ativo.</div></div>
+      </div>
+
+
+      <div class="card info v16-card" id="v16-smart">
+        <div class="section-title">V16 • Simulador inteligente <span class="v16-badge">SMART 3D</span></div>
+        <div class="v16-grid" style="margin-top:9px">
+          <div class="v16-switch"><label>Motor de bola 3D</label><input id="v16Physics" type="checkbox" checked></div>
+          <div class="v16-switch"><label>Bola viva encadeada</label><input id="v16LiveBall" type="checkbox" checked></div>
+          <div class="v16-switch"><label>Movimentação inteligente</label><input id="v16SmartMove" type="checkbox" checked></div>
+          <div class="v16-switch"><label>Câmera automática</label><input id="v16Camera" type="checkbox" checked></div>
+        </div>
+        <div class="v16-grid-3" style="margin-top:9px">
+          <div class="v16-field"><label>Altura visual</label><select id="v16Height"><option value="0.8">Baixa</option><option value="1" selected>Realista</option><option value="1.25">Alta</option></select></div>
+          <div class="v16-field"><label>Intensidade</label><select id="v16Intensity"><option value="0.85">Controle</option><option value="1" selected>Jogo</option><option value="1.18">Alta</option></select></div>
+          <div class="v16-field"><label>Câmera</label><select id="v16CameraMode"><option value="follow" selected>Seguir ação</option><option value="contact">Contato</option><option value="wide">Aberta</option></select></div>
+        </div>
+        <div class="toolbar" style="margin-top:9px">
+          <button class="primary small" id="v16Run">▶ Executar V16</button>
+          <button class="secondary small" id="v16Present">▣ Modo apresentação</button>
+        </div>
+        <div id="v16PhysicsState">Motor pronto: altura, velocidade, sombra da bola, leitura de contato e encadeamento entre jogadores.</div>
+      </div>
+
+      <div class="card info v16-card" id="v16-trajectory">
+        <div class="section-title">Trajetória avançada</div>
+        <div class="v16-grid" style="margin-top:8px">
+          <div class="v16-field"><label>Etapa</label><select id="v16StepSelect"></select></div>
+          <div class="v16-field"><label>Tipo</label><select id="v16TrajType"><option value="reta">Reta</option><option value="arco">Arco</option><option value="arco alto">Lob / arco alto</option><option value="descendente">Descendente</option><option value="curta">Curta</option></select></div>
+          <div class="v16-field"><label>Curva</label><input id="v16Curve" type="range" min="-180" max="90" value="-20"></div>
+          <div class="v16-field"><label>Altura 3D</label><input id="v16ArcHeight" type="range" min="0" max="180" value="55"></div>
+        </div>
+        <div class="toolbar" style="margin-top:8px"><button class="secondary small" id="v16ApplyTraj">Aplicar à etapa</button><button class="ghost small" id="v16PreviewTraj">Pré-visualizar</button></div>
+      </div>
+
+      <div class="card info v16-card" id="v16-lesson">
+        <div class="section-title">Modo Aula</div>
+        <div class="v16-grid" style="margin-top:8px">
+          <div class="v16-field"><label>Duração do exercício</label><select id="v16LessonMinutes"><option>5</option><option selected>8</option><option>10</option><option>12</option><option>15</option></select></div>
+          <div class="v16-field"><label>Séries</label><select id="v16LessonSets"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
+        </div>
+        <div class="toolbar" style="margin-top:8px"><button class="secondary small" id="v16AddLesson">+ Adicionar treino atual</button><button class="ghost small" id="v16ClearLesson">Limpar aula</button></div>
+        <div class="v16-list" id="v16LessonList"></div>
+      </div>
+
+      <div class="card info v16-card" id="v16-scout-link">
+        <div class="section-title">Scout → Treino</div>
+        <div id="v16ScoutAdvice" class="v16-row">Nenhuma análise carregada ainda.</div>
+        <div class="toolbar" style="margin-top:8px"><button class="secondary small" id="v16ReadScout">Analisar Scout</button><button class="primary small" id="v16BuildFromScout">Gerar treino do Scout</button></div>
       </div>
 
       <div class="card info" id="v6-linha">
@@ -3755,6 +3825,116 @@ if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.se
   versionNote.textContent='V15 • TECHNIQUE MOTION';
   versionNote.style.cssText='position:fixed;right:12px;bottom:10px;z-index:20;font:800 10px system-ui;color:#cfff20;background:rgba(7,16,22,.72);border:1px solid rgba(207,255,32,.28);padding:6px 9px;border-radius:9px;pointer-events:none;letter-spacing:.8px';
   document.body.appendChild(versionNote);
+})();
+</script>
+
+<button class="secondary small v16-present-exit" id="v16PresentExit">Sair da apresentação</button>
+
+<script id="jb-v16-smart-simulator">
+// ===== JB PLAY V16 — SMART SIMULATOR ENGINE =====
+(function(){
+  const $=id=>document.getElementById(id);
+  const cfg={physics:$('v16Physics'),live:$('v16LiveBall'),smart:$('v16SmartMove'),camera:$('v16Camera'),height:$('v16Height'),intensity:$('v16Intensity'),cameraMode:$('v16CameraMode')};
+  let running=false,lastBallPoint=null,lesson=JSON.parse(localStorage.getItem('jb_v16_lesson')||'[]'),scoutFocus=null;
+  const actionProfiles=[
+    [/Lob|Rainbow/i,{h:165,s:.78,curve:-140,label:'bola alta'}],
+    [/Smash/i,{h:34,s:1.9,curve:42,label:'descendente'}],
+    [/Gancho|Bandeja|Anômalo/i,{h:72,s:1.35,curve:-52,label:'aérea'}],
+    [/Curta/i,{h:28,s:.78,curve:-16,label:'curta'}],
+    [/Defesa|Leque|Arco/i,{h:118,s:.88,curve:-92,label:'defesa alta'}],
+    [/Saque/i,{h:74,s:1.25,curve:-45,label:'saque'}],
+    [/Voleio|Fast hands/i,{h:22,s:1.55,curve:-8,label:'rápida'}],
+    [/Forehand|Backhand|Drive|Topspin|Slice/i,{h:46,s:1.22,curve:-18,label:'drive'}]
+  ];
+  function profile(action=''){return (actionProfiles.find(x=>x[0].test(action))||[0,{h:45,s:1,curve:-15,label:'neutra'}])[1]}
+  function player(actor=''){const m=actor.match(/Aluno\s*([1-4])/i);return m?players[+m[1]-1]:null}
+  function idOf(pl){return players.indexOf(pl)+1}
+  function state(pl){try{return v62State(pl)}catch(e){return{x:pl.x,y:pl.y}}}
+  function home(pl){return V62_HOME[idOf(pl)]||state(pl)}
+  function actionContact(step,pl){
+    if(!pl)return professor?{x:professor.x,y:professor.y}:{x:40,y:520};
+    if(step.fixedContact)return step.fixedContact;
+    const cur=state(pl),id=idOf(pl),a=(step.action||'').toLowerCase(),top=id<=2;
+    if(step.contactZone||step.contactLane||step.movement){try{return v61ResolveContact(step)}catch(e){}}
+    if(!cfg.smart.checked)return cur;
+    let y=cur.y,x=cur.x;
+    if(/smash|gancho|bandeja|rainbow|anômalo/.test(a)) y=top?165:735;
+    else if(/voleio|curta|fast hands/.test(a)) y=top?360:540;
+    else if(/defesa|lob/.test(a)) y=top?115:785;
+    else if(/forehand|backhand|drive|topspin|slice/.test(a)) y=top?300:600;
+    const d=((step.movement?.direction||'')+' '+(step.contactLane||'')).toLowerCase();
+    if(d.includes('direit'))x=Math.min(575,x+65); if(d.includes('esquer'))x=Math.max(125,x-65);
+    return{x,y};
+  }
+  function receiver(step,next){
+    try{return v61ReceiverPoint(step,next)}catch(e){return{player:player(step.targetPlayer||next?.actor),point:{x:350,y:450}}}
+  }
+  function makePath(start,end,step){
+    const pr=profile(step.action),tr=step.trajectory||{};
+    const curve=Number.isFinite(+tr.curve)?+tr.curve:pr.curve;
+    const mx=(start.x+end.x)/2,my=(start.y+end.y)/2+curve;
+    const path=el('path',{d:`M ${start.x} ${start.y} Q ${mx} ${my} ${end.x} ${end.y}`,fill:'none',stroke:'#dfff4e','stroke-width':5,opacity:.78,'stroke-linecap':'round',filter:'url(#v14Glow)'});
+    svg.appendChild(path);return path;
+  }
+  function ensureBall(){
+    let b=svg.querySelector('#v16Ball');if(!b){b=el('circle',{id:'v16Ball',r:9,fill:'#eaff4f',stroke:'#fff','stroke-width':2.5,filter:'url(#v14Glow)',class:'v14-ball'});svg.appendChild(b)}
+    let sh=svg.querySelector('#v16BallShadow');if(!sh){sh=el('ellipse',{id:'v16BallShadow',rx:8,ry:3,fill:'#000',opacity:.28,class:'v16-ball-shadow'});svg.appendChild(sh)}
+    return{b,sh};
+  }
+  async function fly(path,duration,step){
+    const {b,sh}=ensureBall(),pr=profile(step.action),heightScale=+cfg.height.value||1;
+    const h=(Number.isFinite(+step.trajectory?.height)?+step.trajectory.height:pr.h)*heightScale;
+    const len=path.getTotalLength();b.setAttribute('opacity','1');sh.setAttribute('opacity','.28');
+    return new Promise(res=>{let t0=null;function frame(ts){if(!t0)t0=ts;const t=Math.min(1,(ts-t0)/duration),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,p=path.getPointAtLength(len*e),z=Math.sin(Math.PI*e)*h*.28;
+      b.setAttribute('cx',p.x);b.setAttribute('cy',p.y-z);b.setAttribute('r',String(8+Math.sin(Math.PI*e)*2.2));
+      sh.setAttribute('cx',p.x);sh.setAttribute('cy',p.y+5);sh.setAttribute('rx',String(8+Math.sin(Math.PI*e)*5));sh.setAttribute('opacity',String(.28-.13*Math.sin(Math.PI*e)));
+      if(t<1)requestAnimationFrame(frame);else res();}requestAnimationFrame(frame)});
+  }
+  function cameraFocus(pt,phase='contact'){
+    if(!cfg.camera.checked||cfg.cameraMode.value==='wide')return;
+    const wrap=$('courtWrap');if(!wrap)return;
+    const px=((pt.x/700)*100).toFixed(1)+'%',py=((pt.y/900)*100).toFixed(1)+'%';
+    wrap.style.transformOrigin=`${px} ${py}`;wrap.style.transition='transform .38s ease';wrap.style.transform=cfg.cameraMode.value==='contact'?'scale(1.07)':'scale(1.035)';
+  }
+  function cameraReset(){const w=$('courtWrap');if(w){w.style.transition='transform .5s ease';w.style.transform='scale(1)'}}
+  function contactHalo(pt){const h=el('ellipse',{cx:pt.x,cy:pt.y+8,rx:24,ry:9,fill:'none',stroke:'#eaff4f','stroke-width':4,opacity:.9,class:'v16-contact-halo',filter:'url(#v14Glow)'});svg.appendChild(h);setTimeout(()=>h.remove(),420)}
+  async function move(pl,from,to,dur,label){if(Math.hypot(to.x-from.x,to.y-from.y)<4){v53SetState(pl,to);return}await v53AnimateMove(pl,from,to,dur,label);v53SetState(pl,to)}
+  async function run(){
+    if(running||!timelineSteps?.length)return;running=true;lastBallPoint=null;v53ResetVisuals();
+    const pace=(+sessionPace.value||1)*(+cfg.intensity.value||1),ps=+playerSpeed.value||1;
+    players.forEach((pl,i)=>{const p=V62_HOME[i+1];pl.x=p.x;pl.y=p.y;v53SetState(pl,p)});
+    for(let i=0;i<timelineSteps.length;i++){
+      const s=timelineSteps[i],next=timelineSteps[i+1],actor=player(s.actor),contact=actionContact(s,actor);currentTimelineIndex=i;renderTimeline?.();
+      if(actor){cameraFocus(contact,'move');const from=state(actor);await move(actor,from,contact,Math.max(300,590/(ps*pace)),'ajuste inteligente');contactHalo(contact);await v53AnimateSwing(actor,s.action,contact,Math.max(220,345/pace));}
+      if(/Professor/i.test(s.actor||'')){await v14ProfessorFeed(s.action);cameraFocus(contact,'feed')}
+      const recv=receiver(s,next),start=(cfg.live.checked&&lastBallPoint)?lastBallPoint:(/Professor/i.test(s.actor||'')?(professor?{x:professor.x,y:professor.y}:contact):contact);
+      const end=recv.point,path=makePath(start,end,s),pr=profile(s.action),flight=Math.max(360,800/((+s.speed||pr.s)*pace));
+      const recvMove=recv.player?move(recv.player,state(recv.player),end,Math.max(320,flight*.88),'leitura da bola'):Promise.resolve();
+      const recover=actor?move(actor,contact,home(actor),Math.max(330,flight*.8),'recuperação automática'):Promise.resolve();
+      await Promise.all([fly(path,flight,s),recvMove,recover]);lastBallPoint={...end};if(recv.player)v53SetState(recv.player,end);path.style.opacity='.13';setTimeout(()=>path.remove(),550);await new Promise(r=>setTimeout(r,70));
+    }
+    currentTimelineIndex=-1;renderTimeline?.();cameraReset();await Promise.all(players.map(pl=>move(pl,state(pl),home(pl),320,'home')));v53ResetVisuals();running=false;
+  }
+  function stepOptions(){const sel=$('v16StepSelect');if(!sel)return;const cur=sel.value;sel.innerHTML=(timelineSteps||[]).map((s,i)=>`<option value="${i}">${i+1}. ${(s.actor||'')} — ${(s.action||'')}</option>`).join('');if(cur&&sel.querySelector(`option[value="${cur}"]`))sel.value=cur;loadStep()}
+  function loadStep(){const i=+$('v16StepSelect').value,s=timelineSteps?.[i];if(!s)return;const tr=s.trajectory||{},pr=profile(s.action);$('v16TrajType').value=tr.type||pr.label||'reta';if(!$('v16TrajType').querySelector(`option[value="${$('v16TrajType').value}"]`))$('v16TrajType').value='reta';$('v16Curve').value=tr.curve??pr.curve;$('v16ArcHeight').value=tr.height??pr.h}
+  function applyTraj(){const i=+$('v16StepSelect').value,s=timelineSteps?.[i];if(!s)return;s.trajectory={...(s.trajectory||{}),type:$('v16TrajType').value,curve:+$('v16Curve').value,height:+$('v16ArcHeight').value};renderTimeline?.();$('v16PhysicsState').textContent=`Etapa ${i+1} atualizada: ${s.trajectory.type}, curva ${s.trajectory.curve}, altura ${s.trajectory.height}.`}
+  function renderLesson(){const box=$('v16LessonList');if(!box)return;if(!lesson.length){box.innerHTML='<div class="v16-row">A aula ainda está vazia.</div>';return}box.innerHTML=lesson.map((x,i)=>`<div class="v16-row"><b>${i+1}. ${x.title}</b><small>${x.minutes} min • ${x.sets} série(s) • ${x.steps.length} etapas</small><button class="ghost small" data-v16-remove="${i}" style="margin-top:6px">Remover</button></div>`).join('');box.querySelectorAll('[data-v16-remove]').forEach(b=>b.onclick=()=>{lesson.splice(+b.dataset.v16Remove,1);saveLesson()})}
+  function saveLesson(){localStorage.setItem('jb_v16_lesson',JSON.stringify(lesson));renderLesson()}
+  function addLesson(){if(!timelineSteps?.length)return;lesson.push({title:$('exTitle')?.textContent||'Treino JB Play',minutes:+$('v16LessonMinutes').value,sets:+$('v16LessonSets').value,steps:JSON.parse(JSON.stringify(timelineSteps))});saveLesson()}
+  function scoutAnalysis(){let st;try{st=JSON.parse(localStorage.getItem('jb_scout_pro_v2')||'null')}catch(e){}if(!st?.players?.length){scoutFocus=null;$('v16ScoutAdvice').innerHTML='<b>Sem dados do Scout.</b><small>Faça registros no módulo Scout e volte aqui para gerar uma prescrição baseada nos erros.</small>';return}
+    const sums={forehand:[0,0],backhand:[0,0],smash:[0,0],gancho:[0,0],curta:[0,0],defesa:[0,0],saque:[0,0],devolucao:[0,0]};
+    st.players.forEach(p=>{const s=p.stats||{};sums.forehand[0]+=s.forehandAcerto||0;sums.forehand[1]+=(s.forehandErro||0)+(s.enfForehand||0);sums.backhand[0]+=s.backhandAcerto||0;sums.backhand[1]+=(s.backhandErro||0)+(s.enfBackhand||0);sums.smash[0]+=s.smashAcerto||0;sums.smash[1]+=(s.smashErro||0)+(s.enfSmash||0);sums.gancho[0]+=s.ganchoAcerto||0;sums.gancho[1]+=(s.ganchoErro||0)+(s.enfGancho||0);sums.curta[0]+=s.curtaAcerto||0;sums.curta[1]+=(s.curtaErro||0)+(s.enfCurta||0);sums.defesa[0]+=s.defesaAcerto||0;sums.defesa[1]+=(s.defesaErro||0)+(s.enfDefesa||0);sums.saque[0]+=(s.primeiroSaque||0)+(s.segundoSaque||0);sums.saque[1]+=(s.erroSaque||0)+(s.duplaFalta||0);sums.devolucao[0]+=(s.devolucaoDentro||0)+(s.devolucaoWinner||0);sums.devolucao[1]+=s.erroDevolucao||0});
+    const ranked=Object.entries(sums).map(([k,[ok,err]])=>({k,ok,err,total:ok+err,rate:(ok+err)?ok/(ok+err):1})).filter(x=>x.total>0).sort((a,b)=>a.rate-b.rate||b.err-a.err);scoutFocus=ranked[0]||null;
+    if(!scoutFocus){$('v16ScoutAdvice').innerHTML='<b>Scout encontrado, mas ainda sem volume suficiente.</b><small>Registre acertos e erros por fundamento.</small>';return}
+    $('v16ScoutAdvice').innerHTML=`<b>Prioridade sugerida: ${scoutFocus.k.toUpperCase()}</b><small>Aproveitamento aproximado ${(scoutFocus.rate*100).toFixed(0)}% • ${scoutFocus.err} erro(s) registrados. A V16 pode montar um bloco técnico específico.</small>`;
+  }
+  function buildScout(){scoutAnalysis();if(!scoutFocus)return;const k=scoutFocus.k,cap=x=>x.charAt(0).toUpperCase()+x.slice(1);let shot=cap(k);if(k==='devolucao')shot='Backhand';if(k==='saque')shot='Saque';playersEl.value='4';drawCourt();timelineSteps=[{actor:'Professor',action:'Lançamento',targetPlayer:'Aluno 1',speed:.9},{actor:'Aluno 1',action:shot+' neutro',targetPlayer:'Aluno 3',trajectory:{type:'reta'},speed:1.05},{actor:'Aluno 3',action:shot,targetPlayer:'Aluno 2',trajectory:{type:k==='defesa'?'arco alto':'reta'},speed:1.12},{actor:'Aluno 2',action:k==='smash'?'Smash':shot+' acelerado',targetPlayer:'Aluno 4',speed:1.3},{actor:'Aluno 4',action:'Voleio forehand',targetPlayer:'Aluno 1',speed:1.3}];$('exTitle').textContent=`Scout Focus • ${shot}`;renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});stepOptions();$('v16PhysicsState').textContent=`Treino criado automaticamente a partir do Scout: foco em ${shot}.`}
+  function presentation(on){document.body.classList.toggle('v16-presentation',on);if(on){$('courtPerspective').value='cinema';$('courtPerspective').dispatchEvent(new Event('change'));setTimeout(()=>run(),250)}else cameraReset()}
+
+  $('v16Run').onclick=run;$('v16Present').onclick=()=>presentation(true);$('v16PresentExit').onclick=()=>presentation(false);$('v16ApplyTraj').onclick=applyTraj;$('v16PreviewTraj').onclick=()=>{applyTraj();run()};$('v16StepSelect').onchange=loadStep;$('v16AddLesson').onclick=addLesson;$('v16ClearLesson').onclick=()=>{lesson=[];saveLesson()};$('v16ReadScout').onclick=scoutAnalysis;$('v16BuildFromScout').onclick=buildScout;
+  const oldRender=window.renderTimeline;window.renderTimeline=function(){const r=oldRender?.apply(this,arguments);setTimeout(stepOptions,0);return r};
+  if(typeof playTimeline!=='undefined')playTimeline.onclick=run;if(typeof animate!=='undefined')animate.onclick=run;
+  setInterval(stepOptions,1800);stepOptions();renderLesson();scoutAnalysis();
 })();
 </script>
 
