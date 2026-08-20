@@ -2963,52 +2963,65 @@ if(typeof playTimeline!=='undefined')playTimeline.onclick=v53PlayTimeline;
 if(typeof animate!=='undefined')animate=v53PlayTimeline;
 
 // IA online V5.3: preserva zonas de contato, alvo e recuperação
+function jbLocalTrainingFallback(prompt){
+  const txt=(prompt||'').toLowerCase();
+  const playerCount=txt.includes('2 aluno')||txt.includes('2 jogadores')?2:4;
+  const continuous=/bola viva|cont[ií]nuo|volume/.test(txt);
+  const adv=/avan[cç]ado|intenso|alta intensidade/.test(txt);
+  const seq=[];
+  const has=(...terms)=>terms.some(t=>txt.includes(t));
+  const shot1=has('forehand acelerado')?'Forehand acelerado':has('forehand')?'Forehand neutro':'Voleio forehand';
+  const shot2=has('backhand')?'Backhand neutro':has('gancho')?'Gancho':'Voleio backhand';
+  const shot3=has('smash')?'Smash':has('lob','rainbow')?'Lob / Rainbow':'Gancho';
+  seq.push({actor:'Professor',action:'Lançamento',contactZone:'',contactLane:'',targetPlayer:'Aluno 1',targetZone:'Zona amarela',targetLane:'Esquerda',recoveryZone:'',movement:{type:'parado',direction:''},trajectory:{type:'arco baixo',curve:-22},speed:1.05});
+  seq.push({actor:'Aluno 1',action:shot1,contactZone:has('linha de 3','zona verde')?'Zona verde':'Zona amarela',contactLane:'Esquerda',targetPlayer:playerCount===4?'Aluno 3':'Aluno 2',targetZone:'Zona amarela',targetLane:has('paralela')?'Paralela':has('cruzada','cruzado')?'Cruzada':'Central',recoveryZone:'',movement:{type:has('parado')?'parado':'aproximação',direction:has('parado')?'':'frente'},trajectory:{type:'reta',curve:-18},speed:1.4});
+  if(playerCount===4){
+    seq.push({actor:'Aluno 3',action:shot2,contactZone:has('lob','zona vermelha')?'Zona vermelha':'Zona amarela',contactLane:'Esquerda',targetPlayer:'Aluno 2',targetZone:has('lob','rainbow')?'Zona vermelha':'Zona amarela',targetLane:'Cruzada',recoveryZone:'',movement:{type:has('lob')?'recuo':'lateral',direction:has('lob')?'fundo':'direita'},trajectory:{type:has('lob','rainbow')?'arco alto':'arco baixo',curve:has('lob','rainbow')?-110:-25},speed:has('lob','rainbow')?.9:1.2});
+    seq.push({actor:'Aluno 2',action:shot3,contactZone:has('smash','gancho')?'Zona vermelha':'Zona amarela',contactLane:'Direita',targetPlayer:'Aluno 4',targetZone:'Zona amarela',targetLane:'Paralela',recoveryZone:'',movement:{type:has('smash','gancho')?'recuo':'lateral',direction:has('smash','gancho')?'fundo':'esquerda'},trajectory:{type:has('smash')?'descendente':has('lob','rainbow')?'arco alto':'arco baixo',curve:has('smash')?38:-28},speed:has('smash')?1.8:1.2});
+    if(continuous)seq.push({actor:'Aluno 4',action:has('defesa')?'Defesa de forehand':'Voleio forehand',contactZone:'Zona amarela',contactLane:'Direita',targetPlayer:'Aluno 1',targetZone:'Zona amarela',targetLane:'Cruzada',recoveryZone:'',movement:{type:'lateral',direction:'esquerda'},trajectory:{type:'arco baixo',curve:-22},speed:1.15});
+  }else{
+    seq.push({actor:'Aluno 2',action:shot2,contactZone:'Zona amarela',contactLane:'Direita',targetPlayer:'Aluno 1',targetZone:'Zona amarela',targetLane:'Cruzada',recoveryZone:'',movement:{type:'lateral',direction:'esquerda'},trajectory:{type:'arco baixo',curve:-24},speed:1.15});
+  }
+  return {title:'Treino gerado pela IA local',level:adv?'Avançado':'Intermediário',players:playerCount,mode:continuous?'Contínuo / bola viva':'Sequencial',focus:has('defesa')?'Transição ataque/defesa':has('smash')?'Definição':'Construção de ponto',objective:'Execução automática baseada na prescrição informada.',notes:'Gerado pelo motor local de contingência porque a IA online não respondeu.',timeline:seq};
+}
+
+function jbApplyAITraining(data){
+  if(data.players){playersEl.value=String(data.players);drawCourt()}
+  if(data.level)levelEl.value=data.level;
+  if(data.mode)modeEl.value=data.mode;
+  if(data.focus)focusEl.value=data.focus;
+  if(data.direction && typeof directionEl!=='undefined')directionEl.value=data.direction;
+  if(Array.isArray(data.timeline)){
+    timelineSteps=data.timeline.map(x=>({actor:x.actor||'Professor',action:x.action||'Lançamento',contactZone:x.contactZone||x.receiveZone||'',contactLane:x.contactLane||x.lane||'',targetPlayer:x.targetPlayer||'',targetZone:x.targetZone||'',targetLane:x.targetLane||'',recoveryZone:x.recoveryZone||'',recoveryLane:x.recoveryLane||'',movement:x.movement||{},trajectory:x.trajectory||{},speed:+x.speed||1}));
+    renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});buildTimelineVisuals?.();
+  }
+  exTitle.textContent=data.title||'Treino tático por IA';
+  objective.textContent=data.objective||'Treino montado automaticamente.';
+  if(data.notes && typeof status!=='undefined')status.textContent=data.notes;
+}
+
 if(typeof onlineAiGenerate!=='undefined'){
   onlineAiGenerate.onclick=async()=>{
     const prompt=onlineAiPrompt.value.trim();
     if(!prompt){onlineAiState.className='ai-state err';onlineAiState.textContent='Descreva o treino.';return}
+    onlineAiGenerate.disabled=true;
     onlineAiState.className='ai-state';onlineAiState.textContent='IA montando deslocamentos, zonas de contato e trajetórias...';
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),18000);
     try{
-      const res=await fetch('/api/generate-training',{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({prompt,context:{
-          level:levelEl.value,players:+playersEl.value,mode:modeEl.value,focus:focusEl.value,
-          availableShots:shots,
-          request:'include contactZone, contactLane, targetPlayer, targetZone, targetLane, recoveryZone, movement and trajectory for every timeline step'
-        }})
-      });
-      if(!res.ok)throw new Error(await res.text());
+      const res=await fetch('/api/generate-training',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({prompt,context:{level:levelEl.value,players:+playersEl.value,mode:modeEl.value,focus:focusEl.value,availableShots:shots,request:'include contactZone, contactLane, targetPlayer, targetZone, targetLane, recoveryZone, movement and trajectory for every timeline step'}})});
+      clearTimeout(timer);
+      if(!res.ok)throw new Error('API '+res.status+': '+(await res.text()));
       const data=await res.json();
-      if(data.players){playersEl.value=String(data.players);drawCourt()}
-      if(data.level)levelEl.value=data.level;
-      if(data.mode)modeEl.value=data.mode;
-      if(data.focus)focusEl.value=data.focus;
-      if(Array.isArray(data.timeline)){
-        timelineSteps=data.timeline.map(x=>({
-          actor:x.actor||'Professor',
-          action:x.action||'Lançamento',
-          contactZone:x.contactZone||x.receiveZone||'',
-          contactLane:x.contactLane||x.lane||'',
-          targetPlayer:x.targetPlayer||'',
-          targetZone:x.targetZone||'',
-          targetLane:x.targetLane||'',
-          recoveryZone:x.recoveryZone||'',
-          recoveryLane:x.recoveryLane||'',
-          movement:x.movement||{},
-          trajectory:x.trajectory||{},
-          speed:+x.speed||1
-        }));
-        renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});
-      }
-      exTitle.textContent=data.title||'Treino tático por IA';
-      objective.textContent=data.objective||'';
-      onlineAiState.className='ai-state ok';
-      onlineAiState.textContent='Treino aplicado com zonas de contato e deslocamentos.';
+      if(!data || !Array.isArray(data.timeline) || !data.timeline.length)throw new Error('A API respondeu sem timeline.');
+      jbApplyAITraining(data);
+      onlineAiState.className='ai-state ok';onlineAiState.textContent='Treino gerado pela IA online e aplicado à quadra.';
     }catch(e){
-      console.error(e);
-      onlineAiState.className='ai-state err';
-      onlineAiState.textContent='Não foi possível gerar. Verifique créditos e logs.';
-    }
+      clearTimeout(timer);console.error('JB IA online:',e);
+      const local=jbLocalTrainingFallback(prompt);jbApplyAITraining(local);
+      onlineAiState.className='ai-state ok';
+      onlineAiState.textContent=e && e.name==='AbortError'?'IA online demorou para responder. Treino gerado pelo motor local de contingência.':'IA online indisponível. Treino gerado pelo motor local de contingência.';
+    }finally{onlineAiGenerate.disabled=false;}
   };
 }
 
