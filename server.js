@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(path.join(__dirname, "public"), { index: "index.html" }));
 
-app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Treinos Pro" }));
+app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Play V16.2", ai: !!client }));
 
 const apiKey = process.env.OPENAI_API_KEY;
 const client = apiKey ? new OpenAI({ apiKey }) : null;
@@ -87,6 +87,27 @@ REGRA DE RETORNO AUTOMÁTICO:
 - A IA NÃO precisa inventar recoveryZone para voltar ao home; o motor fará isso automaticamente.
 - Só informe recoveryZone se o professor explicitamente quiser uma recuperação diferente do ponto inicial.
 
+
+MOTOR INTELIGENTE DE PRESCRIÇÃO V16.2:
+- Converta a prescrição em uma sequência executável, não em explicação.
+- Cada toque na bola deve ser uma etapa da timeline.
+- O destino de uma bola deve coincidir com o ponto de contato do próximo jogador quando targetPlayer existir.
+- "paralela": mantém a coluna/lado da quadra (Aluno 1↔Aluno 3; Aluno 2↔Aluno 4).
+- "cruzada": cruza a coluna (Aluno 1↔Aluno 4; Aluno 2↔Aluno 3).
+- "central": use targetLane Central/Zona 3, sem trocar a identidade dos jogadores.
+- Se o professor lançar para um aluno, actor=Professor e targetPlayer deve ser esse aluno.
+- Se o professor disser "parado", não crie deslocamento nem contactZone artificial.
+- Se especificar linha de 3 m, use Zona verde; linha de 6 m, use Zona amarela; fundo/8 m, use Zona vermelha.
+- Para bola viva/contínuo, cada targetPlayer deve ser o actor da próxima etapa sempre que houver recebedor.
+- Para lob/rainbow, trajectory.type=arco alto e speed entre 0.75 e 1.05.
+- Para smash, trajectory.type=descendente e speed entre 1.5 e 2.0.
+- Para curta, trajectory.type=curta e targetZone=Zona verde.
+- Para voleios/forehands/backhands normais, use reta ou arco baixo conforme a descrição.
+- Preserve literalmente a ordem pedida pelo professor.
+- Não acrescente golpes que não foram pedidos, exceto quando a prescrição solicitar treino aberto/bola viva e precisar de continuidade.
+- Se houver ambiguidade, escolha a interpretação mais conservadora e registre em warnings.
+- Inclua confidence de 0 a 1 para a interpretação global.
+
 Responda SOMENTE em JSON válido:
 {
  "title":"string",
@@ -98,6 +119,8 @@ Responda SOMENTE em JSON válido:
  "shots":["..."],
  "objective":"string",
  "notes":"string",
+ "confidence":0.95,
+ "warnings":["string"],
  "timeline":[
    {
      "actor":"Professor|Aluno 1|Aluno 2|Aluno 3|Aluno 4",
@@ -118,37 +141,44 @@ Responda SOMENTE em JSON válido:
 `;
 
 app.post("/api/generate-training", async (req, res) => {
-  try {console.log("🤖 JB PLAY IA: requisição recebida");
+  const started = Date.now();
+  try {
+    console.log("JB PLAY IA: requisicao recebida");
     const { prompt, context } = req.body || {};
-    if (!prompt) return res.status(400).send("Prompt ausente.");
-    if (!client) return res.status(503).send("OPENAI_API_KEY não configurada no servidor.");
-       console.log("JB PLAY IA: chave encontrada - chamando OpenAI...");
+    if (!prompt) return res.status(400).json({ error: "Prompt ausente." });
+    if (!client) return res.status(503).json({ error: "OPENAI_API_KEY nao configurada no servidor." });
 
+    console.log("JB PLAY IA: chave encontrada - chamando OpenAI...");
     const response = await client.responses.create({
-  model,
-  input: [
-    { role: "system", content: SYSTEM },
-    { role: "user", content: `Pedido do professor: ${prompt}` }
-  ]
-}, {
-  timeout: 60000,
-  maxRetries: 1
-});
+      model,
+      input: [
+        { role: "system", content: SYSTEM },
+        { role: "user", content: `Pedido do professor: ${prompt}\nContexto atual: ${JSON.stringify(context || {})}` }
+      ]
+    }, { timeout: 60000, maxRetries: 1 });
 
-console.log("JB PLAY IA: resposta recebida da OpenAI");
-
+    console.log(`JB PLAY IA: resposta recebida da OpenAI em ${Date.now()-started}ms`);
     const text = (response.output_text || "").trim();
-    const clean = text.replace(/^```json\s*/i, "").replace(/```$/,"").trim();
-    res.json(JSON.parse(clean));
+    const clean = text.replace(/^```json\s*/i, "").replace(/```$/," ").trim();
+    const plan = JSON.parse(clean);
+    if (!plan || !Array.isArray(plan.timeline) || !plan.timeline.length) {
+      return res.status(422).json({ error: "Resposta da IA sem timeline executavel." });
+    }
+    plan.meta = { source: "openai", model, latencyMs: Date.now()-started, schema: "jb-prescription-v16.2" };
+    res.json(plan);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Falha ao gerar treino com IA.");
+    console.error("JB PLAY IA ERRO:", err?.name || "Error", err?.message || err);
+    res.status(err?.name === "APIConnectionTimeoutError" ? 504 : 500).json({
+      error: "Falha ao gerar treino com IA.",
+      type: err?.name || "Error",
+      message: err?.message || "Erro desconhecido"
+    });
   }
 });
 
 app.get("/{*splat}", (_req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"))
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, "0.0.0.0", () => console.log(`JB Treinos Pro em http://0.0.0.0:${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`JB Play V16.2 em http://0.0.0.0:${port}`));
