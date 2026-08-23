@@ -1319,7 +1319,7 @@ body.v16-presentation .v16-present-exit{display:block}
 
 
       <div class="card info v16-card" id="v16-smart">
-        <div class="section-title">V17.1 • Simulador inteligente <span class="v16-badge">PHYSICAL TIMELINE ENGINE</span></div>
+        <div class="section-title">V17.2 • Simulador inteligente <span class="v16-badge">CLEAN PHYSICAL + TEST FIX</span></div>
         <div class="v16-grid" style="margin-top:9px">
           <div class="v16-switch"><label>Motor de bola 3D</label><input id="v16Physics" type="checkbox" checked></div>
           <div class="v16-switch"><label>Bola viva encadeada</label><input id="v16LiveBall" type="checkbox" checked></div>
@@ -3912,7 +3912,7 @@ window.v166DepthScale=function(point){
   // Marca versão no painel sem alterar a lógica do app.
   const versionNote=document.createElement('div');
   versionNote.id='v15VersionNote';
-  versionNote.textContent='V16.8 • PHYSICAL TIMELINE ENGINE';
+  versionNote.textContent='V16.8 • CLEAN PHYSICAL + TEST FIX';
   versionNote.style.cssText='position:fixed;right:12px;bottom:10px;z-index:20;font:800 10px system-ui;color:#cfff20;background:rgba(7,16,22,.72);border:1px solid rgba(207,255,32,.28);padding:6px 9px;border-radius:9px;pointer-events:none;letter-spacing:.8px';
   document.body.appendChild(versionNote);
 })();
@@ -4073,7 +4073,7 @@ window.v166DepthScale=function(point){
 
 
 <script id="jb-v168-physical-target-fix">
-// ===== JB PLAY V16.8 — PHYSICAL TIMELINE ENGINE =====
+// ===== JB PLAY V16.8 — CLEAN PHYSICAL + TEST FIX =====
 (function(){
   // Remove qualquer desenho legado de rotas ao aplicar uma prescrição da IA.
   window.buildTimelineVisuals=function(){
@@ -4142,7 +4142,7 @@ window.v166DepthScale=function(point){
 
 
 <script id="jb-v169-clean-continuity-engine">
-// ===== JB PLAY V16.9 — PHYSICAL TIMELINE ENGINE =====
+// ===== JB PLAY V16.9 — CLEAN PHYSICAL + TEST FIX =====
 (function(){
   const $ = id => document.getElementById(id);
   let v169Running = false;
@@ -4553,7 +4553,7 @@ body.v169-running #courtSvg .v169-flight-guide{
 
 
 <script id="jb-v170-animation-test-mode">
-// ===== JB PLAY V17.0 — PHYSICAL TIMELINE ENGINE =====
+// ===== JB PLAY V17.0 — CLEAN PHYSICAL + TEST FIX =====
 (function(){
   const $ = id => document.getElementById(id);
 
@@ -4768,7 +4768,7 @@ body.v169-running #courtSvg .v169-flight-guide{
 
 
 <script id="jb-v171-physical-timeline-engine">
-// ===== JB PLAY V17.1 — PHYSICAL TIMELINE ENGINE =====
+// ===== JB PLAY V17.1 — CLEAN PHYSICAL + TEST FIX =====
 (function(){
   const $=id=>document.getElementById(id);
   const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
@@ -4913,6 +4913,264 @@ body.v171-running #courtSvg .v53-route,
 body.v171-running #courtSvg .v5-temp-route,
 body.v171-running #courtSvg .v52-run,
 body.v171-running #courtSvg .v53-run{display:none!important}
+</style>
+
+
+<script id="jb-v172-clean-physical-test-fix">
+// ===== JB PLAY V17.2 — CLEAN PHYSICAL + TEST FIX =====
+(function(){
+  const $ = id => document.getElementById(id);
+
+  // O motor físico V17.1 já está ligado aos botões neste ponto.
+  // Guardamos a função diretamente para o Modo Teste não depender de .click()
+  // nem de window.timelineSteps (timelineSteps é um 'let' global lexical).
+  const physicalRun =
+    $('v16Run')?.onclick ||
+    $('playTimeline')?.onclick ||
+    $('animate')?.onclick ||
+    null;
+
+  const STORAGE_KEY = 'jbplay_last_ai_timeline_v172';
+  const USAGE_KEY = 'jbplay_ai_usage_v172';
+
+  function usage(){
+    try { return JSON.parse(localStorage.getItem(USAGE_KEY) || '{"generations":0,"tests":0}'); }
+    catch(e){ return {generations:0,tests:0}; }
+  }
+  function saveUsage(u){
+    localStorage.setItem(USAGE_KEY, JSON.stringify(u));
+    renderUsage();
+  }
+  function renderUsage(){
+    const u=usage();
+    const box=$('v170Usage');
+    if(box) box.innerHTML =
+      `<b>IA online:</b> ${u.generations} geração(ões) &nbsp;•&nbsp; `+
+      `<b>Testes sem IA:</b> ${u.tests}`;
+  }
+  function status(msg, ok=true){
+    const e=$('v170Status');
+    if(!e) return;
+    e.textContent=msg;
+    e.dataset.ok=ok?'1':'0';
+  }
+
+  function snapshot(){
+    if(!Array.isArray(timelineSteps) || !timelineSteps.length) return false;
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        savedAt:new Date().toISOString(),
+        timeline:timelineSteps,
+        prescription:($('onlineAiPrompt')?.value || '').trim()
+      }));
+      return true;
+    }catch(e){
+      console.error('V17.2 snapshot:',e);
+      return false;
+    }
+  }
+
+  function saved(){
+    try{
+      const d=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
+      return Array.isArray(d?.timeline)&&d.timeline.length?d:null;
+    }catch(e){ return null; }
+  }
+
+  // ===== LIMPEZA DEFINITIVA DA CAMADA ANTIGA =====
+  const actionWords =
+    /lan[çc]a|executa|avan[çc]a|recua|devolve|defende|ponto livre|gancho|lob|smash|bandeja|voleio|forehand|backhand|rainbow|an[oô]malo|saque|curta/i;
+
+  function removeLegacyOverlays(){
+    if(typeof svg==='undefined' || !svg) return;
+
+    // Elementos dinâmicos criados pelos motores V4–V16.
+    svg.querySelectorAll([
+      '.trajectory-label',
+      '.v5-step-badge',
+      '.v5-temp-route',
+      '.v52-phase-label',
+      '.v52-run',
+      '.v52-trail',
+      '.v53-label',
+      '.v53-route',
+      '.v53-run',
+      '.v53-trail',
+      '.v54-start-line',
+      '.v54-id-label',
+      '#ballAnim',
+      '#ballTrail'
+    ].join(',')).forEach(n=>n.remove());
+
+    // Alguns motores antigos criaram paths com setas sem classe consistente.
+    svg.querySelectorAll('path[marker-end]').forEach(n=>{
+      if(!n.closest('defs')) n.remove();
+    });
+
+    // Remove somente textos de ação; preserva A1-A4, zonas, marca d'água e professor.
+    svg.querySelectorAll('text').forEach(t=>{
+      const txt=(t.textContent||'').trim();
+      if(!txt) return;
+      if(/^A[1-4]$/i.test(txt)) return;
+      if(/^(1|2|3|4|5)$/.test(txt)) return;
+      if(/JOÃO BERTONHA|JB PLAY|PROFESSOR/i.test(txt)) return;
+      if(actionWords.test(txt)) t.remove();
+    });
+
+    // Desliga efeitos técnicos antigos que podiam aparecer sobre o atleta.
+    ['v15PhaseTag','v15TechRing','v15FootRing','v15ImpactStar'].forEach(id=>{
+      const n=$(id);
+      if(n) n.setAttribute('opacity','0');
+    });
+  }
+
+  // Esses builders não desenham mais nada na quadra.
+  // A descrição continua no painel lateral via renderAIPlan.
+  window.buildTimelineVisuals = function(){ removeLegacyOverlays(); };
+  window.buildRealisticVisuals = function(){ removeLegacyOverlays(); };
+
+  // Alguns scripts antigos chamam estas funções diretamente.
+  if(typeof window.v5DrawStep === 'function') window.v5DrawStep = function(){};
+  if(typeof window.v52DrawStep === 'function') window.v52DrawStep = function(){};
+
+  // Observer permanente: se qualquer renderer legado tentar reaparecer,
+  // o elemento é removido no mesmo ciclo de DOM.
+  let cleaning=false;
+  const obs=new MutationObserver(()=>{
+    if(cleaning) return;
+    cleaning=true;
+    requestAnimationFrame(()=>{
+      removeLegacyOverlays();
+      cleaning=false;
+    });
+  });
+  if(typeof svg!=='undefined' && svg){
+    obs.observe(svg,{childList:true,subtree:true});
+  }
+
+  // ===== MODO TESTE CORRIGIDO =====
+  function installTestMode(){
+    const panel=$('v170Panel');
+    if(panel){
+      const title=panel.querySelector('.v170-title');
+      if(title) title.textContent='MODO TESTE DE ANIMAÇÃO — V17.2';
+      const sub=panel.querySelector('.v170-sub');
+      if(sub) sub.textContent='Reutiliza a última timeline da IA. Não faz nova chamada à OpenAI.';
+    }
+
+    const testBtn=$('v170TestBtn');
+    const replayBtn=$('v170ReplayBtn');
+
+    async function runSavedTest(){
+      if(!physicalRun){
+        status('Motor físico não encontrado. Atualize a página.',false);
+        return;
+      }
+
+      // Se há timeline atual válida, salva ela. Caso contrário recupera a última.
+      if(Array.isArray(timelineSteps) && timelineSteps.length){
+        snapshot();
+      }else{
+        const d=saved();
+        if(!d){
+          status('Primeiro gere um treino com IA online.',false);
+          return;
+        }
+        timelineSteps = JSON.parse(JSON.stringify(d.timeline));
+        try{ renderTimeline?.(); }catch(e){}
+        try{ renderAIPlan?.({timeline:timelineSteps}); }catch(e){}
+      }
+
+      removeLegacyOverlays();
+      const u=usage();
+      u.tests++;
+      saveUsage(u);
+      status('Executando timeline salva • nenhuma chamada à OpenAI.');
+
+      try{
+        await physicalRun();
+        status('Teste concluído sem consumir nova geração de IA.');
+      }catch(e){
+        console.error('V17.2 teste:',e);
+        status('Falha ao executar o teste de animação: '+(e?.message||e),false);
+      }
+    }
+
+    if(testBtn) testBtn.onclick=runSavedTest;
+    if(replayBtn) replayBtn.onclick=runSavedTest;
+
+    renderUsage();
+    const d=saved();
+    if(d){
+      const when=new Date(d.savedAt);
+      status('Timeline salva para teste • '+when.toLocaleString());
+    }else{
+      status('Gere um treino com IA uma vez para liberar os testes.');
+    }
+  }
+
+  // ===== SALVA APÓS GERAÇÃO ONLINE =====
+  // Não altera a chamada da OpenAI: apenas observa o resultado já aplicado.
+  const aiBtn=$('onlineAiGenerate');
+  if(aiBtn){
+    aiBtn.addEventListener('click',()=>{
+      const previousJSON=JSON.stringify(Array.isArray(timelineSteps)?timelineSteps:[]);
+      const started=Date.now();
+      const timer=setInterval(()=>{
+        const has=Array.isArray(timelineSteps)&&timelineSteps.length;
+        const changed=has && JSON.stringify(timelineSteps)!==previousJSON;
+        const success=$('onlineAiState')?.classList?.contains('ok');
+
+        if(has && (changed || success)){
+          clearInterval(timer);
+          if(snapshot()){
+            const u=usage();
+            u.generations++;
+            saveUsage(u);
+            status('Treino da IA salvo. Agora você pode repetir sem gastar nova chamada.');
+          }
+          removeLegacyOverlays();
+        }else if(Date.now()-started>105000){
+          clearInterval(timer);
+        }
+      },400);
+    },true);
+  }
+
+  // Reforça que os botões normais também usam apenas o motor físico V17.1.
+  if(physicalRun){
+    ['v16Run','playTimeline','animate'].forEach(id=>{
+      const b=$(id);
+      if(b) b.onclick=physicalRun;
+    });
+  }
+
+  // Limpeza inicial e instalação após o DOM estar estável.
+  removeLegacyOverlays();
+  setTimeout(()=>{
+    installTestMode();
+    removeLegacyOverlays();
+    if(Array.isArray(timelineSteps)&&timelineSteps.length) snapshot();
+  },250);
+})();
+</script>
+
+<style id="jb-v172-clean-style">
+/* Nenhum texto técnico de ação deve existir sobre a quadra */
+#courtSvg .trajectory-label,
+#courtSvg .v5-step-badge,
+#courtSvg .v52-phase-label,
+#courtSvg .v53-label,
+#courtSvg .v54-id-label,
+#courtSvg .v5-temp-route,
+#courtSvg .v52-run,
+#courtSvg .v52-trail,
+#courtSvg .v53-route,
+#courtSvg .v53-run,
+#courtSvg .v53-trail,
+#courtSvg .v54-start-line{
+  display:none !important;
+}
 </style>
 
 </body>
