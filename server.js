@@ -10,11 +10,21 @@ const app = express();
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(path.join(__dirname, "public"), { index: "index.html" }));
 
-app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Play V16.2", ai: !!client }));
+app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Play V16.3", ai: !!client }));
 
 const apiKey = process.env.OPENAI_API_KEY;
 const client = apiKey ? new OpenAI({ apiKey }) : null;
-const model = process.env.OPENAI_MODEL || "gpt-5-mini";
+const model = process.env.OPENAI_MODEL || "gpt-5.4-mini";
+
+app.get("/api/ai-status", (_req, res) => {
+  res.json({
+    online: !!client,
+    model,
+    provider: "OpenAI",
+    mode: "online-only",
+    version: "16.3"
+  });
+});
 
 const SYSTEM = `
 Você é o motor tático do JB Play, especializado em Beach Tennis.
@@ -88,7 +98,7 @@ REGRA DE RETORNO AUTOMÁTICO:
 - Só informe recoveryZone se o professor explicitamente quiser uma recuperação diferente do ponto inicial.
 
 
-MOTOR INTELIGENTE DE PRESCRIÇÃO V16.2:
+MOTOR INTELIGENTE DE PRESCRIÇÃO V16.3:
 - Converta a prescrição em uma sequência executável, não em explicação.
 - Cada toque na bola deve ser uma etapa da timeline.
 - O destino de uma bola deve coincidir com o ponto de contato do próximo jogador quando targetPlayer existir.
@@ -154,8 +164,9 @@ app.post("/api/generate-training", async (req, res) => {
       input: [
         { role: "system", content: SYSTEM },
         { role: "user", content: `Pedido do professor: ${prompt}\nContexto atual: ${JSON.stringify(context || {})}` }
-      ]
-    }, { timeout: 60000, maxRetries: 1 });
+      ],
+      text: { format: { type: "json_object" } }
+    }, { timeout: 90000, maxRetries: 0 });
 
     console.log(`JB PLAY IA: resposta recebida da OpenAI em ${Date.now()-started}ms`);
     const text = (response.output_text || "").trim();
@@ -164,14 +175,21 @@ app.post("/api/generate-training", async (req, res) => {
     if (!plan || !Array.isArray(plan.timeline) || !plan.timeline.length) {
       return res.status(422).json({ error: "Resposta da IA sem timeline executavel." });
     }
-    plan.meta = { source: "openai", model, latencyMs: Date.now()-started, schema: "jb-prescription-v16.2" };
+    plan.meta = { source: "openai", model, latencyMs: Date.now()-started, schema: "jb-prescription-v16.3" };
     res.json(plan);
   } catch (err) {
-    console.error("JB PLAY IA ERRO:", err?.name || "Error", err?.message || err);
-    res.status(err?.name === "APIConnectionTimeoutError" ? 504 : 500).json({
-      error: "Falha ao gerar treino com IA.",
+    console.error("JB PLAY IA ERRO:", err?.status || "", err?.name || "Error", err?.message || err);
+    const status = err?.status || (err?.name === "APIConnectionTimeoutError" ? 504 : 500);
+    let error = "Falha ao gerar treino com IA online.";
+    if (status === 401) error = "Chave da OpenAI inválida ou não autorizada.";
+    else if (status === 429) error = "Limite/quota da OpenAI atingido. Verifique créditos e limites do projeto.";
+    else if (status === 404) error = `Modelo ${model} indisponível para esta chave/projeto.`;
+    else if (status === 504) error = "A OpenAI excedeu o tempo máximo de resposta.";
+    res.status(status).json({
+      error,
       type: err?.name || "Error",
-      message: err?.message || "Erro desconhecido"
+      message: err?.message || "Erro desconhecido",
+      model
     });
   }
 });
@@ -181,4 +199,4 @@ app.get("/{*splat}", (_req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, "0.0.0.0", () => console.log(`JB Play V16.2 em http://0.0.0.0:${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`JB Play V16.3 em http://0.0.0.0:${port}`));
