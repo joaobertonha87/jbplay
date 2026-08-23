@@ -1319,7 +1319,7 @@ body.v16-presentation .v16-present-exit{display:block}
 
 
       <div class="card info v16-card" id="v16-smart">
-        <div class="section-title">V17.3 • Simulador inteligente <span class="v16-badge">SYNCED MOVEMENT + TEST MODE</span></div>
+        <div class="section-title">V17.4 • Simulador inteligente <span class="v16-badge">PERSISTENT SESSION + MOVEMENT SYNC</span></div>
         <div class="v16-grid" style="margin-top:9px">
           <div class="v16-switch"><label>Motor de bola 3D</label><input id="v16Physics" type="checkbox" checked></div>
           <div class="v16-switch"><label>Bola viva encadeada</label><input id="v16LiveBall" type="checkbox" checked></div>
@@ -3912,7 +3912,7 @@ window.v166DepthScale=function(point){
   // Marca versão no painel sem alterar a lógica do app.
   const versionNote=document.createElement('div');
   versionNote.id='v15VersionNote';
-  versionNote.textContent='V16.8 • SYNCED MOVEMENT + TEST MODE';
+  versionNote.textContent='V16.8 • PERSISTENT SESSION + MOVEMENT SYNC';
   versionNote.style.cssText='position:fixed;right:12px;bottom:10px;z-index:20;font:800 10px system-ui;color:#cfff20;background:rgba(7,16,22,.72);border:1px solid rgba(207,255,32,.28);padding:6px 9px;border-radius:9px;pointer-events:none;letter-spacing:.8px';
   document.body.appendChild(versionNote);
 })();
@@ -4073,7 +4073,7 @@ window.v166DepthScale=function(point){
 
 
 <script id="jb-v168-physical-target-fix">
-// ===== JB PLAY V16.8 — SYNCED MOVEMENT + TEST MODE =====
+// ===== JB PLAY V16.8 — PERSISTENT SESSION + MOVEMENT SYNC =====
 (function(){
   // Remove qualquer desenho legado de rotas ao aplicar uma prescrição da IA.
   window.buildTimelineVisuals=function(){
@@ -4142,7 +4142,7 @@ window.v166DepthScale=function(point){
 
 
 <script id="jb-v169-clean-continuity-engine">
-// ===== JB PLAY V16.9 — SYNCED MOVEMENT + TEST MODE =====
+// ===== JB PLAY V16.9 — PERSISTENT SESSION + MOVEMENT SYNC =====
 (function(){
   const $ = id => document.getElementById(id);
   let v169Running = false;
@@ -4553,7 +4553,7 @@ body.v169-running #courtSvg .v169-flight-guide{
 
 
 <script id="jb-v170-animation-test-mode">
-// ===== JB PLAY V17.0 — SYNCED MOVEMENT + TEST MODE =====
+// ===== JB PLAY V17.0 — PERSISTENT SESSION + MOVEMENT SYNC =====
 (function(){
   const $ = id => document.getElementById(id);
 
@@ -4768,7 +4768,7 @@ body.v169-running #courtSvg .v169-flight-guide{
 
 
 <script id="jb-v171-physical-timeline-engine">
-// ===== JB PLAY V17.1 — SYNCED MOVEMENT + TEST MODE =====
+// ===== JB PLAY V17.1 — PERSISTENT SESSION + MOVEMENT SYNC =====
 (function(){
   const $=id=>document.getElementById(id);
   const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
@@ -4917,7 +4917,7 @@ body.v171-running #courtSvg .v53-run{display:none!important}
 
 
 <script id="jb-v172-clean-physical-test-fix">
-// ===== JB PLAY V17.2 — SYNCED MOVEMENT + TEST MODE =====
+// ===== JB PLAY V17.2 — PERSISTENT SESSION + MOVEMENT SYNC =====
 (function(){
   const $ = id => document.getElementById(id);
 
@@ -5175,7 +5175,7 @@ body.v171-running #courtSvg .v53-run{display:none!important}
 
 
 <script id="jb-v173-synced-movement-test-mode">
-// ===== JB PLAY V17.3 — SYNCED MOVEMENT + TEST MODE =====
+// ===== JB PLAY V17.3 — PERSISTENT SESSION + MOVEMENT SYNC =====
 (function(){
   const $=id=>document.getElementById(id);
   const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
@@ -5599,6 +5599,214 @@ body.v173-running #courtSvg .v52-run,
 body.v173-running #courtSvg .v53-run,
 body.v173-running #courtSvg .v54-start-line{
   display:none!important;
+}
+</style>
+
+
+<script id="jb-v174-persistent-session">
+(function(){
+  const $=id=>document.getElementById(id);
+  const KEY='jbplay_persistent_ai_session_v174';
+  const SCHEMA=1;
+
+  function saveSession(reason='auto'){
+    try{
+      if(!Array.isArray(timelineSteps)||!timelineSteps.length) return false;
+      const payload={
+        schema:SCHEMA,
+        savedAt:new Date().toISOString(),
+        appVersion:'V17.4',
+        reason,
+        prescription:
+          ($('onlineAiPrompt')?.value ||
+           $('aiPrescription')?.value ||
+           $('prescription')?.value ||
+           '').trim(),
+        timeline:timelineSteps
+      };
+      localStorage.setItem(KEY,JSON.stringify(payload));
+      updatePersistentStatus('Último treino salvo automaticamente para uso após F5/deploy.');
+      return true;
+    }catch(e){
+      console.error('V17.4 saveSession',e);
+      updatePersistentStatus('Não foi possível salvar a sessão do treino.',false);
+      return false;
+    }
+  }
+
+  function loadSession(){
+    try{
+      const raw=localStorage.getItem(KEY);
+      if(!raw) return null;
+      const data=JSON.parse(raw);
+      if(data?.schema!==SCHEMA || !Array.isArray(data?.timeline) || !data.timeline.length) return null;
+      return data;
+    }catch(e){
+      console.error('V17.4 loadSession',e);
+      return null;
+    }
+  }
+
+  function updatePersistentStatus(msg,ok=true){
+    const el=$('v174PersistentStatus');
+    if(el){el.textContent=msg;el.dataset.ok=ok?'1':'0';}
+  }
+
+  function restoreSession(auto=false){
+    const data=loadSession();
+    if(!data){
+      updatePersistentStatus('Nenhum treino salvo ainda.',false);
+      return false;
+    }
+
+    timelineSteps=JSON.parse(JSON.stringify(data.timeline));
+    try{ renderTimeline?.(); }catch(e){}
+    try{ renderAIPlan?.({timeline:timelineSteps}); }catch(e){}
+
+    const prompt =
+      $('onlineAiPrompt') ||
+      $('aiPrescription') ||
+      $('prescription');
+    if(prompt && data.prescription && !prompt.value) prompt.value=data.prescription;
+
+    const when=new Date(data.savedAt);
+    updatePersistentStatus(
+      `${auto?'Treino restaurado automaticamente':'Último treino restaurado'} • ${when.toLocaleString()}`
+    );
+
+    // Atualiza painel de teste existente
+    const st=$('v170Status');
+    if(st) st.textContent='Treino restaurado e pronto para testar sem IA.';
+    return true;
+  }
+
+  function buildPanel(){
+    if($('v174PersistentPanel')) return;
+    const testPanel=$('v170Panel');
+    const anchor=testPanel?.parentElement || testPanel || $('onlineAiGenerate')?.parentElement;
+    if(!anchor) return;
+
+    const box=document.createElement('div');
+    box.id='v174PersistentPanel';
+    box.innerHTML=`
+      <div class="v174-title">SESSÃO PERSISTENTE</div>
+      <div class="v174-sub">
+        O último treino da IA fica salvo no navegador e volta após F5 ou novo deploy.
+      </div>
+      <div class="v174-actions">
+        <button type="button" id="v174RestoreBtn">↺ Restaurar último treino</button>
+        <button type="button" id="v174ClearBtn">🗑 Limpar treino salvo</button>
+      </div>
+      <div id="v174PersistentStatus"></div>
+    `;
+    if(testPanel) testPanel.insertAdjacentElement('afterend',box);
+    else anchor.appendChild(box);
+
+    $('v174RestoreBtn').onclick=()=>restoreSession(false);
+    $('v174ClearBtn').onclick=()=>{
+      localStorage.removeItem(KEY);
+      updatePersistentStatus('Treino salvo removido.');
+    };
+
+    const data=loadSession();
+    if(data){
+      const when=new Date(data.savedAt);
+      updatePersistentStatus(`Treino salvo disponível • ${when.toLocaleString()}`);
+    }else{
+      updatePersistentStatus('Nenhum treino salvo ainda.');
+    }
+  }
+
+  // Salva automaticamente sempre que a IA terminar e houver timeline válida.
+  const aiBtn=$('onlineAiGenerate');
+  if(aiBtn){
+    aiBtn.addEventListener('click',()=>{
+      const started=Date.now();
+      const before=JSON.stringify(Array.isArray(timelineSteps)?timelineSteps:[]);
+      const t=setInterval(()=>{
+        if(Array.isArray(timelineSteps)&&timelineSteps.length){
+          const now=JSON.stringify(timelineSteps);
+          if(now!==before || Date.now()-started>1200){
+            clearInterval(t);
+            saveSession('online-ai-generation');
+          }
+        }
+        if(Date.now()-started>105000) clearInterval(t);
+      },400);
+    },true);
+  }
+
+  // Também salva a timeline atual quando o usuário inicia um teste,
+  // garantindo que refinamentos feitos na mesma página persistam.
+  const installTestHook=()=>{
+    const test=$('v170TestBtn'), replay=$('v170ReplayBtn');
+    [test,replay].forEach(btn=>{
+      if(!btn || btn.dataset.v174hooked) return;
+      btn.dataset.v174hooked='1';
+      btn.addEventListener('click',()=>saveSession('animation-test'),true);
+    });
+  };
+
+  // Auto-restore depois de todos os scripts antigos criarem seus painéis.
+  setTimeout(()=>{
+    buildPanel();
+    installTestHook();
+
+    if((!Array.isArray(timelineSteps) || !timelineSteps.length) && loadSession()){
+      restoreSession(true);
+    }else if(Array.isArray(timelineSteps)&&timelineSteps.length){
+      saveSession('page-loaded-with-timeline');
+    }
+  },800);
+
+  let tries=0;
+  const hooker=setInterval(()=>{
+    buildPanel();
+    installTestHook();
+    tries++;
+    if(tries>20)clearInterval(hooker);
+  },300);
+})();
+</script>
+
+<style id="jb-v174-persistent-style">
+#v174PersistentPanel{
+  margin-top:10px;
+  padding:13px;
+  border:1px solid rgba(219,255,71,.28);
+  border-radius:13px;
+  background:rgba(7,20,30,.66);
+}
+#v174PersistentPanel .v174-title{
+  font-weight:800;
+  letter-spacing:.07em;
+  font-size:12px;
+}
+#v174PersistentPanel .v174-sub{
+  margin-top:5px;
+  font-size:11px;
+  opacity:.78;
+  line-height:1.35;
+}
+#v174PersistentPanel .v174-actions{
+  margin-top:9px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+#v174PersistentPanel button{
+  cursor:pointer;
+  padding:9px 11px;
+  border-radius:9px;
+  border:1px solid rgba(219,255,71,.30);
+  background:rgba(219,255,71,.08);
+  color:inherit;
+  font-weight:700;
+}
+#v174PersistentStatus{
+  margin-top:7px;
+  font-size:11px;
+  opacity:.75;
 }
 </style>
 
