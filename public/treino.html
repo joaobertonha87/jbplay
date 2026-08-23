@@ -1319,7 +1319,7 @@ body.v16-presentation .v16-present-exit{display:block}
 
 
       <div class="card info v16-card" id="v16-smart">
-        <div class="section-title">V17.2 • Simulador inteligente <span class="v16-badge">CLEAN PHYSICAL + TEST FIX</span></div>
+        <div class="section-title">V17.3 • Simulador inteligente <span class="v16-badge">SYNCED MOVEMENT + TEST MODE</span></div>
         <div class="v16-grid" style="margin-top:9px">
           <div class="v16-switch"><label>Motor de bola 3D</label><input id="v16Physics" type="checkbox" checked></div>
           <div class="v16-switch"><label>Bola viva encadeada</label><input id="v16LiveBall" type="checkbox" checked></div>
@@ -3912,7 +3912,7 @@ window.v166DepthScale=function(point){
   // Marca versão no painel sem alterar a lógica do app.
   const versionNote=document.createElement('div');
   versionNote.id='v15VersionNote';
-  versionNote.textContent='V16.8 • CLEAN PHYSICAL + TEST FIX';
+  versionNote.textContent='V16.8 • SYNCED MOVEMENT + TEST MODE';
   versionNote.style.cssText='position:fixed;right:12px;bottom:10px;z-index:20;font:800 10px system-ui;color:#cfff20;background:rgba(7,16,22,.72);border:1px solid rgba(207,255,32,.28);padding:6px 9px;border-radius:9px;pointer-events:none;letter-spacing:.8px';
   document.body.appendChild(versionNote);
 })();
@@ -4073,7 +4073,7 @@ window.v166DepthScale=function(point){
 
 
 <script id="jb-v168-physical-target-fix">
-// ===== JB PLAY V16.8 — CLEAN PHYSICAL + TEST FIX =====
+// ===== JB PLAY V16.8 — SYNCED MOVEMENT + TEST MODE =====
 (function(){
   // Remove qualquer desenho legado de rotas ao aplicar uma prescrição da IA.
   window.buildTimelineVisuals=function(){
@@ -4142,7 +4142,7 @@ window.v166DepthScale=function(point){
 
 
 <script id="jb-v169-clean-continuity-engine">
-// ===== JB PLAY V16.9 — CLEAN PHYSICAL + TEST FIX =====
+// ===== JB PLAY V16.9 — SYNCED MOVEMENT + TEST MODE =====
 (function(){
   const $ = id => document.getElementById(id);
   let v169Running = false;
@@ -4553,7 +4553,7 @@ body.v169-running #courtSvg .v169-flight-guide{
 
 
 <script id="jb-v170-animation-test-mode">
-// ===== JB PLAY V17.0 — CLEAN PHYSICAL + TEST FIX =====
+// ===== JB PLAY V17.0 — SYNCED MOVEMENT + TEST MODE =====
 (function(){
   const $ = id => document.getElementById(id);
 
@@ -4768,7 +4768,7 @@ body.v169-running #courtSvg .v169-flight-guide{
 
 
 <script id="jb-v171-physical-timeline-engine">
-// ===== JB PLAY V17.1 — CLEAN PHYSICAL + TEST FIX =====
+// ===== JB PLAY V17.1 — SYNCED MOVEMENT + TEST MODE =====
 (function(){
   const $=id=>document.getElementById(id);
   const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
@@ -4917,7 +4917,7 @@ body.v171-running #courtSvg .v53-run{display:none!important}
 
 
 <script id="jb-v172-clean-physical-test-fix">
-// ===== JB PLAY V17.2 — CLEAN PHYSICAL + TEST FIX =====
+// ===== JB PLAY V17.2 — SYNCED MOVEMENT + TEST MODE =====
 (function(){
   const $ = id => document.getElementById(id);
 
@@ -5170,6 +5170,435 @@ body.v171-running #courtSvg .v53-run{display:none!important}
 #courtSvg .v53-trail,
 #courtSvg .v54-start-line{
   display:none !important;
+}
+</style>
+
+
+<script id="jb-v173-synced-movement-test-mode">
+// ===== JB PLAY V17.3 — SYNCED MOVEMENT + TEST MODE =====
+(function(){
+  const $=id=>document.getElementById(id);
+  const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
+  const pos=new Map();
+  let running=false,ball=null,shadow=null,lastBall=null;
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  const pid=a=>{const m=(a||'').match(/Aluno\s*([1-4])/i);return m?+m[1]:0};
+  const pfor=a=>{const i=pid(a);return i?players[i-1]:null};
+  const clone=p=>({x:+p.x,y:+p.y});
+  function home(pl){return clone(HOME[players.indexOf(pl)+1]||{x:pl.x,y:pl.y})}
+  function getPos(pl){
+    if(!pl)return{x:350,y:450};
+    if(!pos.has(pl))pos.set(pl,home(pl));
+    return clone(pos.get(pl));
+  }
+  function setPos(pl,p){
+    if(!pl)return;
+    pos.set(pl,clone(p));
+    try{v53SetState?.(pl,p)}catch(e){}
+  }
+  function top(id){return id<=2}
+
+  function zoneY(id,zone,current){
+    const z=String(zone||'').toLowerCase();
+    if(/vermel|recuper/.test(z))return top(id)?95:805;
+    if(/amarel|constru/.test(z))return top(id)?220:680;
+    if(/verde|defini|rede/.test(z))return top(id)?365:535;
+    return current;
+  }
+  function laneX(lane,current){
+    const v=String(lane||'').toLowerCase();
+    const m=v.match(/zona\s*([1-5])/i);
+    if(m)return 150+(+m[1]-1)*100;
+    if(v.includes('esquer'))return 230;
+    if(v.includes('direit'))return 470;
+    if(v.includes('centro')||v.includes('central'))return 350;
+    return current;
+  }
+
+  // Usa movement + action como redundância. Se a IA escrever "recua" em qualquer um,
+  // o movimento continua sendo interpretado.
+  function movementPoint(pl,step){
+    const id=players.indexOf(pl)+1,cur=getPos(pl);
+    const mv=((step?.movement?.type||'')+' '+(step?.movement?.direction||'')+' '+(step?.action||'')).toLowerCase();
+    let x=laneX(step?.contactLane||step?.lane,cur.x);
+    let y=zoneY(id,step?.contactZone||step?.receiveZone,cur.y);
+
+    if(!step?.contactZone){
+      if(/recu|fundo/.test(mv)) y=top(id)?95:805;
+      else if(/avan|rede|frente/.test(mv)) y=top(id)?365:535;
+    }
+    if(/esquer/.test(mv))x=Math.max(135,x-65);
+    else if(/direit/.test(mv))x=Math.min(565,x+65);
+    return{x,y};
+  }
+
+  function destination(step,next){
+    let recv=pfor(step?.targetPlayer||'');
+    if(!recv && next && pid(next.actor))recv=pfor(next.actor);
+
+    if(recv){
+      let point=(next && pfor(next.actor)===recv)
+        ? movementPoint(recv,next)
+        : getPos(recv);
+
+      const id=players.indexOf(recv)+1;
+      if(step?.targetZone)point.y=zoneY(id,step.targetZone,point.y);
+      if(step?.targetLane)point.x=laneX(step.targetLane,point.x);
+
+      // Paralela mantém coluna; cruzada troca coluna.
+      const lane=String(step?.targetLane||step?.target||'').toLowerCase();
+      const actor=pfor(step?.actor||'');
+      const actorPos=actor?getPos(actor):{x:350,y:450};
+      if(lane.includes('paral'))point.x=actorPos.x;
+      if(lane.includes('cruz'))point.x=actorPos.x<350?470:230;
+
+      return{player:recv,point};
+    }
+
+    // Sem jogador explícito: zona física do lado oposto.
+    const aid=pid(step?.actor),actor=pfor(step?.actor||'');
+    const ap=actor?getPos(actor):{x:350,y:450};
+    const destTop=aid>=3;
+    const z=String(step?.targetZone||step?.target||'').toLowerCase();
+    let y=destTop?220:680;
+    if(z.includes('vermel'))y=destTop?95:805;
+    else if(z.includes('verde'))y=destTop?365:535;
+    else if(z.includes('amarel'))y=destTop?220:680;
+    let x=laneX(step?.targetLane||step?.target,ap.x);
+    if(/zona\s*3/i.test(z))x=350;
+    return{player:null,point:{x,y}};
+  }
+
+  function apply(pl,p,lean=0,racket=0,scale=1){
+    if(!pl)return;
+    const bx=pl.baseX??pl.x,by=pl.baseY??pl.y;
+    const dx=p.x-bx,dy=p.y-by;
+    pl.g.setAttribute('transform',
+      `translate(${dx} ${dy}) translate(${bx} ${by}) scale(${scale}) translate(${-bx} ${-by})`
+    );
+    if(pl.bodyEnhanced){
+      pl.bodyEnhanced.body.setAttribute('transform',`rotate(${lean} ${bx} ${by})`);
+      pl.bodyEnhanced.racket.setAttribute('transform',`rotate(${racket} ${bx+18} ${by-4})`);
+    }
+  }
+
+  async function move(pl,to,dur){
+    if(!pl)return;
+    const from=getPos(pl);
+    if(Math.hypot(to.x-from.x,to.y-from.y)<2){
+      apply(pl,to);
+      setPos(pl,to);
+      return;
+    }
+    await new Promise(resolve=>{
+      let t0=null;
+      function frame(ts){
+        if(t0===null)t0=ts;
+        const r=Math.min(1,(ts-t0)/dur),e=ease(r);
+        const p={x:from.x+(to.x-from.x)*e,y:from.y+(to.y-from.y)*e};
+        const lean=Math.max(-8,Math.min(8,(to.x-from.x)*.02));
+        const sc=typeof v166DepthScale==='function'?v166DepthScale(p):1;
+        apply(pl,p,lean,0,sc*(1+.012*Math.sin(r*Math.PI*6)));
+        if(r<1)requestAnimationFrame(frame);else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+    setPos(pl,to);
+    apply(pl,to,0,0,typeof v166DepthScale==='function'?v166DepthScale(to):1);
+  }
+
+  async function swing(pl,action,p,dur){
+    if(!pl)return;
+    await new Promise(resolve=>{
+      let t0=null;
+      function frame(ts){
+        if(t0===null)t0=ts;
+        const r=Math.min(1,(ts-t0)/dur);
+        let racket=-20+40*r;
+        if(/Smash|Gancho|Bandeja|Rainbow|An[oô]malo|Saque/i.test(action||''))racket=-75+150*r;
+        else if(/Forehand/i.test(action||''))racket=-50+100*r;
+        else if(/Backhand/i.test(action||''))racket=50-100*r;
+        apply(pl,p,6*Math.sin(Math.PI*r),racket,1+.018*Math.sin(Math.PI*r));
+        if(r<1)requestAnimationFrame(frame);else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  function profile(action=''){
+    if(/Lob|Rainbow/i.test(action))return{curve:-150,h:170,s:.8};
+    if(/Smash/i.test(action))return{curve:35,h:35,s:1.8};
+    if(/Gancho|Bandeja|An[oô]malo/i.test(action))return{curve:-50,h:75,s:1.3};
+    if(/Defesa/i.test(action))return{curve:-80,h:110,s:.9};
+    if(/Curta/i.test(action))return{curve:-12,h:25,s:.85};
+    return{curve:-22,h:48,s:1.1};
+  }
+
+  function ensureBall(){
+    if(!ball){
+      ball=svg.querySelector('#v173Ball')||el('circle',{
+        id:'v173Ball',r:9,fill:'#eaff4f',stroke:'#fff','stroke-width':2.5
+      });
+      svg.appendChild(ball);
+    }
+    if(!shadow){
+      shadow=svg.querySelector('#v173Shadow')||el('ellipse',{
+        id:'v173Shadow',rx:9,ry:3.5,fill:'#000',opacity:.22
+      });
+      svg.appendChild(shadow);
+    }
+  }
+
+  async function fly(start,end,step,dur){
+    ensureBall();
+    const pr=profile(step.action),tr=step.trajectory||{};
+    const curve=Number.isFinite(+tr.curve)?+tr.curve:pr.curve;
+    const height=Number.isFinite(+tr.height)?+tr.height:pr.h;
+    const mx=(start.x+end.x)/2,my=(start.y+end.y)/2+curve;
+    const path=el('path',{d:`M ${start.x} ${start.y} Q ${mx} ${my} ${end.x} ${end.y}`,fill:'none',stroke:'none'});
+    svg.appendChild(path);
+    const len=path.getTotalLength();
+    ball.setAttribute('opacity','1');shadow.setAttribute('opacity','.22');
+
+    await new Promise(resolve=>{
+      let t0=null;
+      function frame(ts){
+        if(t0===null)t0=ts;
+        const r=Math.min(1,(ts-t0)/dur),e=ease(r),pt=path.getPointAtLength(len*e);
+        let arc=Math.sin(Math.PI*e);
+        if(/Lob|Rainbow/i.test(step.action||''))arc=Math.pow(arc,.72);
+        if(/Smash/i.test(step.action||''))arc=Math.sin(Math.PI*Math.pow(e,.62))*(1-e*.48);
+        const z=Math.max(0,arc)*height*.30;
+        ball.setAttribute('cx',pt.x);ball.setAttribute('cy',pt.y-z);
+        shadow.setAttribute('cx',pt.x);shadow.setAttribute('cy',pt.y+6);
+        if(r<1)requestAnimationFrame(frame);else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+
+    path.remove();
+    ball.setAttribute('cx',end.x);ball.setAttribute('cy',end.y);
+    shadow.setAttribute('cx',end.x);shadow.setAttribute('cy',end.y+6);
+    lastBall=clone(end);
+  }
+
+  const actionWords=/lan[çc]a|executa|avan[çc]a|recua|devolve|defende|ponto livre|gancho|lob|smash|bandeja|voleio|forehand|backhand/i;
+  function clean(){
+    svg.querySelectorAll('path[marker-end],.trajectory-label,.v53-label,.v5-step-badge,.v53-route,.v5-temp-route,.v52-run,.v53-run,.v54-start-line').forEach(n=>{
+      if(!n.closest('defs'))n.remove();
+    });
+    svg.querySelectorAll('text').forEach(t=>{
+      const tx=(t.textContent||'').trim();
+      if(tx.length>7&&actionWords.test(tx)&&!/^A[1-4]$/i.test(tx))t.remove();
+    });
+  }
+
+  async function execute(step,next,prev,pace,ps,index){
+    currentTimelineIndex=index;renderTimeline?.();clean();
+
+    const actor=pfor(step.actor);
+    let contact;
+    if(!actor){
+      contact=/Professor/i.test(step.actor||'')&&professor
+        ? {x:professor.x,y:professor.y}
+        : (lastBall?clone(lastBall):{x:40,y:520});
+    }else{
+      // Se recebeu a bola na etapa anterior, bate exatamente onde ela chegou.
+      const receivedFromPrev=lastBall && prev && (
+        pid(prev.targetPlayer)===pid(step.actor) ||
+        (!prev.targetPlayer && pid(step.actor))
+      );
+      contact=receivedFromPrev?clone(lastBall):movementPoint(actor,step);
+    }
+
+    // Movimento explícito da própria etapa SEMPRE tem prioridade.
+    // Ex.: A4 "recua para zona vermelha" deve estar no vermelho no contato.
+    if(actor){
+      const explicit=movementPoint(actor,step);
+      const mv=((step.movement?.type||'')+' '+(step.movement?.direction||'')+' '+(step.action||'')).toLowerCase();
+      if(step.contactZone || step.contactLane || /recu|avan|rede|frente|fundo|lateral/.test(mv)){
+        contact=explicit;
+      }
+    }
+
+    const dest=destination(step,next);
+    if(!dest.point)return;
+    const pr=profile(step.action);
+    const flight=Math.max(500,1000/((+step.speed||pr.s)*pace));
+
+    // 1) Ator chega ao ponto de contato.
+    if(actor){
+      await move(actor,contact,Math.max(380,650/(ps*pace)));
+      await sleep(90);
+      await swing(actor,step.action,contact,Math.max(240,360/pace));
+    }else if(/Professor/i.test(step.actor||'')){
+      try{await v14ProfessorFeed?.(step.action)}catch(e){}
+    }
+
+    // 2) AGORA, e somente agora, bola e recebedor começam juntos.
+    const start=lastBall
+      ? clone(lastBall)
+      : (/Professor/i.test(step.actor||'')&&professor?{x:professor.x,y:professor.y}:contact);
+
+    const receiverMove=dest.player
+      ? move(dest.player,dest.point,Math.max(500,flight*.95))
+      : Promise.resolve();
+
+    const ballFlight=fly(start,dest.point,step,flight);
+
+    // O ator permanece no contato por parte do voo; depois retorna.
+    const recovery=actor
+      ? (async()=>{
+          await sleep(Math.max(140,flight*.28));
+          await move(actor,home(actor),Math.max(420,flight*.72));
+        })()
+      : Promise.resolve();
+
+    await Promise.all([ballFlight,receiverMove,recovery]);
+
+    // Recebedor fica fisicamente no ponto de chegada até executar sua próxima ação.
+    if(dest.player){
+      setPos(dest.player,dest.point);
+      apply(dest.player,dest.point,0,0,
+        typeof v166DepthScale==='function'?v166DepthScale(dest.point):1
+      );
+    }
+    clean();
+  }
+
+  async function run(){
+    if(running||!Array.isArray(timelineSteps)||!timelineSteps.length)return;
+    running=true;
+    document.body.classList.add('v173-running');
+    clean();
+    lastBall=null;
+    ensureBall();
+    ball.setAttribute('opacity','0');shadow.setAttribute('opacity','0');
+
+    pos.clear();
+    players.forEach(pl=>{
+      const h=home(pl);
+      setPos(pl,h);
+      apply(pl,h);
+    });
+
+    const pace=+($('sessionPace')?.value||1);
+    const ps=+($('playerSpeed')?.value||1);
+
+    for(let i=0;i<timelineSteps.length;i++){
+      const st=timelineSteps[i];
+      if(/ponto\s*livre|jogo\s*livre|bola\s*livre/i.test((st.action||'')+' '+(st.target||''))){
+        const info=$('v16PhysicsState');
+        if(info)info.textContent='Sequência prescrita concluída • PONTO LIVRE';
+        break;
+      }
+      await execute(st,timelineSteps[i+1],timelineSteps[i-1],pace,ps,i);
+      await sleep(100);
+    }
+
+    currentTimelineIndex=-1;renderTimeline?.();
+    await sleep(300);
+    ball.setAttribute('opacity','0');shadow.setAttribute('opacity','0');
+
+    await Promise.all(players.map(pl=>move(pl,home(pl),420)));
+    players.forEach(pl=>{
+      pl.g.removeAttribute('transform');
+      setPos(pl,home(pl));
+    });
+    clean();
+    document.body.classList.remove('v173-running');
+    running=false;
+  }
+
+  // Motor principal: última atribuição vence versões anteriores.
+  ['v16Run','playTimeline','animate'].forEach(id=>{
+    const b=$(id);if(b)b.onclick=run;
+  });
+
+  // ===== MODO TESTE: usa DIRETAMENTE a timeline já carregada =====
+  function installTestButtons(){
+    const test=$('v170TestBtn'),replay=$('v170ReplayBtn');
+    if(!test||!replay)return false;
+
+    const title=$('v170Panel')?.querySelector('.v170-title');
+    if(title)title.textContent='MODO TESTE DE ANIMAÇÃO — V17.3';
+
+    const sub=$('v170Panel')?.querySelector('.v170-sub');
+    if(sub)sub.textContent='Usa o treino já carregado na tela. Não chama a OpenAI novamente.';
+
+    const status=$('v170Status');
+    function setStatus(txt,ok=true){
+      if(status){status.textContent=txt;status.dataset.ok=ok?'1':'0';}
+    }
+
+    async function testRun(){
+      if(!Array.isArray(timelineSteps)||!timelineSteps.length){
+        setStatus('Nenhum treino carregado. Gere uma vez com IA online.',false);
+        return;
+      }
+
+      // O teste NÃO lê localStorage e NÃO faz fetch.
+      // Apenas executa a timeline que já está na memória da tela.
+      const usageEl=$('v170Usage');
+      let tests=+(sessionStorage.getItem('jb_v173_tests')||0)+1;
+      sessionStorage.setItem('jb_v173_tests',String(tests));
+      if(usageEl){
+        const genMatch=(usageEl.textContent||'').match(/IA online:\s*(\d+)/i);
+        const gens=genMatch?genMatch[1]:'—';
+        usageEl.innerHTML=`<b>IA online:</b> ${gens} geração(ões) &nbsp;•&nbsp; <b>Testes sem IA:</b> ${tests}`;
+      }
+      setStatus('Executando o treino carregado • sem nova chamada à OpenAI.');
+      await run();
+      setStatus('Teste concluído • nenhuma nova geração de IA.');
+    }
+
+    test.onclick=testRun;
+    replay.onclick=testRun;
+
+    if(Array.isArray(timelineSteps)&&timelineSteps.length)
+      setStatus('Treino atual pronto para testar sem IA.');
+    else
+      setStatus('Gere um treino uma vez com IA online.');
+
+    return true;
+  }
+
+  // O painel da V17.0 nasce ~300 ms depois. Tentamos depois e repetimos até existir.
+  let tries=0;
+  const installer=setInterval(()=>{
+    tries++;
+    if(installTestButtons()||tries>20)clearInterval(installer);
+  },250);
+
+  // Quando a IA termina e timelineSteps recebe dados, atualiza o status sem salvar cópia.
+  const aiBtn=$('onlineAiGenerate');
+  if(aiBtn){
+    aiBtn.addEventListener('click',()=>{
+      const timer=setInterval(()=>{
+        if(Array.isArray(timelineSteps)&&timelineSteps.length){
+          clearInterval(timer);
+          installTestButtons();
+        }
+      },350);
+      setTimeout(()=>clearInterval(timer),105000);
+    },true);
+  }
+
+  clean();
+})();
+</script>
+
+<style id="jb-v173-style">
+body.v173-running #courtSvg .trajectory-label,
+body.v173-running #courtSvg .v53-label,
+body.v173-running #courtSvg .v5-step-badge,
+body.v173-running #courtSvg .v53-route,
+body.v173-running #courtSvg .v5-temp-route,
+body.v173-running #courtSvg .v52-run,
+body.v173-running #courtSvg .v53-run,
+body.v173-running #courtSvg .v54-start-line{
+  display:none!important;
 }
 </style>
 
