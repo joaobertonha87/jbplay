@@ -1319,7 +1319,7 @@ body.v16-presentation .v16-present-exit{display:block}
 
 
       <div class="card info v16-card" id="v16-smart">
-        <div class="section-title">V17.4 • Simulador inteligente <span class="v16-badge">PERSISTENT SESSION + MOVEMENT SYNC</span></div>
+        <div class="section-title">V17.5 • Simulador inteligente <span class="v16-badge">STRICT ZONE CONTACT</span></div>
         <div class="v16-grid" style="margin-top:9px">
           <div class="v16-switch"><label>Motor de bola 3D</label><input id="v16Physics" type="checkbox" checked></div>
           <div class="v16-switch"><label>Bola viva encadeada</label><input id="v16LiveBall" type="checkbox" checked></div>
@@ -3912,7 +3912,7 @@ window.v166DepthScale=function(point){
   // Marca versão no painel sem alterar a lógica do app.
   const versionNote=document.createElement('div');
   versionNote.id='v15VersionNote';
-  versionNote.textContent='V16.8 • PERSISTENT SESSION + MOVEMENT SYNC';
+  versionNote.textContent='V16.8 • STRICT ZONE CONTACT';
   versionNote.style.cssText='position:fixed;right:12px;bottom:10px;z-index:20;font:800 10px system-ui;color:#cfff20;background:rgba(7,16,22,.72);border:1px solid rgba(207,255,32,.28);padding:6px 9px;border-radius:9px;pointer-events:none;letter-spacing:.8px';
   document.body.appendChild(versionNote);
 })();
@@ -4073,7 +4073,7 @@ window.v166DepthScale=function(point){
 
 
 <script id="jb-v168-physical-target-fix">
-// ===== JB PLAY V16.8 — PERSISTENT SESSION + MOVEMENT SYNC =====
+// ===== JB PLAY V16.8 — STRICT ZONE CONTACT =====
 (function(){
   // Remove qualquer desenho legado de rotas ao aplicar uma prescrição da IA.
   window.buildTimelineVisuals=function(){
@@ -4142,7 +4142,7 @@ window.v166DepthScale=function(point){
 
 
 <script id="jb-v169-clean-continuity-engine">
-// ===== JB PLAY V16.9 — PERSISTENT SESSION + MOVEMENT SYNC =====
+// ===== JB PLAY V16.9 — STRICT ZONE CONTACT =====
 (function(){
   const $ = id => document.getElementById(id);
   let v169Running = false;
@@ -4553,7 +4553,7 @@ body.v169-running #courtSvg .v169-flight-guide{
 
 
 <script id="jb-v170-animation-test-mode">
-// ===== JB PLAY V17.0 — PERSISTENT SESSION + MOVEMENT SYNC =====
+// ===== JB PLAY V17.0 — STRICT ZONE CONTACT =====
 (function(){
   const $ = id => document.getElementById(id);
 
@@ -4768,7 +4768,7 @@ body.v169-running #courtSvg .v169-flight-guide{
 
 
 <script id="jb-v171-physical-timeline-engine">
-// ===== JB PLAY V17.1 — PERSISTENT SESSION + MOVEMENT SYNC =====
+// ===== JB PLAY V17.1 — STRICT ZONE CONTACT =====
 (function(){
   const $=id=>document.getElementById(id);
   const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
@@ -4917,7 +4917,7 @@ body.v171-running #courtSvg .v53-run{display:none!important}
 
 
 <script id="jb-v172-clean-physical-test-fix">
-// ===== JB PLAY V17.2 — PERSISTENT SESSION + MOVEMENT SYNC =====
+// ===== JB PLAY V17.2 — STRICT ZONE CONTACT =====
 (function(){
   const $ = id => document.getElementById(id);
 
@@ -5175,7 +5175,7 @@ body.v171-running #courtSvg .v53-run{display:none!important}
 
 
 <script id="jb-v173-synced-movement-test-mode">
-// ===== JB PLAY V17.3 — PERSISTENT SESSION + MOVEMENT SYNC =====
+// ===== JB PLAY V17.3 — STRICT ZONE CONTACT =====
 (function(){
   const $=id=>document.getElementById(id);
   const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
@@ -5807,6 +5807,219 @@ body.v173-running #courtSvg .v54-start-line{
   margin-top:7px;
   font-size:11px;
   opacity:.75;
+}
+</style>
+
+
+<script id="jb-v175-strict-zone-contact">
+(function(){
+  const $=id=>document.getElementById(id);
+  const RED={top:95,bottom:805};
+  const YELLOW={top:220,bottom:680};
+  const GREEN={top:345,bottom:555}; // margem segura da rede
+  const X={left:230,center:350,right:470};
+
+  const pid=a=>{const m=String(a||'').match(/Aluno\s*([1-4])/i);return m?+m[1]:0};
+  const pfor=a=>{const i=pid(a);return i?players[i-1]:null};
+  const isTop=id=>id>0&&id<=2;
+
+  function textOf(step){
+    return [
+      step?.action,
+      step?.target,
+      step?.targetZone,
+      step?.targetLane,
+      step?.contactZone,
+      step?.contactLane,
+      step?.movement?.type,
+      step?.movement?.direction
+    ].filter(Boolean).join(' ').toLowerCase();
+  }
+
+  function strictZoneY(id,step,fallback){
+    const txt=textOf(step);
+
+    if(/zona\s*vermel|vermelh|recupera|recua|recuo|fundo/.test(txt))
+      return isTop(id)?RED.top:RED.bottom;
+
+    if(/zona\s*verde|defini|avan[çc]a|rede|frente/.test(txt))
+      return isTop(id)?GREEN.top:GREEN.bottom;
+
+    if(/zona\s*amarel|constru/.test(txt))
+      return isTop(id)?YELLOW.top:YELLOW.bottom;
+
+    return fallback;
+  }
+
+  function strictLaneX(step,fallback){
+    const txt=textOf(step);
+    if(/zona\s*3|centro|central/.test(txt)) return X.center;
+    if(/esquer/.test(txt)) return X.left;
+    if(/direit/.test(txt)) return X.right;
+    return fallback;
+  }
+
+  // Normaliza semanticamente a timeline gerada pela IA antes de animar.
+  // Isso garante que ações como "A4 recua para zona vermelha" sejam obedecidas
+  // mesmo que a IA tenha colocado essa informação em action/movement em vez de contactZone.
+  function normalizeTimeline(){
+    if(!Array.isArray(timelineSteps)) return;
+
+    for(let i=0;i<timelineSteps.length;i++){
+      const st=timelineSteps[i];
+      if(!st) continue;
+
+      const id=pid(st.actor);
+      if(id){
+        const txt=textOf(st);
+
+        if(/zona\s*vermel|vermelh|recua|recuo|fundo/.test(txt)){
+          st.contactZone='vermelha';
+          st.movement=st.movement||{};
+          if(!st.movement.type) st.movement.type='recuar';
+        }
+
+        if(/zona\s*verde|defini|avan[çc]a|rede|frente/.test(txt)){
+          st.contactZone='verde';
+          st.movement=st.movement||{};
+          if(!st.movement.type) st.movement.type='avançar';
+        }
+
+        if(/zona\s*3/.test(txt) && /devolve|direcion|envia|joga/.test(txt)){
+          st.targetZone='zona 3';
+          st.targetLane='centro';
+        }
+      }
+    }
+  }
+
+  // Reforça o destino físico da bola usando a PRÓXIMA ação do recebedor.
+  const oldReceiver = window.v168Receiver || window.v61ReceiverPoint;
+  window.v175Receiver = function(step,next){
+    let recv=pfor(step?.targetPlayer||'');
+    if(!recv && next && pid(next.actor)) recv=pfor(next.actor);
+
+    if(recv){
+      const id=players.indexOf(recv)+1;
+      let cur;
+      try{ cur=v61State(recv); }catch(e){ cur={x:recv.x,y:recv.y}; }
+
+      // Para recepção, a próxima etapa manda na posição de contato.
+      const semanticStep=(next && pfor(next.actor)===recv)?next:step;
+      let x=strictLaneX(semanticStep,cur.x);
+      let y=strictZoneY(id,semanticStep,cur.y);
+
+      // O destino explícito da bola também pode restringir a zona.
+      y=strictZoneY(id,step,y);
+      x=strictLaneX(step,x);
+
+      const lane=String(step?.targetLane||step?.target||'').toLowerCase();
+      let actor=null,ap={x:350,y:450};
+      try{ actor=pfor(step.actor); if(actor)ap=v61State(actor); }catch(e){}
+      if(lane.includes('paral')) x=ap.x;
+      if(lane.includes('cruz')) x=ap.x<350?X.right:X.left;
+
+      return {player:recv,point:{x,y}};
+    }
+
+    return oldReceiver ? oldReceiver(step,next) : {player:null,point:null};
+  };
+
+  // Sobrescreve as funções globais consultadas pelos motores anteriores.
+  try{ v61ReceiverPoint=window.v175Receiver; }catch(e){}
+
+  const oldContact = window.v168Contact;
+  window.v175Contact = function(step,pl){
+    if(!pl) return oldContact ? oldContact(step,pl) : {x:40,y:520};
+    const id=players.indexOf(pl)+1;
+    let cur;
+    try{cur=v61State(pl)}catch(e){cur={x:pl.x,y:pl.y}};
+
+    let base = oldContact ? oldContact(step,pl) : cur;
+    return {
+      x: strictLaneX(step,base.x),
+      y: strictZoneY(id,step,base.y)
+    };
+  };
+  try{ v61ResolveContact=(step)=>window.v175Contact(step,pfor(step.actor)); }catch(e){}
+
+  // Remove qualquer marcador "CONTATO" ou similar, inclusive se for criado depois.
+  function cleanContactText(){
+    if(typeof svg==='undefined'||!svg) return;
+    svg.querySelectorAll('text').forEach(t=>{
+      const txt=(t.textContent||'').trim();
+      if(/^(CONTATO|CONTACT|IMPACTO)$/i.test(txt)) t.remove();
+    });
+    svg.querySelectorAll('.v15PhaseTag,.v15ImpactStar,.v53-label,.trajectory-label').forEach(n=>{
+      if(n && !n.closest('defs')) n.remove();
+    });
+  }
+
+  let lock=false;
+  const obs=new MutationObserver(()=>{
+    if(lock)return;
+    lock=true;
+    requestAnimationFrame(()=>{
+      cleanContactText();
+      lock=false;
+    });
+  });
+  if(typeof svg!=='undefined'&&svg) obs.observe(svg,{childList:true,subtree:true,characterData:true});
+
+  // Antes de qualquer execução normal ou modo teste, normaliza a timeline.
+  function wrapButton(id){
+    const b=$(id);
+    if(!b || b.dataset.v175wrapped) return;
+    const old=b.onclick;
+    if(typeof old!=='function') return;
+    b.dataset.v175wrapped='1';
+    b.onclick=async function(){
+      normalizeTimeline();
+      cleanContactText();
+      return await old.apply(this,arguments);
+    };
+  }
+
+  function install(){
+    ['v16Run','playTimeline','animate','v170TestBtn','v170ReplayBtn'].forEach(wrapButton);
+    normalizeTimeline();
+    cleanContactText();
+
+    const st=$('v174PersistentStatus');
+    if(st && Array.isArray(timelineSteps) && timelineSteps.length){
+      st.textContent='Treino persistente carregado • zonas rígidas V17.5 ativas.';
+    }
+  }
+
+  setTimeout(install,500);
+  let tries=0;
+  const timer=setInterval(()=>{
+    install();
+    tries++;
+    if(tries>20) clearInterval(timer);
+  },300);
+
+  const aiBtn=$('onlineAiGenerate');
+  if(aiBtn){
+    aiBtn.addEventListener('click',()=>{
+      const t=setInterval(()=>{
+        if(Array.isArray(timelineSteps)&&timelineSteps.length){
+          normalizeTimeline();
+          cleanContactText();
+        }
+      },350);
+      setTimeout(()=>clearInterval(t),105000);
+    },true);
+  }
+})();
+</script>
+
+<style id="jb-v175-style">
+#courtSvg .v15PhaseTag,
+#courtSvg .v15ImpactStar,
+#courtSvg .v53-label,
+#courtSvg .trajectory-label{
+  display:none!important;
 }
 </style>
 
