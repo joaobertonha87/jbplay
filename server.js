@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(path.join(__dirname, "public"), { index: "index.html" }));
 
-app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Play V16.3", ai: !!client }));
+app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Play V16.5", ai: !!client }));
 
 const apiKey = process.env.OPENAI_API_KEY;
 const client = apiKey ? new OpenAI({ apiKey }) : null;
@@ -22,7 +22,7 @@ app.get("/api/ai-status", (_req, res) => {
     model,
     provider: "OpenAI",
     mode: "online-only",
-    version: "16.3"
+    version: "16.4"
   });
 });
 
@@ -98,7 +98,7 @@ REGRA DE RETORNO AUTOMÁTICO:
 - Só informe recoveryZone se o professor explicitamente quiser uma recuperação diferente do ponto inicial.
 
 
-MOTOR INTELIGENTE DE PRESCRIÇÃO V16.3:
+MOTOR INTELIGENTE DE PRESCRIÇÃO V16.5:
 - Converta a prescrição em uma sequência executável, não em explicação.
 - Cada toque na bola deve ser uma etapa da timeline.
 - O destino de uma bola deve coincidir com o ponto de contato do próximo jogador quando targetPlayer existir.
@@ -117,6 +117,11 @@ MOTOR INTELIGENTE DE PRESCRIÇÃO V16.3:
 - Não acrescente golpes que não foram pedidos, exceto quando a prescrição solicitar treino aberto/bola viva e precisar de continuidade.
 - Se houver ambiguidade, escolha a interpretação mais conservadora e registre em warnings.
 - Inclua confidence de 0 a 1 para a interpretação global.
+- V16.5: defina contactHeight como baixa/média/alta conforme o golpe; Lob/Rainbow/Smash/Gancho/Bandeja normalmente exigem contato alto quando coerente.
+- V16.5: use preparation para descrever a preparação técnica do jogador antes do contato (ex.: "giro de ombros", "raquete alta", "base baixa").
+- V16.5: use group para sincronização. Etapas independentes que devem ocorrer ao mesmo tempo recebem o MESMO group; ações sequenciais recebem groups crescentes.
+- V16.5: delayMs permite pequeno atraso dentro do mesmo group, de 0 a 2500 ms.
+- No modo Simultâneo, procure pares de ações independentes executáveis em paralelo sem criar duas bolas incompatíveis para o mesmo jogador.
 
 Responda SOMENTE em JSON válido:
 {
@@ -144,11 +149,41 @@ Responda SOMENTE em JSON válido:
      "recoveryLane":"Esquerda|Direita|Central",
      "movement":{"type":"parado|aproximação|lateral|recuo|avanço|recuperação","direction":"esquerda|direita|frente|fundo|"},
      "trajectory":{"type":"reta|arco baixo|arco alto|curta|descendente","curve":-30},
-     "speed":1.2
+     "speed":1.2,
+     "contactHeight":"baixa|média|alta",
+     "preparation":"string",
+     "group":1,
+     "delayMs":0
    }
  ]
 }
 `;
+
+const TRAINING_SCHEMA = {
+  type: "object", additionalProperties: false,
+  properties: {
+    title:{type:"string"}, level:{type:"string",enum:["Iniciante","Intermediário","Avançado"]}, players:{type:"integer",enum:[2,3,4]},
+    mode:{type:"string",enum:["Sequencial","Simultâneo","Contínuo / bola viva"]},
+    focus:{type:"string",enum:["Construção de ponto","Definição","Recuperação","Transição ataque/defesa","Direcionamento","Volume / intensidade"]},
+    direction:{type:"string",enum:["Zona 1","Zona 2","Zona 3","Zona 4","Zona 5","Cruzado","Paralela","Central"]},
+    shots:{type:"array",items:{type:"string"}}, objective:{type:"string"}, notes:{type:"string"}, confidence:{type:"number",minimum:0,maximum:1}, warnings:{type:"array",items:{type:"string"}},
+    timeline:{type:"array",minItems:1,maxItems:24,items:{type:"object",additionalProperties:false,properties:{
+      actor:{type:"string",enum:["Professor","Aluno 1","Aluno 2","Aluno 3","Aluno 4"]}, action:{type:"string"},
+      contactZone:{type:"string",enum:["","Zona verde","Zona amarela","Zona vermelha"]}, contactLane:{type:"string",enum:["","Esquerda","Direita","Central","Zona 1","Zona 2","Zona 3","Zona 4","Zona 5"]},
+      targetPlayer:{type:"string",enum:["","Aluno 1","Aluno 2","Aluno 3","Aluno 4"]}, targetZone:{type:"string",enum:["","Zona verde","Zona amarela","Zona vermelha"]}, targetLane:{type:"string",enum:["","Paralela","Cruzada","Central","Esquerda","Direita","Zona 1","Zona 2","Zona 3","Zona 4","Zona 5"]},
+      recoveryZone:{type:"string",enum:["","Zona verde","Zona amarela","Zona vermelha"]}, recoveryLane:{type:"string",enum:["","Esquerda","Direita","Central"]},
+      movement:{type:"object",additionalProperties:false,properties:{type:{type:"string",enum:["parado","aproximação","lateral","recuo","avanço","recuperação"]},direction:{type:"string",enum:["","esquerda","direita","frente","fundo"]}},required:["type","direction"]},
+      trajectory:{type:"object",additionalProperties:false,properties:{type:{type:"string",enum:["reta","arco baixo","arco alto","curta","descendente"]},curve:{type:"number",minimum:-180,maximum:90}},required:["type","curve"]}, speed:{type:"number",minimum:.55,maximum:2.2}, contactHeight:{type:"string",enum:["baixa","média","alta"]}, preparation:{type:"string"}, group:{type:"integer",minimum:1,maximum:24}, delayMs:{type:"integer",minimum:0,maximum:2500}
+    },required:["actor","action","contactZone","contactLane","targetPlayer","targetZone","targetLane","recoveryZone","recoveryLane","movement","trajectory","speed","contactHeight","preparation","group","delayMs"]}}
+  },
+  required:["title","level","players","mode","focus","direction","shots","objective","notes","confidence","warnings","timeline"]
+};
+
+function validateTrainingPlan(plan){
+  if(!plan||!Array.isArray(plan.timeline)||!plan.timeline.length) throw new Error("Resposta da IA sem timeline executável.");
+  plan.timeline=plan.timeline.slice(0,24).map((step,i)=>({...step,order:i+1,speed:Math.max(.55,Math.min(2.2,Number(step.speed)||1.1))}));
+  return plan;
+}
 
 app.post("/api/generate-training", async (req, res) => {
   const started = Date.now();
@@ -165,17 +200,14 @@ app.post("/api/generate-training", async (req, res) => {
         { role: "system", content: SYSTEM },
         { role: "user", content: `Pedido do professor: ${prompt}\nContexto atual: ${JSON.stringify(context || {})}` }
       ],
-      text: { format: { type: "json_object" } }
+      text: { format: { type: "json_schema", name: "jb_play_training", strict: true, schema: TRAINING_SCHEMA } }
     }, { timeout: 90000, maxRetries: 0 });
 
     console.log(`JB PLAY IA: resposta recebida da OpenAI em ${Date.now()-started}ms`);
     const text = (response.output_text || "").trim();
     const clean = text.replace(/^```json\s*/i, "").replace(/```$/," ").trim();
-    const plan = JSON.parse(clean);
-    if (!plan || !Array.isArray(plan.timeline) || !plan.timeline.length) {
-      return res.status(422).json({ error: "Resposta da IA sem timeline executavel." });
-    }
-    plan.meta = { source: "openai", model, latencyMs: Date.now()-started, schema: "jb-prescription-v16.3" };
+    const plan = validateTrainingPlan(JSON.parse(clean));
+    plan.meta = { source: "openai", model, latencyMs: Date.now()-started, schema: "jb-prescription-v16.5" };
     res.json(plan);
   } catch (err) {
     console.error("JB PLAY IA ERRO:", err?.status || "", err?.name || "Error", err?.message || err);
@@ -199,4 +231,4 @@ app.get("/{*splat}", (_req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, "0.0.0.0", () => console.log(`JB Play V16.3 em http://0.0.0.0:${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`JB Play V16.5 em http://0.0.0.0:${port}`));
