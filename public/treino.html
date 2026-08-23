@@ -1319,7 +1319,7 @@ body.v16-presentation .v16-present-exit{display:block}
 
 
       <div class="card info v16-card" id="v16-smart">
-        <div class="section-title">V17.7 • Simulador inteligente <span class="v16-badge">PERSISTENT AI SESSION FIX</span></div>
+        <div class="section-title">V17.8 • Simulador inteligente <span class="v16-badge">LOCKED PHYSICAL CONTACT</span></div>
         <div class="v16-grid" style="margin-top:9px">
           <div class="v16-switch"><label>Motor de bola 3D</label><input id="v16Physics" type="checkbox" checked></div>
           <div class="v16-switch"><label>Bola viva encadeada</label><input id="v16LiveBall" type="checkbox" checked></div>
@@ -3907,7 +3907,7 @@ window.v166DepthScale=function(point){
   // Marca versão no painel sem alterar a lógica do app.
   const versionNote=document.createElement('div');
   versionNote.id='v15VersionNote';
-  versionNote.textContent='V16.8 • PERSISTENT AI SESSION FIX';
+  versionNote.textContent='V16.8 • LOCKED PHYSICAL CONTACT';
   versionNote.style.cssText='position:fixed;right:12px;bottom:10px;z-index:20;font:800 10px system-ui;color:#cfff20;background:rgba(7,16,22,.72);border:1px solid rgba(207,255,32,.28);padding:6px 9px;border-radius:9px;pointer-events:none;letter-spacing:.8px';
   document.body.appendChild(versionNote);
 })();
@@ -4068,7 +4068,7 @@ window.v166DepthScale=function(point){
 
 
 <script id="jb-v168-physical-target-fix">
-// ===== JB PLAY V16.8 — PERSISTENT AI SESSION FIX =====
+// ===== JB PLAY V16.8 — LOCKED PHYSICAL CONTACT =====
 (function(){
   // Remove qualquer desenho legado de rotas ao aplicar uma prescrição da IA.
   window.buildTimelineVisuals=function(){
@@ -4137,7 +4137,7 @@ window.v166DepthScale=function(point){
 
 
 <script id="jb-v169-clean-continuity-engine">
-// ===== JB PLAY V16.9 — PERSISTENT AI SESSION FIX =====
+// ===== JB PLAY V16.9 — LOCKED PHYSICAL CONTACT =====
 (function(){
   const $ = id => document.getElementById(id);
   let v169Running = false;
@@ -4548,7 +4548,7 @@ body.v169-running #courtSvg .v169-flight-guide{
 
 
 <script id="jb-v170-animation-test-mode">
-// ===== JB PLAY V17.0 — PERSISTENT AI SESSION FIX =====
+// ===== JB PLAY V17.0 — LOCKED PHYSICAL CONTACT =====
 (function(){
   const $ = id => document.getElementById(id);
 
@@ -4763,7 +4763,7 @@ body.v169-running #courtSvg .v169-flight-guide{
 
 
 <script id="jb-v171-physical-timeline-engine">
-// ===== JB PLAY V17.1 — PERSISTENT AI SESSION FIX =====
+// ===== JB PLAY V17.1 — LOCKED PHYSICAL CONTACT =====
 (function(){
   const $=id=>document.getElementById(id);
   const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
@@ -4912,7 +4912,7 @@ body.v171-running #courtSvg .v53-run{display:none!important}
 
 
 <script id="jb-v172-clean-physical-test-fix">
-// ===== JB PLAY V17.2 — PERSISTENT AI SESSION FIX =====
+// ===== JB PLAY V17.2 — LOCKED PHYSICAL CONTACT =====
 (function(){
   const $ = id => document.getElementById(id);
 
@@ -5170,7 +5170,7 @@ body.v171-running #courtSvg .v53-run{display:none!important}
 
 
 <script id="jb-v173-synced-movement-test-mode">
-// ===== JB PLAY V17.3 — PERSISTENT AI SESSION FIX =====
+// ===== JB PLAY V17.3 — LOCKED PHYSICAL CONTACT =====
 (function(){
   const $=id=>document.getElementById(id);
   const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
@@ -6020,7 +6020,7 @@ body.v173-running #courtSvg .v54-start-line{
 
 
 <script id="jb-v176-precompiled-physical-sequence">
-// ===== JB PLAY V17.6 — PERSISTENT AI SESSION FIX =====
+// ===== JB PLAY V17.6 — LOCKED PHYSICAL CONTACT =====
 (function(){
   const $=id=>document.getElementById(id);
   const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
@@ -6541,6 +6541,518 @@ body.v176-running #courtSvg .v15ImpactStar{
   },2000);
 })();
 </script>
+
+
+<script id="jb-v178-locked-physical-contact">
+// ===== JB PLAY V17.8 — LOCKED PHYSICAL CONTACT =====
+(function(){
+  const $=id=>document.getElementById(id);
+
+  const HOME={
+    1:{x:230,y:300},
+    2:{x:470,y:300},
+    3:{x:230,y:600},
+    4:{x:470,y:600}
+  };
+
+  const ZONE_Y={
+    1:{red:95,yellow:220,green:345},
+    2:{red:95,yellow:220,green:345},
+    3:{red:805,yellow:680,green:555},
+    4:{red:805,yellow:680,green:555}
+  };
+
+  let engineRunning=false;
+  let compiledPlan=[];
+  let posMap=new Map();
+  let ball=null,shadow=null,lastBall=null;
+
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  const clone=p=>({x:+p.x,y:+p.y});
+
+  function pid(actor){
+    const m=String(actor||'').match(/Aluno\s*([1-4])/i);
+    return m?+m[1]:0;
+  }
+  function pl(actor){
+    const id=pid(actor);
+    return id?players[id-1]:null;
+  }
+  function home(player){
+    return clone(HOME[players.indexOf(player)+1]||{x:player.x,y:player.y});
+  }
+  function pos(player){
+    if(!posMap.has(player)) posMap.set(player,home(player));
+    return clone(posMap.get(player));
+  }
+  function setPos(player,p){
+    if(!player)return;
+    posMap.set(player,clone(p));
+    try{v53SetState?.(player,p)}catch(e){}
+  }
+
+  function sem(step){
+    return [
+      step?.action,
+      step?.target,
+      step?.targetPlayer,
+      step?.targetZone,
+      step?.targetLane,
+      step?.contactZone,
+      step?.contactLane,
+      step?.movement?.type,
+      step?.movement?.direction
+    ].filter(Boolean).join(' ').toLowerCase();
+  }
+
+  function zoneFrom(step){
+    const t=sem(step);
+    if(/vermel|recuper|recua|recuo|fundo/.test(t)) return 'red';
+    if(/verde|defini|avan[çc]a|rede|frente/.test(t)) return 'green';
+    if(/amarel|constru/.test(t)) return 'yellow';
+    return null;
+  }
+
+  function xFrom(step,baseX){
+    const t=sem(step);
+    const z=t.match(/zona\s*([1-5])/i);
+    if(z) return 150+(+z[1]-1)*100;
+    if(/centro|central/.test(t)) return 350;
+    if(/esquer/.test(t)) return 230;
+    if(/direit/.test(t)) return 470;
+    return baseX;
+  }
+
+  // ESTE é o contato definitivo. É calculado uma vez e congelado.
+  function physicalContact(step){
+    const player=pl(step?.actor);
+    if(!player){
+      if(/professor/i.test(step?.actor||'') && professor)
+        return {x:professor.x,y:professor.y};
+      return {x:40,y:520};
+    }
+
+    const id=pid(step.actor);
+    const base=clone(HOME[id]);
+    const zone=zoneFrom(step);
+
+    if(zone) base.y=ZONE_Y[id][zone];
+    base.x=xFrom(step,base.x);
+
+    return Object.freeze({x:base.x,y:base.y});
+  }
+
+  function targetIds(step){
+    const txt=[
+      step?.targetPlayer,
+      step?.target,
+      step?.action
+    ].filter(Boolean).join(' ');
+    const ids=[...txt.matchAll(/Aluno\s*([1-4])/gi)].map(m=>+m[1]);
+    return [...new Set(ids)].filter(id=>id!==pid(step?.actor));
+  }
+
+  function zoneFallback(step,actorId){
+    const t=sem(step);
+    const destTop=actorId>=3;
+    let y=destTop?220:680;
+
+    if(/vermel/.test(t)) y=destTop?95:805;
+    else if(/verde|defini|rede/.test(t)) y=destTop?345:555;
+    else if(/amarel/.test(t)) y=destTop?220:680;
+
+    let x=350;
+    const z=t.match(/zona\s*([1-5])/i);
+    if(z)x=150+(+z[1]-1)*100;
+    else if(/esquer/.test(t))x=230;
+    else if(/direit/.test(t))x=470;
+
+    return {x,y};
+  }
+
+  function compile(){
+    compiledPlan=[];
+    if(!Array.isArray(timelineSteps)) return compiledPlan;
+
+    // Passo 1: congela contato de cada etapa.
+    timelineSteps.forEach((step,index)=>{
+      if(!step)return;
+      compiledPlan.push({
+        index,
+        step,
+        actor:pl(step.actor),
+        actorId:pid(step.actor),
+        physicalContact:physicalContact(step),
+        receiver:null,
+        destination:null
+      });
+    });
+
+    // Passo 2: conecta cada bola ao physicalContact futuro.
+    for(let i=0;i<compiledPlan.length;i++){
+      const c=compiledPlan[i];
+      if(/ponto\s*livre|jogo\s*livre|bola\s*livre/i.test(sem(c.step))) continue;
+
+      const ids=targetIds(c.step);
+
+      if(ids.length>1){
+        const pts=ids.map(id=>{
+          const future=compiledPlan.find((x,j)=>j>i && x.actorId===id);
+          return future?.physicalContact || HOME[id];
+        });
+        c.destination=Object.freeze({
+          x:pts.reduce((a,b)=>a+b.x,0)/pts.length,
+          y:pts.reduce((a,b)=>a+b.y,0)/pts.length
+        });
+        continue;
+      }
+
+      if(ids.length===1){
+        const id=ids[0];
+        const future=compiledPlan.find((x,j)=>j>i && x.actorId===id);
+        c.receiver=players[id-1]||null;
+        c.destination=Object.freeze(
+          clone(future?.physicalContact || HOME[id])
+        );
+        continue;
+      }
+
+      // Sem alvo explícito, a próxima ação de outro jogador recebe.
+      const future=compiledPlan.find((x,j)=>j>i && x.actorId && x.actorId!==c.actorId);
+      if(future){
+        c.receiver=future.actor;
+        c.destination=Object.freeze(clone(future.physicalContact));
+      }else{
+        c.destination=Object.freeze(zoneFallback(c.step,c.actorId));
+      }
+    }
+
+    // Passo 3: direção mexe apenas em X. Nunca altera Y do contato congelado.
+    for(const c of compiledPlan){
+      if(!c.destination) continue;
+      const t=sem(c.step);
+      const d=clone(c.destination);
+
+      if(/paralel/.test(t)) d.x=c.physicalContact.x;
+      else if(/cruzad/.test(t)) d.x=c.physicalContact.x<350?470:230;
+
+      if(/zona\s*3/.test(t)) d.x=350;
+      c.destination=Object.freeze(d);
+    }
+
+    return compiledPlan;
+  }
+
+  function apply(player,p,lean=0,racket=0,scale=1){
+    if(!player)return;
+    const bx=player.baseX??player.x;
+    const by=player.baseY??player.y;
+    const dx=p.x-bx,dy=p.y-by;
+    player.g.setAttribute('transform',
+      `translate(${dx} ${dy}) translate(${bx} ${by}) scale(${scale}) translate(${-bx} ${-by})`
+    );
+    if(player.bodyEnhanced){
+      player.bodyEnhanced.body.setAttribute('transform',`rotate(${lean} ${bx} ${by})`);
+      player.bodyEnhanced.racket.setAttribute('transform',`rotate(${racket} ${bx+18} ${by-4})`);
+    }
+  }
+
+  async function move(player,to,dur){
+    if(!player)return;
+    const from=pos(player);
+    if(Math.hypot(to.x-from.x,to.y-from.y)<2){
+      setPos(player,to);apply(player,to);return;
+    }
+
+    await new Promise(resolve=>{
+      let t0=null;
+      function frame(ts){
+        if(t0===null)t0=ts;
+        const r=Math.min(1,(ts-t0)/dur);
+        const e=ease(r);
+        const p={
+          x:from.x+(to.x-from.x)*e,
+          y:from.y+(to.y-from.y)*e
+        };
+        const lean=Math.max(-8,Math.min(8,(to.x-from.x)*.02));
+        const sc=typeof v166DepthScale==='function'?v166DepthScale(p):1;
+        apply(player,p,lean,0,sc*(1+.012*Math.sin(r*Math.PI*6)));
+        if(r<1)requestAnimationFrame(frame);
+        else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+
+    setPos(player,to);
+    apply(player,to,0,0,typeof v166DepthScale==='function'?v166DepthScale(to):1);
+  }
+
+  async function swing(player,action,p,dur){
+    if(!player)return;
+    await new Promise(resolve=>{
+      let t0=null;
+      function frame(ts){
+        if(t0===null)t0=ts;
+        const r=Math.min(1,(ts-t0)/dur);
+        let rack=-20+40*r;
+        if(/Smash|Gancho|Bandeja|Rainbow|An[oô]malo|Saque/i.test(action||''))rack=-75+150*r;
+        else if(/Forehand/i.test(action||''))rack=-50+100*r;
+        else if(/Backhand/i.test(action||''))rack=50-100*r;
+        apply(player,p,6*Math.sin(Math.PI*r),rack,1+.018*Math.sin(Math.PI*r));
+        if(r<1)requestAnimationFrame(frame);
+        else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  function profile(action=''){
+    if(/Lob|Rainbow/i.test(action))return{curve:-150,height:175,speed:.78};
+    if(/Smash/i.test(action))return{curve:35,height:35,speed:1.8};
+    if(/Gancho|Bandeja|An[oô]malo/i.test(action))return{curve:-48,height:72,speed:1.28};
+    if(/Defesa/i.test(action))return{curve:-82,height:115,speed:.88};
+    if(/Curta/i.test(action))return{curve:-12,height:25,speed:.82};
+    return{curve:-20,height:48,speed:1.1};
+  }
+
+  function ensureBall(){
+    if(!ball){
+      ball=svg.querySelector('#v178Ball')||el('circle',{
+        id:'v178Ball',r:9,fill:'#eaff4f',stroke:'#fff','stroke-width':2.5
+      });
+      svg.appendChild(ball);
+    }
+    if(!shadow){
+      shadow=svg.querySelector('#v178Shadow')||el('ellipse',{
+        id:'v178Shadow',rx:9,ry:3.5,fill:'#000',opacity:.22
+      });
+      svg.appendChild(shadow);
+    }
+  }
+
+  async function fly(start,end,step,dur){
+    ensureBall();
+    const pr=profile(step.action);
+    const tr=step.trajectory||{};
+    const curve=Number.isFinite(+tr.curve)?+tr.curve:pr.curve;
+    const height=Number.isFinite(+tr.height)?+tr.height:pr.height;
+    const mx=(start.x+end.x)/2;
+    const my=(start.y+end.y)/2+curve;
+
+    const path=el('path',{
+      d:`M ${start.x} ${start.y} Q ${mx} ${my} ${end.x} ${end.y}`,
+      fill:'none',stroke:'none'
+    });
+    svg.appendChild(path);
+    const len=path.getTotalLength();
+
+    ball.setAttribute('opacity','1');
+    shadow.setAttribute('opacity','.22');
+
+    await new Promise(resolve=>{
+      let t0=null;
+      function frame(ts){
+        if(t0===null)t0=ts;
+        const r=Math.min(1,(ts-t0)/dur);
+        const e=ease(r);
+        const pt=path.getPointAtLength(len*e);
+        let arc=Math.sin(Math.PI*e);
+        if(/Lob|Rainbow/i.test(step.action||''))arc=Math.pow(arc,.7);
+        if(/Smash/i.test(step.action||''))arc=Math.sin(Math.PI*Math.pow(e,.62))*(1-e*.48);
+        const z=Math.max(0,arc)*height*.30;
+
+        ball.setAttribute('cx',pt.x);
+        ball.setAttribute('cy',pt.y-z);
+        shadow.setAttribute('cx',pt.x);
+        shadow.setAttribute('cy',pt.y+6);
+
+        if(r<1)requestAnimationFrame(frame);
+        else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+
+    path.remove();
+    ball.setAttribute('cx',end.x);
+    ball.setAttribute('cy',end.y);
+    shadow.setAttribute('cx',end.x);
+    shadow.setAttribute('cy',end.y+6);
+    lastBall=clone(end);
+  }
+
+  const unwanted=/lan[çc]a|executa|avan[çc]a|recua|devolve|defende|ponto livre|gancho|lob|smash|bandeja|voleio|forehand|backhand|contato|impacto/i;
+  function clean(){
+    svg.querySelectorAll(
+      'path[marker-end],.trajectory-label,.v53-label,.v5-step-badge,.v53-route,.v5-temp-route,.v52-run,.v53-run,.v54-start-line,.v15PhaseTag,.v15ImpactStar'
+    ).forEach(n=>{if(!n.closest('defs'))n.remove()});
+
+    svg.querySelectorAll('text').forEach(t=>{
+      const tx=(t.textContent||'').trim();
+      if((tx.length>7&&unwanted.test(tx)) || /^(CONTATO|IMPACTO)$/i.test(tx)) t.remove();
+    });
+  }
+
+  async function execute(c,pace,ps){
+    currentTimelineIndex=c.index;
+    renderTimeline?.();
+    clean();
+
+    if(c.actor){
+      const cur=pos(c.actor);
+      if(Math.hypot(c.physicalContact.x-cur.x,c.physicalContact.y-cur.y)>2){
+        await move(c.actor,c.physicalContact,Math.max(440,720/(ps*pace)));
+      }
+      await sleep(80);
+      await swing(c.actor,c.step.action,c.physicalContact,Math.max(240,360/pace));
+    }else if(/professor/i.test(c.step.actor||'')){
+      try{await v14ProfessorFeed?.(c.step.action)}catch(e){}
+    }
+
+    if(!c.destination)return;
+
+    const pr=profile(c.step.action);
+    const flight=Math.max(540,1080/((+c.step.speed||pr.speed)*pace));
+
+    const start=lastBall
+      ? clone(lastBall)
+      : (/professor/i.test(c.step.actor||'')&&professor
+          ? {x:professor.x,y:professor.y}
+          : clone(c.physicalContact));
+
+    const receiverMove=c.receiver
+      ? move(c.receiver,c.destination,Math.max(540,flight*.98))
+      : Promise.resolve();
+
+    const ballMove=fly(start,c.destination,c.step,flight);
+
+    const recover=c.actor
+      ? (async()=>{
+          await sleep(Math.max(170,flight*.32));
+          await move(c.actor,home(c.actor),Math.max(450,flight*.68));
+        })()
+      : Promise.resolve();
+
+    await Promise.all([receiverMove,ballMove,recover]);
+
+    if(c.receiver){
+      setPos(c.receiver,c.destination);
+      apply(c.receiver,c.destination,0,0,
+        typeof v166DepthScale==='function'?v166DepthScale(c.destination):1
+      );
+    }
+
+    clean();
+  }
+
+  async function run(){
+    if(engineRunning||!Array.isArray(timelineSteps)||!timelineSteps.length)return;
+    engineRunning=true;
+    document.body.classList.add('v178-running');
+
+    compile();
+    clean();
+    lastBall=null;
+    ensureBall();
+    ball.setAttribute('opacity','0');
+    shadow.setAttribute('opacity','0');
+
+    posMap.clear();
+    players.forEach(player=>{
+      const h=home(player);
+      setPos(player,h);
+      apply(player,h);
+    });
+
+    const pace=+($('sessionPace')?.value||1);
+    const ps=+($('playerSpeed')?.value||1);
+
+    for(const c of compiledPlan){
+      if(/ponto\s*livre|jogo\s*livre|bola\s*livre/i.test(sem(c.step))){
+        const info=$('v16PhysicsState');
+        if(info)info.textContent='Sequência prescrita concluída • PONTO LIVRE';
+        break;
+      }
+      await execute(c,pace,ps);
+      await sleep(90);
+    }
+
+    currentTimelineIndex=-1;
+    renderTimeline?.();
+    await sleep(250);
+
+    ball.setAttribute('opacity','0');
+    shadow.setAttribute('opacity','0');
+
+    await Promise.all(players.map(player=>move(player,home(player),430)));
+    players.forEach(player=>{
+      player.g.removeAttribute('transform');
+      setPos(player,home(player));
+    });
+
+    clean();
+    document.body.classList.remove('v178-running');
+    engineRunning=false;
+  }
+
+  function install(){
+    ['v16Run','playTimeline','animate','v170TestBtn','v170ReplayBtn'].forEach(id=>{
+      const b=$(id);
+      if(b){
+        b.onclick=run;
+        b.dataset.v178engine='1';
+      }
+    });
+
+    const st=$('v170Status');
+    if(st && Array.isArray(timelineSteps)&&timelineSteps.length){
+      st.textContent='Treino carregado • contatos físicos bloqueados V17.8.';
+    }
+    clean();
+  }
+
+  // V17.8 sempre assume controle por último.
+  setTimeout(install,1800);
+  let n=0;
+  const timer=setInterval(()=>{
+    install();
+    n++;
+    if(n>26)clearInterval(timer);
+  },350);
+
+  const aiBtn=$('onlineAiGenerate');
+  if(aiBtn){
+    aiBtn.addEventListener('click',()=>{
+      const t=setInterval(()=>{
+        if(Array.isArray(timelineSteps)&&timelineSteps.length){
+          compile();
+          install();
+        }
+      },400);
+      setTimeout(()=>clearInterval(t),105000);
+    },true);
+  }
+
+  setTimeout(()=>{
+    if(Array.isArray(timelineSteps)&&timelineSteps.length)compile();
+  },2200);
+})();
+</script>
+
+<style id="jb-v178-style">
+body.v178-running #courtSvg .trajectory-label,
+body.v178-running #courtSvg .v53-label,
+body.v178-running #courtSvg .v5-step-badge,
+body.v178-running #courtSvg .v53-route,
+body.v178-running #courtSvg .v5-temp-route,
+body.v178-running #courtSvg .v52-run,
+body.v178-running #courtSvg .v53-run,
+body.v178-running #courtSvg .v54-start-line,
+body.v178-running #courtSvg .v15PhaseTag,
+body.v178-running #courtSvg .v15ImpactStar{
+  display:none!important;
+}
+</style>
 
 </body>
 </html>
