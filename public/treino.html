@@ -1092,7 +1092,7 @@ body{background:transparent!important}
 
 
 <style id="jb-v15-style">
-/* ===== JB PLAY V15 • TECHNIQUE MOTION ===== */
+/* ===== JB PLAY V16.5 • IA MOTION SYNC ===== */
 .v15-phase-tag{font-size:11px;font-weight:1000;letter-spacing:1.2px;fill:#eaff4f;paint-order:stroke;stroke:#071016;stroke-width:4px;pointer-events:none}
 .v15-tech-ring{fill:none;stroke:#eaff4f;stroke-width:3;opacity:0;filter:url(#v14Glow);pointer-events:none}
 .v15-foot-ring{fill:none;stroke:#fff;stroke-width:2;stroke-dasharray:5 5;opacity:.0;pointer-events:none}
@@ -1278,7 +1278,7 @@ body.v16-presentation .v16-present-exit{display:block}
         <div class="ai-box">
           <textarea id="aiPrompt" placeholder="Ex.: treino avançado para 4 alunos, ataque e defesa, começando com forehand neutro, depois gancho e smash, bola viva e alvo nas zonas 2 e 4."></textarea>
           <button class="primary small" id="aiGenerate" style="width:100%;margin-top:8px">Gerar treino inteligente</button>
-          <div class="subtle" id="aiHint" style="margin-top:7px">A geração é local nesta versão: interpreta sua prescrição e monta a sequência automaticamente. Pode ser conectada a uma API de IA depois.</div>
+          <div class="subtle" id="aiHint" style="margin-top:7px">A geração usa IA online OpenAI e monta deslocamentos, zonas de contato, trajetórias e sequência executável na quadra.</div>
         </div></div>
       </div>
 
@@ -2963,28 +2963,6 @@ if(typeof playTimeline!=='undefined')playTimeline.onclick=v53PlayTimeline;
 if(typeof animate!=='undefined')animate=v53PlayTimeline;
 
 // IA online V5.3: preserva zonas de contato, alvo e recuperação
-function jbLocalTrainingFallback(prompt){
-  const txt=(prompt||'').toLowerCase();
-  const playerCount=txt.includes('2 aluno')||txt.includes('2 jogadores')?2:4;
-  const continuous=/bola viva|cont[ií]nuo|volume/.test(txt);
-  const adv=/avan[cç]ado|intenso|alta intensidade/.test(txt);
-  const seq=[];
-  const has=(...terms)=>terms.some(t=>txt.includes(t));
-  const shot1=has('forehand acelerado')?'Forehand acelerado':has('forehand')?'Forehand neutro':'Voleio forehand';
-  const shot2=has('backhand')?'Backhand neutro':has('gancho')?'Gancho':'Voleio backhand';
-  const shot3=has('smash')?'Smash':has('lob','rainbow')?'Lob / Rainbow':'Gancho';
-  seq.push({actor:'Professor',action:'Lançamento',contactZone:'',contactLane:'',targetPlayer:'Aluno 1',targetZone:'Zona amarela',targetLane:'Esquerda',recoveryZone:'',movement:{type:'parado',direction:''},trajectory:{type:'arco baixo',curve:-22},speed:1.05});
-  seq.push({actor:'Aluno 1',action:shot1,contactZone:has('linha de 3','zona verde')?'Zona verde':'Zona amarela',contactLane:'Esquerda',targetPlayer:playerCount===4?'Aluno 3':'Aluno 2',targetZone:'Zona amarela',targetLane:has('paralela')?'Paralela':has('cruzada','cruzado')?'Cruzada':'Central',recoveryZone:'',movement:{type:has('parado')?'parado':'aproximação',direction:has('parado')?'':'frente'},trajectory:{type:'reta',curve:-18},speed:1.4});
-  if(playerCount===4){
-    seq.push({actor:'Aluno 3',action:shot2,contactZone:has('lob','zona vermelha')?'Zona vermelha':'Zona amarela',contactLane:'Esquerda',targetPlayer:'Aluno 2',targetZone:has('lob','rainbow')?'Zona vermelha':'Zona amarela',targetLane:'Cruzada',recoveryZone:'',movement:{type:has('lob')?'recuo':'lateral',direction:has('lob')?'fundo':'direita'},trajectory:{type:has('lob','rainbow')?'arco alto':'arco baixo',curve:has('lob','rainbow')?-110:-25},speed:has('lob','rainbow')?.9:1.2});
-    seq.push({actor:'Aluno 2',action:shot3,contactZone:has('smash','gancho')?'Zona vermelha':'Zona amarela',contactLane:'Direita',targetPlayer:'Aluno 4',targetZone:'Zona amarela',targetLane:'Paralela',recoveryZone:'',movement:{type:has('smash','gancho')?'recuo':'lateral',direction:has('smash','gancho')?'fundo':'esquerda'},trajectory:{type:has('smash')?'descendente':has('lob','rainbow')?'arco alto':'arco baixo',curve:has('smash')?38:-28},speed:has('smash')?1.8:1.2});
-    if(continuous)seq.push({actor:'Aluno 4',action:has('defesa')?'Defesa de forehand':'Voleio forehand',contactZone:'Zona amarela',contactLane:'Direita',targetPlayer:'Aluno 1',targetZone:'Zona amarela',targetLane:'Cruzada',recoveryZone:'',movement:{type:'lateral',direction:'esquerda'},trajectory:{type:'arco baixo',curve:-22},speed:1.15});
-  }else{
-    seq.push({actor:'Aluno 2',action:shot2,contactZone:'Zona amarela',contactLane:'Direita',targetPlayer:'Aluno 1',targetZone:'Zona amarela',targetLane:'Cruzada',recoveryZone:'',movement:{type:'lateral',direction:'esquerda'},trajectory:{type:'arco baixo',curve:-24},speed:1.15});
-  }
-  return {title:'Treino gerado pela IA local',level:adv?'Avançado':'Intermediário',players:playerCount,mode:continuous?'Contínuo / bola viva':'Sequencial',focus:has('defesa')?'Transição ataque/defesa':has('smash')?'Definição':'Construção de ponto',objective:'Execução automática baseada na prescrição informada.',notes:'Gerado pelo motor local de contingência porque a IA online não respondeu.',timeline:seq};
-}
-
 function jbV162Text(v){return (v||'').toString().trim()}
 function jbV162Id(v){const m=jbV162Text(v).match(/Aluno\s*([1-4])/i);return m?+m[1]:0}
 function jbV162ParallelTarget(id){return ({1:'Aluno 3',2:'Aluno 4',3:'Aluno 1',4:'Aluno 2'})[id]||''}
@@ -3067,7 +3045,7 @@ function jbApplyAITraining(data,prompt=""){
   if(data.focus)focusEl.value=data.focus;
   if(data.direction && typeof directionEl!=='undefined')directionEl.value=data.direction;
   if(Array.isArray(data.timeline)){
-    timelineSteps=data.timeline.map((x,i)=>({actor:x.actor||'Professor',action:x.action||'Lançamento',contactZone:x.contactZone||x.receiveZone||'',contactLane:x.contactLane||x.lane||'',targetPlayer:x.targetPlayer||'',targetZone:x.targetZone||'',targetLane:x.targetLane||'',recoveryZone:x.recoveryZone||'',recoveryLane:x.recoveryLane||'',movement:x.movement||{},trajectory:x.trajectory||{},speed:+x.speed||1,order:x.order||i+1}));
+    timelineSteps=data.timeline.map((x,i)=>({actor:x.actor||'Professor',action:x.action||'Lançamento',contactZone:x.contactZone||x.receiveZone||'',contactLane:x.contactLane||x.lane||'',targetPlayer:x.targetPlayer||'',targetZone:x.targetZone||'',targetLane:x.targetLane||'',recoveryZone:x.recoveryZone||'',recoveryLane:x.recoveryLane||'',movement:x.movement||{},trajectory:x.trajectory||{},speed:+x.speed||1,order:x.order||i+1,group:x.group||i+1,delayMs:+x.delayMs||0,contactHeight:x.contactHeight||'média',preparation:x.preparation||'automática'}));
     renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});buildTimelineVisuals?.();
   }
   exTitle.textContent=data.title||'Treino tático por IA';
@@ -3082,22 +3060,26 @@ if(typeof onlineAiGenerate!=='undefined'){
     onlineAiGenerate.disabled=true;
     onlineAiState.className='ai-state';onlineAiState.textContent='IA montando deslocamentos, zonas de contato e trajetórias...';
     const controller=new AbortController();
-    const timer=setTimeout(()=>controller.abort(),65000);
+    const timer=setTimeout(()=>controller.abort(),100000);
     try{
-      const res=await fetch('/api/generate-training',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({prompt,context:{level:levelEl.value,players:+playersEl.value,mode:modeEl.value,focus:focusEl.value,availableShots:shots,request:'Return an executable prescription. Preserve exact player identities and order. Include contactZone/contactLane only when movement or contact location is specified; resolve parallel/cross targets; chain ball-live steps; include trajectory/speed/confidence/warnings.'}})});
+      const res=await fetch('/api/generate-training',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,cache:'no-store',body:JSON.stringify({prompt,context:{level:levelEl.value,players:+playersEl.value,mode:modeEl.value,focus:focusEl.value,availableShots:shots,request:'Return an executable prescription. Preserve exact player identities and order. Include contactZone/contactLane only when movement or contact location is specified; resolve parallel/cross targets; chain ball-live steps; include trajectory/speed/confidence/warnings.'}})});
       clearTimeout(timer);
-      if(!res.ok)throw new Error('API '+res.status+': '+(await res.text()));
-      const data=await res.json();
-      if(!data || !Array.isArray(data.timeline) || !data.timeline.length)throw new Error('A API respondeu sem timeline.');
+      const raw=await res.text();
+      let data=null;
+      try{data=raw?JSON.parse(raw):null}catch(_){throw new Error('Resposta inválida do servidor: '+raw.slice(0,220))}
+      if(!res.ok)throw new Error(data?.error || data?.message || ('Erro HTTP '+res.status));
+      if(!data || !Array.isArray(data.timeline) || !data.timeline.length)throw new Error('A IA online respondeu sem timeline executável.');
       jbApplyAITraining(data,prompt);
       onlineAiState.className='ai-state ok';
       const n=timelineSteps.length,conf=data.confidence!=null?` • ${Math.round(data.confidence*100)}% de confiança`:'';
-      onlineAiState.textContent=`Prescrição interpretada pela IA: ${n} etapa(s) aplicada(s) à quadra${conf}.`;
+      const latency=data.meta?.latencyMs?` • ${(data.meta.latencyMs/1000).toFixed(1)}s`:'';
+      const warn=data.warnings?.length?` • ${data.warnings.length} aviso(s)`:''; const mdl=data.meta?.model?` • ${data.meta.model}`:''; onlineAiState.textContent=`IA online OpenAI: ${n} etapa(s) aplicada(s) à quadra${conf}${latency}${warn}${mdl}.`;
     }catch(e){
       clearTimeout(timer);console.error('JB IA online:',e);
-      const local=jbLocalTrainingFallback(prompt);jbApplyAITraining(local,prompt);
-      onlineAiState.className='ai-state ok';
-      onlineAiState.textContent=e && e.name==='AbortError'?'IA online demorou para responder. Treino gerado pelo motor local de contingência.':'IA online indisponível. Treino gerado pelo motor local de contingência.';
+      onlineAiState.className='ai-state err';
+      onlineAiState.textContent=e && e.name==='AbortError'
+        ? 'A IA online excedeu 100 segundos sem concluir. Nenhum treino local foi gerado. Tente novamente ou verifique o serviço OpenAI/Render.'
+        : `Falha na IA online: ${e?.message||'erro desconhecido'}. Nenhum treino local foi gerado.`;
     }finally{onlineAiGenerate.disabled=false;}
   };
 }
@@ -3912,7 +3894,7 @@ if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.se
   // Marca versão no painel sem alterar a lógica do app.
   const versionNote=document.createElement('div');
   versionNote.id='v15VersionNote';
-  versionNote.textContent='V15 • TECHNIQUE MOTION';
+  versionNote.textContent='V16.5 • IA MOTION SYNC';
   versionNote.style.cssText='position:fixed;right:12px;bottom:10px;z-index:20;font:800 10px system-ui;color:#cfff20;background:rgba(7,16,22,.72);border:1px solid rgba(207,255,32,.28);padding:6px 9px;border-radius:9px;pointer-events:none;letter-spacing:.8px';
   document.body.appendChild(versionNote);
 })();
@@ -3989,21 +3971,34 @@ if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.se
   function cameraReset(){const w=$('courtWrap');if(w){w.style.transition='transform .5s ease';w.style.transform='scale(1)'}}
   function contactHalo(pt){const h=el('ellipse',{cx:pt.x,cy:pt.y+8,rx:24,ry:9,fill:'none',stroke:'#eaff4f','stroke-width':4,opacity:.9,class:'v16-contact-halo',filter:'url(#v14Glow)'});svg.appendChild(h);setTimeout(()=>h.remove(),420)}
   async function move(pl,from,to,dur,label){if(Math.hypot(to.x-from.x,to.y-from.y)<4){v53SetState(pl,to);return}await v53AnimateMove(pl,from,to,dur,label);v53SetState(pl,to)}
+  function contactHeightPx(step,pr){
+    const h=(step.contactHeight||'').toLowerCase();
+    if(h==='alta')return Math.max(105,pr.h||70);if(h==='baixa')return Math.min(32,pr.h||32);return pr.h||48;
+  }
+  async function executeStep(s,next,pace,ps,index){
+    const actor=player(s.actor),contact=actionContact(s,actor),pr=profile(s.action);currentTimelineIndex=index;renderTimeline?.();
+    if(s.delayMs)await new Promise(r=>setTimeout(r,Math.min(2500,+s.delayMs)/pace));
+    const recv=receiver(s,next),end=recv.point;
+    const flight=Math.max(360,800/((+s.speed||pr.s)*pace));
+    // O recebedor inicia leitura/preparação ANTES do impacto, sem esperar a bola sair.
+    let recvPrepare=Promise.resolve();
+    if(recv.player){const rf=state(recv.player);recvPrepare=move(recv.player,rf,end,Math.max(260,flight*.72),'preparação antecipada')}
+    if(actor){cameraFocus(contact,'move');const from=state(actor);await move(actor,from,contact,Math.max(260,520/(ps*pace)),'ajuste ao contato');contactHalo(contact);await v53AnimateSwing(actor,s.action,contact,Math.max(200,320/pace));}
+    if(/Professor/i.test(s.actor||'')){await v14ProfessorFeed(s.action);cameraFocus(contact,'feed')}
+    const start=(cfg.live.checked&&lastBallPoint)?lastBallPoint:(/Professor/i.test(s.actor||'')?(professor?{x:professor.x,y:professor.y}:contact):contact);
+    s.trajectory={...(s.trajectory||{}),height:Number.isFinite(+s.trajectory?.height)?+s.trajectory.height:contactHeightPx(s,pr)};
+    const path=makePath(start,end,s);
+    const recover=actor?move(actor,contact,home(actor),Math.max(300,flight*.78),'recuperação automática'):Promise.resolve();
+    await Promise.all([fly(path,flight,s),recvPrepare,recover]);lastBallPoint={...end};if(recv.player)v53SetState(recv.player,end);path.style.opacity='.13';setTimeout(()=>path.remove(),550);
+  }
   async function run(){
     if(running||!timelineSteps?.length)return;running=true;lastBallPoint=null;v53ResetVisuals();
     const pace=(+sessionPace.value||1)*(+cfg.intensity.value||1),ps=+playerSpeed.value||1;
     players.forEach((pl,i)=>{const p=V62_HOME[i+1];pl.x=p.x;pl.y=p.y;v53SetState(pl,p)});
-    for(let i=0;i<timelineSteps.length;i++){
-      const s=timelineSteps[i],next=timelineSteps[i+1],actor=player(s.actor),contact=actionContact(s,actor);currentTimelineIndex=i;renderTimeline?.();
-      if(actor){cameraFocus(contact,'move');const from=state(actor);await move(actor,from,contact,Math.max(300,590/(ps*pace)),'ajuste inteligente');contactHalo(contact);await v53AnimateSwing(actor,s.action,contact,Math.max(220,345/pace));}
-      if(/Professor/i.test(s.actor||'')){await v14ProfessorFeed(s.action);cameraFocus(contact,'feed')}
-      const recv=receiver(s,next),start=(cfg.live.checked&&lastBallPoint)?lastBallPoint:(/Professor/i.test(s.actor||'')?(professor?{x:professor.x,y:professor.y}:contact):contact);
-      const end=recv.point,path=makePath(start,end,s),pr=profile(s.action),flight=Math.max(360,800/((+s.speed||pr.s)*pace));
-      const recvMove=recv.player?move(recv.player,state(recv.player),end,Math.max(320,flight*.88),'leitura da bola'):Promise.resolve();
-      const recover=actor?move(actor,contact,home(actor),Math.max(330,flight*.8),'recuperação automática'):Promise.resolve();
-      await Promise.all([fly(path,flight,s),recvMove,recover]);lastBallPoint={...end};if(recv.player)v53SetState(recv.player,end);path.style.opacity='.13';setTimeout(()=>path.remove(),550);await new Promise(r=>setTimeout(r,70));
-    }
-    currentTimelineIndex=-1;renderTimeline?.();cameraReset();await Promise.all(players.map(pl=>move(pl,state(pl),home(pl),320,'home')));v53ResetVisuals();running=false;
+    // Etapas com o mesmo group executam simultaneamente. Sem group, seguem sequenciais.
+    const groups=[];for(let i=0;i<timelineSteps.length;){const g=timelineSteps[i].group??(i+1),batch=[];while(i<timelineSteps.length&&(timelineSteps[i].group??(i+1))===g){batch.push({s:timelineSteps[i],i});i++}groups.push(batch)}
+    for(const batch of groups){await Promise.all(batch.map(({s,i})=>executeStep(s,timelineSteps[i+1],pace,ps,i)));await new Promise(r=>setTimeout(r,55))}
+    currentTimelineIndex=-1;renderTimeline?.();cameraReset();await Promise.all(players.map(pl=>move(pl,state(pl),home(pl),300,'home')));v53ResetVisuals();running=false;
   }
   function stepOptions(){const sel=$('v16StepSelect');if(!sel)return;const cur=sel.value;sel.innerHTML=(timelineSteps||[]).map((s,i)=>`<option value="${i}">${i+1}. ${(s.actor||'')} — ${(s.action||'')}</option>`).join('');if(cur&&sel.querySelector(`option[value="${cur}"]`))sel.value=cur;loadStep()}
   function loadStep(){const i=+$('v16StepSelect').value,s=timelineSteps?.[i];if(!s)return;const tr=s.trajectory||{},pr=profile(s.action);$('v16TrajType').value=tr.type||pr.label||'reta';if(!$('v16TrajType').querySelector(`option[value="${$('v16TrajType').value}"]`))$('v16TrajType').value='reta';$('v16Curve').value=tr.curve??pr.curve;$('v16ArcHeight').value=tr.height??pr.h}
