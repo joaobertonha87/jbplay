@@ -1319,7 +1319,7 @@ body.v16-presentation .v16-present-exit{display:block}
 
 
       <div class="card info v16-card" id="v16-smart">
-        <div class="section-title">V16 • Simulador inteligente <span class="v16-badge">SMART 3D</span></div>
+        <div class="section-title">V16.6 • Simulador inteligente <span class="v16-badge">MOTION 3D+</span></div>
         <div class="v16-grid" style="margin-top:9px">
           <div class="v16-switch"><label>Motor de bola 3D</label><input id="v16Physics" type="checkbox" checked></div>
           <div class="v16-switch"><label>Bola viva encadeada</label><input id="v16LiveBall" type="checkbox" checked></div>
@@ -3776,6 +3776,19 @@ v8RefreshStats();
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
 
+<script id="jb-v166-depth-engine">
+// ===== JB PLAY V16.6 — DEPTH / BODY PRESENCE =====
+window.v166DepthScale=function(point){
+  const mode=document.getElementById('courtPerspective')?.value||'top';
+  if(mode==='top') return 1;
+  const y=Math.max(60,Math.min(840,point?.y??450));
+  // Na câmera 3D, atletas mais próximos ganham presença sem alterar a posição lógica.
+  const near=(y-60)/780;
+  const strength=mode==='low'?.18:mode==='cinema'?.14:mode==='pro'?.12:.10;
+  return .94+near*strength;
+};
+</script>
+
 <script id="jb-v15-technique-motion">
 // ===== JB PLAY V15 — TECHNIQUE MOTION =====
 (function(){
@@ -3844,8 +3857,10 @@ if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.se
           bodyAngle=mix(pr.contactBody,pr.finishBody,q); rackAngle=mix(pr.contactRack,pr.finishRack,q); scale=mix(1.025,1,q); lift=mix(pr.lift,0,q);
         }
         if(pl.bodyEnhanced){
-          pl.bodyEnhanced.body.setAttribute('transform',`translate(${dx} ${dy+lift}) rotate(${bodyAngle} ${pl.x} ${pl.y}) scale(${scale})`);
-          pl.bodyEnhanced.racket.setAttribute('transform',`translate(${dx} ${dy+lift}) rotate(${rackAngle} ${pl.x+18} ${pl.y-4})`);
+          const depth=(window.v166DepthScale?window.v166DepthScale(contact):1);
+          const visualScale=scale*depth;
+          pl.bodyEnhanced.body.setAttribute('transform',`translate(${dx} ${dy+lift}) rotate(${bodyAngle} ${pl.x} ${pl.y}) scale(${visualScale})`);
+          pl.bodyEnhanced.racket.setAttribute('transform',`translate(${dx} ${dy+lift}) rotate(${rackAngle} ${pl.x+18} ${pl.y-4}) scale(${depth})`);
           if(pl.bodyEnhanced.flash){
             const hit=Math.max(0,1-Math.abs(raw-.53)*11);
             pl.bodyEnhanced.flash.setAttribute('opacity',String(hit));
@@ -3903,7 +3918,7 @@ if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.se
 <button class="secondary small v16-present-exit" id="v16PresentExit">Sair da apresentação</button>
 
 <script id="jb-v16-smart-simulator">
-// ===== JB PLAY V16 — SMART SIMULATOR ENGINE =====
+// ===== JB PLAY V16.6 — SMART SIMULATOR / MOTION DEPTH ENGINE =====
 (function(){
   const $=id=>document.getElementById(id);
   const cfg={physics:$('v16Physics'),live:$('v16LiveBall'),smart:$('v16SmartMove'),camera:$('v16Camera'),height:$('v16Height'),intensity:$('v16Intensity'),cameraMode:$('v16CameraMode')};
@@ -3955,22 +3970,43 @@ if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.se
   }
   async function fly(path,duration,step){
     const {b,sh}=ensureBall(),pr=profile(step.action),heightScale=+cfg.height.value||1;
-    const h=(Number.isFinite(+step.trajectory?.height)?+step.trajectory.height:pr.h)*heightScale;
+    const tr=(step.trajectory?.type||'').toLowerCase();
+    let h=(Number.isFinite(+step.trajectory?.height)?+step.trajectory.height:pr.h)*heightScale;
+    if(tr.includes('alto')||/Lob|Rainbow/i.test(step.action||''))h=Math.max(h,145*heightScale);
+    if(tr.includes('desc')||/Smash/i.test(step.action||''))h=Math.min(h,58*heightScale);
+    if(tr.includes('curta')||/Curta/i.test(step.action||''))h=Math.min(h,36*heightScale);
     const len=path.getTotalLength();b.setAttribute('opacity','1');sh.setAttribute('opacity','.28');
-    return new Promise(res=>{let t0=null;function frame(ts){if(!t0)t0=ts;const t=Math.min(1,(ts-t0)/duration),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,p=path.getPointAtLength(len*e),z=Math.sin(Math.PI*e)*h*.28;
-      b.setAttribute('cx',p.x);b.setAttribute('cy',p.y-z);b.setAttribute('r',String(8+Math.sin(Math.PI*e)*2.2));
-      sh.setAttribute('cx',p.x);sh.setAttribute('cy',p.y+5);sh.setAttribute('rx',String(8+Math.sin(Math.PI*e)*5));sh.setAttribute('opacity',String(.28-.13*Math.sin(Math.PI*e)));
+    return new Promise(res=>{let t0=null;function frame(ts){if(!t0)t0=ts;const t=Math.min(1,(ts-t0)/duration),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,p=path.getPointAtLength(len*e);
+      let arc=Math.sin(Math.PI*e);
+      if(tr.includes('desc')||/Smash/i.test(step.action||'')) arc=Math.sin(Math.PI*Math.pow(e,.62))*(1-e*.48);
+      else if(tr.includes('curta')) arc=Math.sin(Math.PI*e)*(.78+.22*(1-e));
+      else if(tr.includes('alto')||/Lob|Rainbow/i.test(step.action||'')) arc=Math.pow(Math.sin(Math.PI*e),.72);
+      const z=Math.max(0,arc)*h*.30;
+      b.setAttribute('cx',p.x);b.setAttribute('cy',p.y-z);b.setAttribute('r',String(8+Math.max(0,arc)*2.4));
+      sh.setAttribute('cx',p.x);sh.setAttribute('cy',p.y+5);sh.setAttribute('rx',String(8+Math.max(0,arc)*5));sh.setAttribute('opacity',String(.28-.14*Math.max(0,arc)));
       if(t<1)requestAnimationFrame(frame);else res();}requestAnimationFrame(frame)});
   }
   function cameraFocus(pt,phase='contact'){
     if(!cfg.camera.checked||cfg.cameraMode.value==='wide')return;
     const wrap=$('courtWrap');if(!wrap)return;
     const px=((pt.x/700)*100).toFixed(1)+'%',py=((pt.y/900)*100).toFixed(1)+'%';
-    wrap.style.transformOrigin=`${px} ${py}`;wrap.style.transition='transform .38s ease';wrap.style.transform=cfg.cameraMode.value==='contact'?'scale(1.07)':'scale(1.035)';
+    const mode=$('courtPerspective')?.value||'top';
+    const boost=mode==='cinema'?1.085:mode==='low'?1.075:1.055;
+    wrap.style.transformOrigin=`${px} ${py}`;wrap.style.transition='transform .48s cubic-bezier(.2,.75,.2,1)';
+    wrap.style.transform=`scale(${phase==='contact'?boost:1+(boost-1)*.58})`;
   }
-  function cameraReset(){const w=$('courtWrap');if(w){w.style.transition='transform .5s ease';w.style.transform='scale(1)'}}
+  function cameraReset(){const w=$('courtWrap');if(w){w.style.transition='transform .65s cubic-bezier(.2,.75,.2,1)';w.style.transform='scale(1)'}}
   function contactHalo(pt){const h=el('ellipse',{cx:pt.x,cy:pt.y+8,rx:24,ry:9,fill:'none',stroke:'#eaff4f','stroke-width':4,opacity:.9,class:'v16-contact-halo',filter:'url(#v14Glow)'});svg.appendChild(h);setTimeout(()=>h.remove(),420)}
-  async function move(pl,from,to,dur,label){if(Math.hypot(to.x-from.x,to.y-from.y)<4){v53SetState(pl,to);return}await v53AnimateMove(pl,from,to,dur,label);v53SetState(pl,to)}
+  async function move(pl,from,to,dur,label){
+    if(!pl)return;
+    if(Math.hypot(to.x-from.x,to.y-from.y)<4){v53SetState(pl,to);v53ApplyPlayer(pl,to,0,0,window.v166DepthScale?.(to)||1);return}
+    const runLine=el('path',{d:`M ${from.x} ${from.y} L ${to.x} ${to.y}`,class:'v53-run'});svg.appendChild(runLine);
+    await new Promise(resolve=>{let t0=null;function frame(ts){if(!t0)t0=ts;const raw=Math.min(1,(ts-t0)/dur),e=raw<.5?2*raw*raw:1-Math.pow(-2*raw+2,2)/2;
+      const pt={x:from.x+(to.x-from.x)*e,y:from.y+(to.y-from.y)*e};const lean=Math.max(-9,Math.min(9,(to.x-from.x)*.024));const stride=1+.018*Math.sin(raw*Math.PI*6);
+      v53ApplyPlayer(pl,pt,lean,0,(window.v166DepthScale?.(pt)||1)*stride);
+      if(raw<1)requestAnimationFrame(frame);else resolve();}requestAnimationFrame(frame)});
+    v53SetState(pl,to);runLine.style.opacity='0';setTimeout(()=>runLine.remove(),140);
+  }
   function contactHeightPx(step,pr){
     const h=(step.contactHeight||'').toLowerCase();
     if(h==='alta')return Math.max(105,pr.h||70);if(h==='baixa')return Math.min(32,pr.h||32);return pr.h||48;
@@ -3983,7 +4019,7 @@ if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.se
     // O recebedor inicia leitura/preparação ANTES do impacto, sem esperar a bola sair.
     let recvPrepare=Promise.resolve();
     if(recv.player){const rf=state(recv.player);recvPrepare=move(recv.player,rf,end,Math.max(260,flight*.72),'preparação antecipada')}
-    if(actor){cameraFocus(contact,'move');const from=state(actor);await move(actor,from,contact,Math.max(260,520/(ps*pace)),'ajuste ao contato');contactHalo(contact);await v53AnimateSwing(actor,s.action,contact,Math.max(200,320/pace));}
+    if(actor){cameraFocus(contact,'move');const from=state(actor);await move(actor,from,contact,Math.max(260,520/(ps*pace)),'ajuste ao contato');contactHalo(contact);cameraFocus(contact,'contact');await v53AnimateSwing(actor,s.action,contact,Math.max(200,320/pace));}
     if(/Professor/i.test(s.actor||'')){await v14ProfessorFeed(s.action);cameraFocus(contact,'feed')}
     const start=(cfg.live.checked&&lastBallPoint)?lastBallPoint:(/Professor/i.test(s.actor||'')?(professor?{x:professor.x,y:professor.y}:contact):contact);
     s.trajectory={...(s.trajectory||{}),height:Number.isFinite(+s.trajectory?.height)?+s.trajectory.height:contactHeightPx(s,pr)};
