@@ -98,7 +98,7 @@ REGRA DE RETORNO AUTOMÁTICO:
 - Só informe recoveryZone se o professor explicitamente quiser uma recuperação diferente do ponto inicial.
 
 
-MOTOR INTELIGENTE DE PRESCRIÇÃO V16.5:
+MOTOR INTELIGENTE DE PRESCRIÇÃO V16.6:
 - Converta a prescrição em uma sequência executável, não em explicação.
 - Cada toque na bola deve ser uma etapa da timeline.
 - O destino de uma bola deve coincidir com o ponto de contato do próximo jogador quando targetPlayer existir.
@@ -117,10 +117,10 @@ MOTOR INTELIGENTE DE PRESCRIÇÃO V16.5:
 - Não acrescente golpes que não foram pedidos, exceto quando a prescrição solicitar treino aberto/bola viva e precisar de continuidade.
 - Se houver ambiguidade, escolha a interpretação mais conservadora e registre em warnings.
 - Inclua confidence de 0 a 1 para a interpretação global.
-- V16.5: defina contactHeight como baixa/média/alta conforme o golpe; Lob/Rainbow/Smash/Gancho/Bandeja normalmente exigem contato alto quando coerente.
-- V16.5: use preparation para descrever a preparação técnica do jogador antes do contato (ex.: "giro de ombros", "raquete alta", "base baixa").
-- V16.5: use group para sincronização. Etapas independentes que devem ocorrer ao mesmo tempo recebem o MESMO group; ações sequenciais recebem groups crescentes.
-- V16.5: delayMs permite pequeno atraso dentro do mesmo group, de 0 a 2500 ms.
+- V16.6: defina contactHeight como baixa/média/alta conforme o golpe; Lob/Rainbow/Smash/Gancho/Bandeja normalmente exigem contato alto quando coerente.
+- V16.6: use preparation para descrever a preparação técnica do jogador antes do contato (ex.: "giro de ombros", "raquete alta", "base baixa").
+- V16.6: use group para sincronização. Etapas independentes que devem ocorrer ao mesmo tempo recebem o MESMO group; ações sequenciais recebem groups crescentes.
+- V16.6: delayMs permite pequeno atraso dentro do mesmo group, de 0 a 2500 ms.
 - No modo Simultâneo, procure pares de ações independentes executáveis em paralelo sem criar duas bolas incompatíveis para o mesmo jogador.
 
 Responda SOMENTE em JSON válido:
@@ -207,7 +207,7 @@ app.post("/api/generate-training", async (req, res) => {
     const text = (response.output_text || "").trim();
     const clean = text.replace(/^```json\s*/i, "").replace(/```$/," ").trim();
     const plan = validateTrainingPlan(JSON.parse(clean));
-    plan.meta = { source: "openai", model, latencyMs: Date.now()-started, schema: "jb-prescription-v16.5" };
+    plan.meta = { source: "openai", model, latencyMs: Date.now()-started, schema: "jb-prescription-v16.6" };
     res.json(plan);
   } catch (err) {
     console.error("JB PLAY IA ERRO:", err?.status || "", err?.name || "Error", err?.message || err);
