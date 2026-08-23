@@ -114,6 +114,12 @@ MOTOR INTELIGENTE DE PRESCRIÇÃO V16.6:
 - Para curta, trajectory.type=curta e targetZone=Zona verde.
 - Para voleios/forehands/backhands normais, use reta ou arco baixo conforme a descrição.
 - Preserve literalmente a ordem pedida pelo professor.
+- SINCRONIZAÇÃO: o deslocamento do recebedor deve acontecer DURANTE o voo da bola anterior e terminar no ponto de contato; não crie uma etapa separada só para esse deslocamento.
+- Se a próxima etapa já tiver contactZone, essa zona é a posição FINAL de contato. Não some outro recuo/avanço além dela.
+- Quando o texto disser "zona 3 para alunos 3 e 4" ou equivalente, interprete Zona 3 como corredor/alvo central entre os dois: targetPlayer="", targetLane="Zona 3"; não escolha arbitrariamente um dos dois.
+- Quando a prescrição terminar com "ponto livre", "jogo livre" ou equivalente, adicione uma última etapa com action="Ponto livre", sem inventar golpes posteriores. O simulador encerrará a sequência dirigida nesse marcador.
+- Para gancho paralelo, preserve a coluna do executor e do alvo indicado; trajectory.type deve ser arco baixo ou descendente conforme altura, nunca lob alto.
+- Para defesa de gancho com avanço à rede, a etapa do defensor deve ter movement.type="avanço" e o ponto de contato deve ficar na Zona verde, salvo instrução contrária.
 - Não acrescente golpes que não foram pedidos, exceto quando a prescrição solicitar treino aberto/bola viva e precisar de continuidade.
 - Se houver ambiguidade, escolha a interpretação mais conservadora e registre em warnings.
 - Inclua confidence de 0 a 1 para a interpretação global.
