@@ -1319,7 +1319,7 @@ body.v16-presentation .v16-present-exit{display:block}
 
 
       <div class="card info v16-card" id="v16-smart">
-        <div class="section-title">V16.6 • Simulador inteligente <span class="v16-badge">MOTION 3D+</span></div>
+        <div class="section-title">V16.7 • Simulador inteligente <span class="v16-badge">SEQUENCE SYNC+</span></div>
         <div class="v16-grid" style="margin-top:9px">
           <div class="v16-switch"><label>Motor de bola 3D</label><input id="v16Physics" type="checkbox" checked></div>
           <div class="v16-switch"><label>Bola viva encadeada</label><input id="v16LiveBall" type="checkbox" checked></div>
@@ -3457,8 +3457,11 @@ function v61ReceiverPoint(step,nextStep){
       if(mv.includes('esquer'))x=Math.max(115,x-70);
       else if(mv.includes('direit'))x=Math.min(585,x+70);
     }
-    if(mv.includes('recu')||mv.includes('fundo'))y=id<=2?Math.max(70,y-60):Math.min(830,y+60);
-    if(mv.includes('avan')||mv.includes('frente'))y=id<=2?Math.min(420,y+60):Math.max(480,y-60);
+    // Se a IA já definiu a zona de contato, ela é a posição final. Não aplicar o movimento duas vezes.
+    if(!zone){
+      if(mv.includes('recu')||mv.includes('fundo'))y=id<=2?Math.max(70,y-60):Math.min(830,y+60);
+      if(mv.includes('avan')||mv.includes('frente'))y=id<=2?Math.min(420,y+60):Math.max(480,y-60);
+    }
     return{player:recv,point:{x,y}};
   }
 
@@ -3960,7 +3963,7 @@ window.v166DepthScale=function(point){
     const pr=profile(step.action),tr=step.trajectory||{};
     const curve=Number.isFinite(+tr.curve)?+tr.curve:pr.curve;
     const mx=(start.x+end.x)/2,my=(start.y+end.y)/2+curve;
-    const path=el('path',{d:`M ${start.x} ${start.y} Q ${mx} ${my} ${end.x} ${end.y}`,fill:'none',stroke:'#dfff4e','stroke-width':5,opacity:.78,'stroke-linecap':'round',filter:'url(#v14Glow)'});
+    const path=el('path',{d:`M ${start.x} ${start.y} Q ${mx} ${my} ${end.x} ${end.y}`,fill:'none',stroke:'#dfff4e','stroke-width':2,opacity:.16,'stroke-linecap':'round','stroke-dasharray':'5 9'});
     svg.appendChild(path);return path;
   }
   function ensureBall(){
@@ -4021,19 +4024,28 @@ window.v166DepthScale=function(point){
     if(recv.player){const rf=state(recv.player);recvPrepare=move(recv.player,rf,end,Math.max(260,flight*.72),'preparação antecipada')}
     if(actor){cameraFocus(contact,'move');const from=state(actor);await move(actor,from,contact,Math.max(260,520/(ps*pace)),'ajuste ao contato');contactHalo(contact);cameraFocus(contact,'contact');await v53AnimateSwing(actor,s.action,contact,Math.max(200,320/pace));}
     if(/Professor/i.test(s.actor||'')){await v14ProfessorFeed(s.action);cameraFocus(contact,'feed')}
-    const start=(cfg.live.checked&&lastBallPoint)?lastBallPoint:(/Professor/i.test(s.actor||'')?(professor?{x:professor.x,y:professor.y}:contact):contact);
+    const start=/Professor/i.test(s.actor||'')?(professor?{x:professor.x,y:professor.y}:contact):contact;
     s.trajectory={...(s.trajectory||{}),height:Number.isFinite(+s.trajectory?.height)?+s.trajectory.height:contactHeightPx(s,pr)};
     const path=makePath(start,end,s);
     const recover=actor?move(actor,contact,home(actor),Math.max(300,flight*.78),'recuperação automática'):Promise.resolve();
-    await Promise.all([fly(path,flight,s),recvPrepare,recover]);lastBallPoint={...end};if(recv.player)v53SetState(recv.player,end);path.style.opacity='.13';setTimeout(()=>path.remove(),550);
+    await Promise.all([fly(path,flight,s),recvPrepare,recover]);lastBallPoint={...end};if(recv.player)v53SetState(recv.player,end);path.remove();
   }
   async function run(){
     if(running||!timelineSteps?.length)return;running=true;lastBallPoint=null;v53ResetVisuals();
+    // limpa rotas/legendas de motores antigos para não criar linhas grandes sobre a quadra
+    svg.querySelectorAll('.v53-route,.v53-label,.v53-trail,.trajectory-label,.v52-run,.v53-run').forEach(n=>n.remove());
     const pace=(+sessionPace.value||1)*(+cfg.intensity.value||1),ps=+playerSpeed.value||1;
     players.forEach((pl,i)=>{const p=V62_HOME[i+1];pl.x=p.x;pl.y=p.y;v53SetState(pl,p)});
     // Etapas com o mesmo group executam simultaneamente. Sem group, seguem sequenciais.
     const groups=[];for(let i=0;i<timelineSteps.length;){const g=timelineSteps[i].group??(i+1),batch=[];while(i<timelineSteps.length&&(timelineSteps[i].group??(i+1))===g){batch.push({s:timelineSteps[i],i});i++}groups.push(batch)}
-    for(const batch of groups){await Promise.all(batch.map(({s,i})=>executeStep(s,timelineSteps[i+1],pace,ps,i)));await new Promise(r=>setTimeout(r,55))}
+    for(const batch of groups){
+      const playable=batch.filter(({s})=>!/ponto\s*livre|jogo\s*livre|bola\s*livre/i.test(s.action||''));
+      if(playable.length!==batch.length){
+        const st=document.getElementById('v16PhysicsState');if(st)st.textContent='Sequência prescrita concluída • PONTO LIVRE';
+        break;
+      }
+      await Promise.all(playable.map(({s,i})=>executeStep(s,timelineSteps[i+1],pace,ps,i)));await new Promise(r=>setTimeout(r,55))
+    }
     currentTimelineIndex=-1;renderTimeline?.();cameraReset();await Promise.all(players.map(pl=>move(pl,state(pl),home(pl),300,'home')));v53ResetVisuals();running=false;
   }
   function stepOptions(){const sel=$('v16StepSelect');if(!sel)return;const cur=sel.value;sel.innerHTML=(timelineSteps||[]).map((s,i)=>`<option value="${i}">${i+1}. ${(s.actor||'')} — ${(s.action||'')}</option>`).join('');if(cur&&sel.querySelector(`option[value="${cur}"]`))sel.value=cur;loadStep()}
