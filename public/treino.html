@@ -1319,7 +1319,7 @@ body.v16-presentation .v16-present-exit{display:block}
 
 
       <div class="card info v16-card" id="v16-smart">
-        <div class="section-title">V17.5 • Simulador inteligente <span class="v16-badge">STRICT ZONE CONTACT</span></div>
+        <div class="section-title">V17.6 • Simulador inteligente <span class="v16-badge">PRECOMPILED PHYSICAL SEQUENCE</span></div>
         <div class="v16-grid" style="margin-top:9px">
           <div class="v16-switch"><label>Motor de bola 3D</label><input id="v16Physics" type="checkbox" checked></div>
           <div class="v16-switch"><label>Bola viva encadeada</label><input id="v16LiveBall" type="checkbox" checked></div>
@@ -3912,7 +3912,7 @@ window.v166DepthScale=function(point){
   // Marca versão no painel sem alterar a lógica do app.
   const versionNote=document.createElement('div');
   versionNote.id='v15VersionNote';
-  versionNote.textContent='V16.8 • STRICT ZONE CONTACT';
+  versionNote.textContent='V16.8 • PRECOMPILED PHYSICAL SEQUENCE';
   versionNote.style.cssText='position:fixed;right:12px;bottom:10px;z-index:20;font:800 10px system-ui;color:#cfff20;background:rgba(7,16,22,.72);border:1px solid rgba(207,255,32,.28);padding:6px 9px;border-radius:9px;pointer-events:none;letter-spacing:.8px';
   document.body.appendChild(versionNote);
 })();
@@ -4073,7 +4073,7 @@ window.v166DepthScale=function(point){
 
 
 <script id="jb-v168-physical-target-fix">
-// ===== JB PLAY V16.8 — STRICT ZONE CONTACT =====
+// ===== JB PLAY V16.8 — PRECOMPILED PHYSICAL SEQUENCE =====
 (function(){
   // Remove qualquer desenho legado de rotas ao aplicar uma prescrição da IA.
   window.buildTimelineVisuals=function(){
@@ -4142,7 +4142,7 @@ window.v166DepthScale=function(point){
 
 
 <script id="jb-v169-clean-continuity-engine">
-// ===== JB PLAY V16.9 — STRICT ZONE CONTACT =====
+// ===== JB PLAY V16.9 — PRECOMPILED PHYSICAL SEQUENCE =====
 (function(){
   const $ = id => document.getElementById(id);
   let v169Running = false;
@@ -4553,7 +4553,7 @@ body.v169-running #courtSvg .v169-flight-guide{
 
 
 <script id="jb-v170-animation-test-mode">
-// ===== JB PLAY V17.0 — STRICT ZONE CONTACT =====
+// ===== JB PLAY V17.0 — PRECOMPILED PHYSICAL SEQUENCE =====
 (function(){
   const $ = id => document.getElementById(id);
 
@@ -4768,7 +4768,7 @@ body.v169-running #courtSvg .v169-flight-guide{
 
 
 <script id="jb-v171-physical-timeline-engine">
-// ===== JB PLAY V17.1 — STRICT ZONE CONTACT =====
+// ===== JB PLAY V17.1 — PRECOMPILED PHYSICAL SEQUENCE =====
 (function(){
   const $=id=>document.getElementById(id);
   const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
@@ -4917,7 +4917,7 @@ body.v171-running #courtSvg .v53-run{display:none!important}
 
 
 <script id="jb-v172-clean-physical-test-fix">
-// ===== JB PLAY V17.2 — STRICT ZONE CONTACT =====
+// ===== JB PLAY V17.2 — PRECOMPILED PHYSICAL SEQUENCE =====
 (function(){
   const $ = id => document.getElementById(id);
 
@@ -5175,7 +5175,7 @@ body.v171-running #courtSvg .v53-run{display:none!important}
 
 
 <script id="jb-v173-synced-movement-test-mode">
-// ===== JB PLAY V17.3 — STRICT ZONE CONTACT =====
+// ===== JB PLAY V17.3 — PRECOMPILED PHYSICAL SEQUENCE =====
 (function(){
   const $=id=>document.getElementById(id);
   const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
@@ -6019,6 +6019,446 @@ body.v173-running #courtSvg .v54-start-line{
 #courtSvg .v15ImpactStar,
 #courtSvg .v53-label,
 #courtSvg .trajectory-label{
+  display:none!important;
+}
+</style>
+
+
+<script id="jb-v176-precompiled-physical-sequence">
+// ===== JB PLAY V17.6 — PRECOMPILED PHYSICAL SEQUENCE =====
+(function(){
+  const $=id=>document.getElementById(id);
+  const HOME={1:{x:230,y:300},2:{x:470,y:300},3:{x:230,y:600},4:{x:470,y:600}};
+  const Z={
+    redTop:95, yellowTop:220, greenTop:345,
+    greenBottom:555, yellowBottom:680, redBottom:805
+  };
+  let running=false, ball=null, shadow=null, lastBall=null;
+  let physicalPos=new Map(), compiled=[];
+
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  const pid=a=>{const m=String(a||'').match(/Aluno\s*([1-4])/i);return m?+m[1]:0};
+  const player=a=>{const i=pid(a);return i?players[i-1]:null};
+  const top=id=>id<=2;
+  const cp=p=>({x:+p.x,y:+p.y});
+
+  function home(pl){return cp(HOME[players.indexOf(pl)+1]||{x:pl.x,y:pl.y})}
+  function getPos(pl){
+    if(!physicalPos.has(pl)) physicalPos.set(pl,home(pl));
+    return cp(physicalPos.get(pl));
+  }
+  function setPos(pl,p){
+    if(!pl)return;
+    physicalPos.set(pl,cp(p));
+    try{v53SetState?.(pl,p)}catch(e){}
+  }
+
+  function semantic(step){
+    return [
+      step?.action, step?.target, step?.targetPlayer,
+      step?.targetZone, step?.targetLane,
+      step?.contactZone, step?.contactLane,
+      step?.movement?.type, step?.movement?.direction
+    ].filter(Boolean).join(' ').toLowerCase();
+  }
+
+  function contactFor(step){
+    const pl=player(step?.actor);
+    if(!pl){
+      if(/professor/i.test(step?.actor||'') && professor)
+        return {x:professor.x,y:professor.y};
+      return {x:40,y:520};
+    }
+
+    const id=pid(step.actor);
+    const txt=semantic(step);
+    let p=home(pl);
+
+    // ZONA É OBRIGATÓRIA.
+    if(/vermel|recuper|recua|recuo|fundo/.test(txt))
+      p.y=top(id)?Z.redTop:Z.redBottom;
+    else if(/verde|defini|avan[çc]a|rede|frente/.test(txt))
+      p.y=top(id)?Z.greenTop:Z.greenBottom;
+    else if(/amarel|constru/.test(txt))
+      p.y=top(id)?Z.yellowTop:Z.yellowBottom;
+
+    if(/zona\s*3|centro|central/.test(txt)) p.x=350;
+    else if(/esquer/.test(txt)) p.x=230;
+    else if(/direit/.test(txt)) p.x=470;
+
+    return p;
+  }
+
+  function explicitTargets(step){
+    const txt=[
+      step?.targetPlayer, step?.target, step?.action
+    ].filter(Boolean).join(' ');
+    const ids=[...txt.matchAll(/Aluno\s*([1-4])/gi)].map(m=>+m[1]);
+    return [...new Set(ids)].filter(i=>i!==pid(step?.actor));
+  }
+
+  function zoneTarget(step,actorId){
+    const txt=semantic(step);
+    const destTop=actorId>=3;
+    let y=destTop?Z.yellowTop:Z.yellowBottom;
+
+    if(/vermel/.test(txt)) y=destTop?Z.redTop:Z.redBottom;
+    else if(/verde|defini|rede/.test(txt)) y=destTop?Z.greenTop:Z.greenBottom;
+    else if(/amarel/.test(txt)) y=destTop?Z.yellowTop:Z.yellowBottom;
+
+    let x=350;
+    if(/zona\s*1/.test(txt))x=150;
+    else if(/zona\s*2/.test(txt))x=250;
+    else if(/zona\s*3/.test(txt))x=350;
+    else if(/zona\s*4/.test(txt))x=450;
+    else if(/zona\s*5/.test(txt))x=550;
+    else if(/esquer/.test(txt))x=230;
+    else if(/direit/.test(txt))x=470;
+
+    return{x,y};
+  }
+
+  function compileTimeline(){
+    compiled=[];
+    if(!Array.isArray(timelineSteps)) return compiled;
+
+    // 1. Primeiro fixa TODOS os pontos de contato.
+    for(let i=0;i<timelineSteps.length;i++){
+      const st=timelineSteps[i];
+      if(!st)continue;
+      compiled.push({
+        index:i,
+        step:st,
+        actor:player(st.actor),
+        actorId:pid(st.actor),
+        contact:contactFor(st),
+        destination:null,
+        receiver:null
+      });
+    }
+
+    // 2. Depois conecta cada bola ao contato FUTURO correto.
+    for(let i=0;i<compiled.length;i++){
+      const c=compiled[i], st=c.step;
+      if(/ponto\s*livre|jogo\s*livre|bola\s*livre/i.test(semantic(st))) continue;
+
+      const targets=explicitTargets(st);
+
+      // Destino para múltiplos jogadores (ex.: "para alunos 3 e 4") = zona entre eles.
+      if(targets.length>1){
+        const pts=targets.map(id=>{
+          const future=compiled.find((x,j)=>j>i && x.actorId===id);
+          return future?.contact || HOME[id];
+        });
+        c.destination={
+          x:pts.reduce((a,b)=>a+b.x,0)/pts.length,
+          y:pts.reduce((a,b)=>a+b.y,0)/pts.length
+        };
+        c.receiver=null;
+        continue;
+      }
+
+      // Alvo explícito: usa o contato futuro desse jogador.
+      if(targets.length===1){
+        const targetId=targets[0];
+        const future=compiled.find((x,j)=>j>i && x.actorId===targetId);
+        c.receiver=players[targetId-1]||null;
+        c.destination=future ? cp(future.contact) : cp(HOME[targetId]);
+        continue;
+      }
+
+      // Sem targetPlayer explícito: próxima ação de OUTRO jogador recebe a bola.
+      const nextOther=compiled.find((x,j)=>j>i && x.actorId && x.actorId!==c.actorId);
+      if(nextOther){
+        c.receiver=nextOther.actor;
+        c.destination=cp(nextOther.contact);
+        continue;
+      }
+
+      // Último fallback físico = zona indicada, nunca centro da rede.
+      c.destination=zoneTarget(st,c.actorId);
+    }
+
+    // 3. Direção paralela/cruzada corrige apenas X, sem destruir a zona Y.
+    for(const c of compiled){
+      if(!c.destination)continue;
+      const txt=semantic(c.step);
+      const src=c.contact;
+      if(/paralel/.test(txt)) c.destination.x=src.x;
+      else if(/cruzad/.test(txt)) c.destination.x=src.x<350?470:230;
+
+      // "zona 3" explicitamente vence direção lateral.
+      if(/zona\s*3/.test(txt)) c.destination.x=350;
+    }
+
+    return compiled;
+  }
+
+  function apply(pl,p,lean=0,racket=0,scale=1){
+    if(!pl)return;
+    const bx=pl.baseX??pl.x, by=pl.baseY??pl.y;
+    const dx=p.x-bx,dy=p.y-by;
+    pl.g.setAttribute('transform',
+      `translate(${dx} ${dy}) translate(${bx} ${by}) scale(${scale}) translate(${-bx} ${-by})`
+    );
+    if(pl.bodyEnhanced){
+      pl.bodyEnhanced.body.setAttribute('transform',`rotate(${lean} ${bx} ${by})`);
+      pl.bodyEnhanced.racket.setAttribute('transform',`rotate(${racket} ${bx+18} ${by-4})`);
+    }
+  }
+
+  async function move(pl,to,dur){
+    if(!pl)return;
+    const from=getPos(pl);
+    if(Math.hypot(to.x-from.x,to.y-from.y)<2){
+      setPos(pl,to);apply(pl,to);return;
+    }
+    await new Promise(resolve=>{
+      let t0=null;
+      function frame(ts){
+        if(t0===null)t0=ts;
+        const r=Math.min(1,(ts-t0)/dur),e=ease(r);
+        const p={x:from.x+(to.x-from.x)*e,y:from.y+(to.y-from.y)*e};
+        const lean=Math.max(-8,Math.min(8,(to.x-from.x)*.02));
+        const sc=typeof v166DepthScale==='function'?v166DepthScale(p):1;
+        apply(pl,p,lean,0,sc*(1+.012*Math.sin(r*Math.PI*6)));
+        if(r<1)requestAnimationFrame(frame); else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+    setPos(pl,to);
+    apply(pl,to,0,0,typeof v166DepthScale==='function'?v166DepthScale(to):1);
+  }
+
+  async function swing(pl,action,p,dur){
+    if(!pl)return;
+    await new Promise(resolve=>{
+      let t0=null;
+      function frame(ts){
+        if(t0===null)t0=ts;
+        const r=Math.min(1,(ts-t0)/dur);
+        let rack=-20+40*r;
+        if(/Smash|Gancho|Bandeja|Rainbow|An[oô]malo|Saque/i.test(action||''))rack=-75+150*r;
+        else if(/Forehand/i.test(action||''))rack=-50+100*r;
+        else if(/Backhand/i.test(action||''))rack=50-100*r;
+        apply(pl,p,6*Math.sin(Math.PI*r),rack,1+.018*Math.sin(Math.PI*r));
+        if(r<1)requestAnimationFrame(frame);else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  function profile(a=''){
+    if(/Lob|Rainbow/i.test(a))return{curve:-150,h:175,s:.78};
+    if(/Smash/i.test(a))return{curve:35,h:35,s:1.8};
+    if(/Gancho|Bandeja|An[oô]malo/i.test(a))return{curve:-48,h:72,s:1.28};
+    if(/Defesa/i.test(a))return{curve:-82,h:115,s:.88};
+    if(/Curta/i.test(a))return{curve:-12,h:25,s:.82};
+    return{curve:-20,h:48,s:1.1};
+  }
+
+  function ensureBall(){
+    if(!ball){
+      ball=svg.querySelector('#v176Ball')||el('circle',{
+        id:'v176Ball',r:9,fill:'#eaff4f',stroke:'#fff','stroke-width':2.5
+      });
+      svg.appendChild(ball);
+    }
+    if(!shadow){
+      shadow=svg.querySelector('#v176Shadow')||el('ellipse',{
+        id:'v176Shadow',rx:9,ry:3.5,fill:'#000',opacity:.22
+      });
+      svg.appendChild(shadow);
+    }
+  }
+
+  async function fly(start,end,step,dur){
+    ensureBall();
+    const pr=profile(step.action),tr=step.trajectory||{};
+    const curve=Number.isFinite(+tr.curve)?+tr.curve:pr.curve;
+    const height=Number.isFinite(+tr.height)?+tr.height:pr.h;
+    const mx=(start.x+end.x)/2,my=(start.y+end.y)/2+curve;
+    const path=el('path',{d:`M ${start.x} ${start.y} Q ${mx} ${my} ${end.x} ${end.y}`,fill:'none',stroke:'none'});
+    svg.appendChild(path);
+    const len=path.getTotalLength();
+    ball.setAttribute('opacity','1');shadow.setAttribute('opacity','.22');
+
+    await new Promise(resolve=>{
+      let t0=null;
+      function frame(ts){
+        if(t0===null)t0=ts;
+        const r=Math.min(1,(ts-t0)/dur),e=ease(r),pt=path.getPointAtLength(len*e);
+        let arc=Math.sin(Math.PI*e);
+        if(/Lob|Rainbow/i.test(step.action||''))arc=Math.pow(arc,.7);
+        if(/Smash/i.test(step.action||''))arc=Math.sin(Math.PI*Math.pow(e,.62))*(1-e*.48);
+        const z=Math.max(0,arc)*height*.30;
+        ball.setAttribute('cx',pt.x);ball.setAttribute('cy',pt.y-z);
+        shadow.setAttribute('cx',pt.x);shadow.setAttribute('cy',pt.y+6);
+        if(r<1)requestAnimationFrame(frame);else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+    path.remove();
+    ball.setAttribute('cx',end.x);ball.setAttribute('cy',end.y);
+    shadow.setAttribute('cx',end.x);shadow.setAttribute('cy',end.y+6);
+    lastBall=cp(end);
+  }
+
+  const actionWords=/lan[çc]a|executa|avan[çc]a|recua|devolve|defende|ponto livre|gancho|lob|smash|bandeja|voleio|forehand|backhand|contato|impacto/i;
+  function clean(){
+    svg.querySelectorAll('path[marker-end],.trajectory-label,.v53-label,.v5-step-badge,.v53-route,.v5-temp-route,.v52-run,.v53-run,.v54-start-line,.v15PhaseTag,.v15ImpactStar').forEach(n=>{
+      if(!n.closest('defs'))n.remove();
+    });
+    svg.querySelectorAll('text').forEach(t=>{
+      const tx=(t.textContent||'').trim();
+      if((tx.length>7&&actionWords.test(tx)) || /^(CONTATO|IMPACTO)$/i.test(tx)) t.remove();
+    });
+  }
+
+  async function execute(c,next,pace,ps){
+    const st=c.step;
+    currentTimelineIndex=c.index;
+    renderTimeline?.(); clean();
+
+    // Se ator recebeu a bola anterior, sua posição física já é o contato compilado.
+    if(c.actor){
+      const cur=getPos(c.actor);
+      if(Math.hypot(c.contact.x-cur.x,c.contact.y-cur.y)>2)
+        await move(c.actor,c.contact,Math.max(420,700/(ps*pace)));
+      await sleep(80);
+      await swing(c.actor,st.action,c.contact,Math.max(240,360/pace));
+    }else if(/Professor/i.test(st.actor||'')){
+      try{await v14ProfessorFeed?.(st.action)}catch(e){}
+    }
+
+    if(!c.destination)return;
+
+    const pr=profile(st.action);
+    const flight=Math.max(520,1050/((+st.speed||pr.s)*pace));
+    const start=lastBall
+      ? cp(lastBall)
+      : (/Professor/i.test(st.actor||'')&&professor?{x:professor.x,y:professor.y}:cp(c.contact));
+
+    // O recebedor começa a deslocar EXATAMENTE junto com a bola.
+    const receiveMove=c.receiver
+      ? move(c.receiver,c.destination,Math.max(520,flight*.98))
+      : Promise.resolve();
+
+    const ballMove=fly(start,c.destination,st,flight);
+
+    // Ator só retorna depois que a bola já saiu.
+    const recover=c.actor
+      ? (async()=>{
+          await sleep(Math.max(160,flight*.30));
+          await move(c.actor,home(c.actor),Math.max(430,flight*.70));
+        })()
+      : Promise.resolve();
+
+    await Promise.all([receiveMove,ballMove,recover]);
+
+    if(c.receiver){
+      setPos(c.receiver,c.destination);
+      apply(c.receiver,c.destination,0,0,
+        typeof v166DepthScale==='function'?v166DepthScale(c.destination):1
+      );
+    }
+    clean();
+  }
+
+  async function run(){
+    if(running||!Array.isArray(timelineSteps)||!timelineSteps.length)return;
+    running=true;
+    document.body.classList.add('v176-running');
+    clean(); lastBall=null; ensureBall();
+    ball.setAttribute('opacity','0');shadow.setAttribute('opacity','0');
+
+    compileTimeline();
+    physicalPos.clear();
+    players.forEach(pl=>{
+      const h=home(pl);setPos(pl,h);apply(pl,h);
+    });
+
+    const pace=+($('sessionPace')?.value||1);
+    const ps=+($('playerSpeed')?.value||1);
+
+    for(let i=0;i<compiled.length;i++){
+      const c=compiled[i];
+      if(/ponto\s*livre|jogo\s*livre|bola\s*livre/i.test(semantic(c.step))){
+        const info=$('v16PhysicsState');
+        if(info)info.textContent='Sequência prescrita concluída • PONTO LIVRE';
+        break;
+      }
+      await execute(c,compiled[i+1],pace,ps);
+      await sleep(90);
+    }
+
+    currentTimelineIndex=-1;renderTimeline?.();
+    await sleep(250);
+    ball.setAttribute('opacity','0');shadow.setAttribute('opacity','0');
+    await Promise.all(players.map(pl=>move(pl,home(pl),420)));
+    players.forEach(pl=>{pl.g.removeAttribute('transform');setPos(pl,home(pl));});
+    clean();
+    document.body.classList.remove('v176-running');
+    running=false;
+  }
+
+  function install(){
+    // Última atribuição vence os motores anteriores.
+    ['v16Run','playTimeline','animate','v170TestBtn','v170ReplayBtn'].forEach(id=>{
+      const b=$(id);
+      if(b){
+        b.onclick=run;
+        b.dataset.v176engine='1';
+      }
+    });
+
+    // Mensagem do modo teste.
+    const st=$('v170Status');
+    if(st && Array.isArray(timelineSteps)&&timelineSteps.length)
+      st.textContent='Treino carregado • motor físico pré-compilado V17.6 pronto.';
+    clean();
+  }
+
+  // Reinstala depois de todos os scripts antigos terminarem seus próprios hooks.
+  setTimeout(install,1400);
+  let tries=0;
+  const timer=setInterval(()=>{
+    install();tries++;
+    if(tries>24)clearInterval(timer);
+  },350);
+
+  const aiBtn=$('onlineAiGenerate');
+  if(aiBtn){
+    aiBtn.addEventListener('click',()=>{
+      const t=setInterval(()=>{
+        if(Array.isArray(timelineSteps)&&timelineSteps.length){
+          compileTimeline();
+          install();
+        }
+      },400);
+      setTimeout(()=>clearInterval(t),105000);
+    },true);
+  }
+
+  // Se a sessão persistente restaurar timeline depois do load, recompila.
+  setTimeout(()=>{
+    if(Array.isArray(timelineSteps)&&timelineSteps.length) compileTimeline();
+  },1800);
+})();
+</script>
+
+<style id="jb-v176-style">
+body.v176-running #courtSvg .trajectory-label,
+body.v176-running #courtSvg .v53-label,
+body.v176-running #courtSvg .v5-step-badge,
+body.v176-running #courtSvg .v53-route,
+body.v176-running #courtSvg .v5-temp-route,
+body.v176-running #courtSvg .v52-run,
+body.v176-running #courtSvg .v53-run,
+body.v176-running #courtSvg .v54-start-line,
+body.v176-running #courtSvg .v15PhaseTag,
+body.v176-running #courtSvg .v15ImpactStar{
   display:none!important;
 }
 </style>
