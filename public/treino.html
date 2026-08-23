@@ -1319,7 +1319,7 @@ body.v16-presentation .v16-present-exit{display:block}
 
 
       <div class="card info v16-card" id="v16-smart">
-        <div class="section-title">V16.7 • Simulador inteligente <span class="v16-badge">SEQUENCE SYNC+</span></div>
+        <div class="section-title">V16.8 • Simulador inteligente <span class="v16-badge">PHYSICAL TARGET SYNC</span></div>
         <div class="v16-grid" style="margin-top:9px">
           <div class="v16-switch"><label>Motor de bola 3D</label><input id="v16Physics" type="checkbox" checked></div>
           <div class="v16-switch"><label>Bola viva encadeada</label><input id="v16LiveBall" type="checkbox" checked></div>
@@ -3046,7 +3046,7 @@ function jbApplyAITraining(data,prompt=""){
   if(data.direction && typeof directionEl!=='undefined')directionEl.value=data.direction;
   if(Array.isArray(data.timeline)){
     timelineSteps=data.timeline.map((x,i)=>({actor:x.actor||'Professor',action:x.action||'Lançamento',contactZone:x.contactZone||x.receiveZone||'',contactLane:x.contactLane||x.lane||'',targetPlayer:x.targetPlayer||'',targetZone:x.targetZone||'',targetLane:x.targetLane||'',recoveryZone:x.recoveryZone||'',recoveryLane:x.recoveryLane||'',movement:x.movement||{},trajectory:x.trajectory||{},speed:+x.speed||1,order:x.order||i+1,group:x.group||i+1,delayMs:+x.delayMs||0,contactHeight:x.contactHeight||'média',preparation:x.preparation||'automática'}));
-    renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});buildTimelineVisuals?.();
+    renderTimeline?.();renderAIPlan?.({timeline:timelineSteps});
   }
   exTitle.textContent=data.title||'Treino tático por IA';
   objective.textContent=data.objective||'Treino montado automaticamente.';
@@ -3912,7 +3912,7 @@ window.v166DepthScale=function(point){
   // Marca versão no painel sem alterar a lógica do app.
   const versionNote=document.createElement('div');
   versionNote.id='v15VersionNote';
-  versionNote.textContent='V16.5 • IA MOTION SYNC';
+  versionNote.textContent='V16.8 • PHYSICAL TARGET SYNC';
   versionNote.style.cssText='position:fixed;right:12px;bottom:10px;z-index:20;font:800 10px system-ui;color:#cfff20;background:rgba(7,16,22,.72);border:1px solid rgba(207,255,32,.28);padding:6px 9px;border-radius:9px;pointer-events:none;letter-spacing:.8px';
   document.body.appendChild(versionNote);
 })();
@@ -4068,6 +4068,75 @@ window.v166DepthScale=function(point){
   const oldRender=window.renderTimeline;window.renderTimeline=function(){const r=oldRender?.apply(this,arguments);setTimeout(stepOptions,0);return r};
   if(typeof playTimeline!=='undefined')playTimeline.onclick=run;if(typeof animate!=='undefined')animate.onclick=run;
   setInterval(stepOptions,1800);stepOptions();renderLesson();scoutAnalysis();
+})();
+</script>
+
+
+<script id="jb-v168-physical-target-fix">
+// ===== JB PLAY V16.8 — PHYSICAL TARGET SYNC =====
+(function(){
+  // Remove qualquer desenho legado de rotas ao aplicar uma prescrição da IA.
+  window.buildTimelineVisuals=function(){
+    svg.querySelectorAll('path[marker-end="url(#arrow)"],.trajectory-label,.v5-temp-route,.v5-step-badge').forEach(n=>{if(!n.closest('defs'))n.remove()});
+    if(typeof renderAIPlan==='function')renderAIPlan({timeline:timelineSteps||[]});
+  };
+
+  // Destino físico: jogador/zona/faixa. Nunca usa o centro da rede como fallback.
+  window.v168Receiver=function(step,nextStep){
+    const targetName=(step?.targetPlayer||'').trim();
+    let recv=targetName?v61Player(targetName):null;
+    if(!recv && nextStep && v61Id(nextStep.actor)) recv=v61Player(nextStep.actor);
+    if(recv){
+      const id=players.indexOf(recv)+1,cur=v61State(recv);
+      const zone=step.targetZone||nextStep?.contactZone||'';
+      const lane=step.targetLane||nextStep?.contactLane||'';
+      let x=v61LaneX(id,lane,cur.x), y=v61ZoneY(id,zone);
+      if(y==null)y=cur.y;
+      // "paralela" preserva a coluna física do recebedor; "cruzada" usa a coluna oposta.
+      if(/paral/i.test(lane)) x=cur.x;
+      if(/cruz/i.test(lane)) x=cur.x<350?470:230;
+      return {player:recv,point:{x,y}};
+    }
+    const aid=v61Id(step.actor), actor=v61Player(step.actor), cur=actor?v61State(actor):{x:350,y:450};
+    const destinationTop=aid>=3; // bola atravessa a rede para o lado oposto
+    const zone=(step.targetZone||'').toLowerCase();
+    let y=destinationTop?220:680;
+    if(zone.includes('vermel'))y=destinationTop?95:805;
+    else if(zone.includes('verde'))y=destinationTop?365:535;
+    else if(zone.includes('amarel'))y=destinationTop?220:680;
+    let x=v61LaneX(destinationTop?1:3,step.targetLane,cur.x);
+    if(/paral/i.test(step.targetLane||''))x=cur.x;
+    if(/cruz/i.test(step.targetLane||''))x=cur.x<350?470:230;
+    return {player:null,point:{x,y}};
+  };
+
+  // Corrige contato: uma contactZone explícita é posição FINAL; não soma recuo/avanço de novo.
+  window.v168Contact=function(step,pl){
+    if(!pl)return /Professor/i.test(step.actor||'')&&professor?{x:professor.x,y:professor.y}:{x:40,y:520};
+    const id=v61Id(step.actor),cur=v61State(pl),mv=((step.movement?.type||'')+' '+(step.movement?.direction||'')).toLowerCase();
+    if(!step.contactZone&&!step.contactLane&&(!mv.trim()||mv.includes('parado')))return cur;
+    let x=v61LaneX(id,step.contactLane,cur.x),y=v61ZoneY(id,step.contactZone);if(y==null)y=cur.y;
+    if(!step.contactZone){
+      if(mv.includes('recu')||mv.includes('fundo'))y=id<=2?Math.max(70,y-70):Math.min(830,y+70);
+      if(mv.includes('avan')||mv.includes('frente'))y=id<=2?Math.min(420,y+70):Math.max(480,y-70);
+    }
+    if(mv.includes('lateral')){if(mv.includes('esquer'))x=Math.max(115,x-70);else if(mv.includes('direit'))x=Math.min(585,x+70)}
+    return{x,y};
+  };
+
+  // Patch no simulador V16.6/V16.7 por meio das funções-base que ele consulta.
+  v61ReceiverPoint=window.v168Receiver;
+  v61ResolveContact=function(step){return window.v168Contact(step,v61Player(step.actor))};
+
+  // Não deixa rotas antigas permanecerem na quadra após gerar IA.
+  const aiBtn=document.getElementById('onlineAiGenerate');
+  if(aiBtn){
+    const current=aiBtn.onclick;
+    aiBtn.onclick=async function(){
+      svg.querySelectorAll('path[marker-end="url(#arrow)"],.trajectory-label,.v5-temp-route,.v5-step-badge').forEach(n=>{if(!n.closest('defs'))n.remove()});
+      return current?.apply(this,arguments);
+    };
+  }
 })();
 </script>
 
