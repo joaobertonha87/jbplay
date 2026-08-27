@@ -472,8 +472,20 @@ function rename(i,v){state.players[i].name=v.trim()||`Aluno ${i+1}`;render()}
 function setMode(m){state.mode=m;if(m==='standard'&&categories.find(c=>c.id===currentCat)?.advanced)currentCat='ponto';render()}
 function setCat(id){currentCat=id;render()}
 function selectPlayer(i){current=i;render()}
-function add(k){state.players[current].stats[k]++;state.statHistory.push({type:'stat',player:current,key:k});render()}
-function addZone(i){state.players[current].zones[i]++;state.statHistory.push({type:'zone',player:current,key:i});render()}
+function add(k,btn,type,label){
+ const athlete=state.players[current].name;
+ state.players[current].stats[k]++;
+ state.statHistory.push({type:'stat',player:current,key:k});
+ scoutFeedback(btn,type,label||k,athlete);
+ render();
+}
+function addZone(i,btn){
+ const athlete=state.players[current].name;
+ state.players[current].zones[i]++;
+ state.statHistory.push({type:'zone',player:current,key:i});
+ scoutFeedback(btn,'info','Zona '+(i+1),athlete);
+ render();
+}
 function undoStat(){const x=state.statHistory.pop();if(!x)return;if(x.type==='stat'&&state.players[x.player].stats[x.key]>0)state.players[x.player].stats[x.key]--;if(x.type==='zone'&&state.players[x.player].zones[x.key]>0)state.players[x.player].zones[x.key]--;render()}
 function resetPlayer(){if(confirm('Zerar todas as estatísticas deste aluno?')){state.players[current].stats=blank();state.players[current].zones=blankZones();state.statHistory=state.statHistory.filter(x=>x.player!==current);render()}}
 function labelPoint(n){const normal=document.getElementById('format').value==='normal';return normal?['0','15','30','40','AD'][Math.min(n,4)]:['0','15','30','40'][Math.min(n,3)]}
@@ -517,10 +529,10 @@ function renderActions(){
  if(cat.heatmap){
    grid.innerHTML='';grid.classList.add('hidden');heat.classList.remove('hidden');
    const p=state.players[current],mx=Math.max(1,...p.zones);
-   heat.innerHTML=`<div class="heatmap-wrap"><div class="court-mini">${p.zones.map((n,i)=>`<button class="zone" onclick="addZone(${i})" style="background:rgba(36,107,254,${0.08+0.58*(n/mx)})">Z${i+1}<br><small>${n}</small></button>`).join('')}</div><div class="heat-info"><b>Mapa de finalização</b><br><br>Toque na zona onde o ponto terminou. O mapa fica mais intenso conforme as ocorrências aumentam.<br><br><b>Total registrado:</b> ${p.zones.reduce((a,b)=>a+b,0)}</div></div>`;
+   heat.innerHTML=`<div class="heatmap-wrap"><div class="court-mini">${p.zones.map((n,i)=>`<button class="zone" onclick="addZone(${i},this)" style="background:rgba(36,107,254,${0.08+0.58*(n/mx)})">Z${i+1}<br><small>${n}</small></button>`).join('')}</div><div class="heat-info"><b>Mapa de finalização</b><br><br>Toque na zona onde o ponto terminou. O mapa fica mais intenso conforme as ocorrências aumentam.<br><br><b>Total registrado:</b> ${p.zones.reduce((a,b)=>a+b,0)}</div></div>`;
  }else{
    heat.classList.add('hidden');grid.classList.remove('hidden');
-   grid.innerHTML=cat.defs.map(([k,label,type])=>`<button class="stat-btn ${type||''}" onclick="add('${k}')"><b>${label}</b><small>+1 ocorrência</small></button>`).join('');
+   grid.innerHTML=cat.defs.map(([k,label,type])=>`<button class="stat-btn ${type||''}" onclick="add('${k}',this,'${type||''}','${label.replace(/'/g,"&#39;")}')"><b>${label}</b><small>+1 ocorrência</small></button>`).join('');
  }
 }
 function render(){
@@ -618,6 +630,192 @@ render();
  }
  addEventListener('resize',()=>document.documentElement.classList.toggle('jb-ipad',isIPadSize()),{passive:true});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true}); else install();
+})();
+</script>
+
+
+<style id="jb-scout-v191-feedback-css">
+/* Feedback imediato para registro no iPad */
+.stat-btn,.zone{
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.stat-btn.jb-feedback-hit,
+.zone.jb-feedback-hit{
+  animation:jbScoutTap .24s ease-out!important;
+  box-shadow:0 0 0 3px rgba(207,255,32,.32),0 0 26px rgba(207,255,32,.16)!important;
+}
+.stat-btn.bad.jb-feedback-hit{
+  box-shadow:0 0 0 3px rgba(255,104,116,.32),0 0 25px rgba(255,104,116,.14)!important;
+}
+.stat-btn.good.jb-feedback-hit{
+  box-shadow:0 0 0 3px rgba(53,209,125,.34),0 0 25px rgba(53,209,125,.15)!important;
+}
+@keyframes jbScoutTap{
+  0%{transform:scale(1)}
+  42%{transform:scale(.955)}
+  72%{transform:scale(1.018)}
+  100%{transform:scale(1)}
+}
+#jbScoutFeedbackToast{
+  position:fixed;
+  left:50%;
+  bottom:calc(24px + env(safe-area-inset-bottom));
+  z-index:99999;
+  transform:translate(-50%,18px) scale(.96);
+  opacity:0;
+  pointer-events:none;
+  min-width:220px;
+  max-width:min(520px,calc(100vw - 32px));
+  padding:11px 16px;
+  border-radius:999px;
+  background:rgba(4,13,18,.94);
+  border:1px solid rgba(207,255,32,.26);
+  box-shadow:0 14px 45px rgba(0,0,0,.38);
+  color:#f3f8f9;
+  text-align:center;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.01em;
+  transition:opacity .14s ease,transform .18s ease;
+  backdrop-filter:blur(18px);
+}
+#jbScoutFeedbackToast.show{
+  opacity:1;
+  transform:translate(-50%,0) scale(1);
+}
+#jbScoutFeedbackToast.good{border-color:rgba(53,209,125,.38)}
+#jbScoutFeedbackToast.bad{border-color:rgba(255,104,116,.38)}
+#jbScoutFeedbackToast.warn{border-color:rgba(245,187,85,.38)}
+#jbScoutSoundToggle{
+  min-height:38px!important;
+  white-space:nowrap;
+}
+#jbScoutSoundToggle.sound-on{
+  border-color:rgba(207,255,32,.30)!important;
+  color:var(--primary)!important;
+  background:rgba(207,255,32,.08)!important;
+}
+@media(max-width:1100px) and (orientation:landscape){
+  #jbScoutFeedbackToast{
+    bottom:calc(16px + env(safe-area-inset-bottom));
+    font-size:11px;
+    padding:9px 14px;
+  }
+}
+</style>
+
+<script id="jb-scout-v191-feedback-js">
+(function(){
+ const SOUND_KEY='jb_scout_feedback_sound_v191';
+ let soundOn=localStorage.getItem(SOUND_KEY)!=='0';
+ let audioCtx=null;
+ let toastTimer=null;
+
+ function ensureAudio(){
+   if(!audioCtx){
+     try{
+       audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+     }catch(e){ return null; }
+   }
+   if(audioCtx.state==='suspended'){
+     try{ audioCtx.resume(); }catch(e){}
+   }
+   return audioCtx;
+ }
+
+ function tone(type){
+   if(!soundOn)return;
+   const ctx=ensureAudio();
+   if(!ctx)return;
+
+   const osc=ctx.createOscillator();
+   const gain=ctx.createGain();
+   const now=ctx.currentTime;
+
+   let freq=610;
+   if(type==='good')freq=760;
+   else if(type==='bad')freq=310;
+   else if(type==='warn')freq=500;
+   else if(type==='info')freq=640;
+
+   osc.type='sine';
+   osc.frequency.setValueAtTime(freq,now);
+   gain.gain.setValueAtTime(0.0001,now);
+   gain.gain.exponentialRampToValueAtTime(0.10,now+.008);
+   gain.gain.exponentialRampToValueAtTime(0.0001,now+.075);
+
+   osc.connect(gain);
+   gain.connect(ctx.destination);
+   osc.start(now);
+   osc.stop(now+.085);
+ }
+
+ function vibrate(type){
+   // Funciona apenas nos navegadores/dispositivos que expõem a API.
+   if(navigator.vibrate){
+     try{navigator.vibrate(type==='bad'?[18,20,18]:18)}catch(e){}
+   }
+ }
+
+ function showToast(type,label,athlete){
+   let t=document.getElementById('jbScoutFeedbackToast');
+   if(!t){
+     t=document.createElement('div');
+     t.id='jbScoutFeedbackToast';
+     document.body.appendChild(t);
+   }
+   t.className='';
+   t.id='jbScoutFeedbackToast';
+   if(type)t.classList.add(type);
+   t.textContent='✓ '+label+'  •  '+athlete+'  +1';
+   requestAnimationFrame(()=>t.classList.add('show'));
+   clearTimeout(toastTimer);
+   toastTimer=setTimeout(()=>t.classList.remove('show'),720);
+ }
+
+ window.scoutFeedback=function(btn,type,label,athlete){
+   if(btn){
+     btn.classList.remove('jb-feedback-hit');
+     void btn.offsetWidth;
+     btn.classList.add('jb-feedback-hit');
+     setTimeout(()=>btn.classList.remove('jb-feedback-hit'),280);
+   }
+   tone(type);
+   vibrate(type);
+   showToast(type,label,athlete);
+ };
+
+ function installToggle(){
+   if(document.getElementById('jbScoutSoundToggle'))return;
+   const toolbar=document.querySelector('.action-zone .toolbar') ||
+                 document.querySelector('.tracker .toolbar');
+   if(!toolbar)return;
+
+   const b=document.createElement('button');
+   b.id='jbScoutSoundToggle';
+   b.type='button';
+   b.className='btn btn-light';
+   const sync=()=>{
+     b.textContent=soundOn?'🔊 Som ON':'🔇 Som OFF';
+     b.classList.toggle('sound-on',soundOn);
+     b.setAttribute('aria-pressed',String(soundOn));
+   };
+   b.onclick=()=>{
+     soundOn=!soundOn;
+     localStorage.setItem(SOUND_KEY,soundOn?'1':'0');
+     if(soundOn)tone('info');
+     sync();
+   };
+   toolbar.appendChild(b);
+   sync();
+ }
+
+ if(document.readyState==='loading'){
+   document.addEventListener('DOMContentLoaded',()=>setTimeout(installToggle,100),{once:true});
+ }else{
+   setTimeout(installToggle,100);
+ }
 })();
 </script>
 
