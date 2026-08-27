@@ -749,5 +749,164 @@ render();
 })();
 </script>
 
+
+<style id="jb-v20-match-mode-css">
+#jbV20Bar{
+ position:sticky;top:0;z-index:9000;
+ display:flex;align-items:center;gap:8px;
+ padding:8px 12px;margin:0 0 10px;
+ background:rgba(5,13,18,.96);
+ border:1px solid rgba(255,255,255,.07);
+ border-radius:12px;backdrop-filter:blur(18px);
+}
+#jbV20Bar .v20-title{font-size:11px;font-weight:900;color:#cfff20;letter-spacing:.08em;margin-right:auto}
+#jbV20Bar button{
+ min-height:42px;border-radius:9px;border:1px solid rgba(255,255,255,.10);
+ background:#0b1921;color:#dce7eb;padding:8px 12px;font-weight:850;font-size:11px;
+}
+#jbV20Bar button.active{background:#cfff20;color:#071014;border-color:#cfff20}
+#jbV20Bar #v20Finish{border-color:rgba(255,101,113,.25);color:#ff929a}
+#jbV20Last{
+ position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));z-index:8000;
+ transform:translateX(-50%);display:flex;align-items:center;gap:10px;
+ width:min(760px,calc(100vw - 24px));padding:8px 10px;border-radius:12px;
+ background:rgba(4,12,17,.96);border:1px solid rgba(207,255,32,.18);
+ box-shadow:0 12px 40px rgba(0,0,0,.38);backdrop-filter:blur(16px);
+}
+#jbV20Last button{
+ flex:0 0 auto;min-height:44px;border:0;border-radius:9px;padding:9px 14px;
+ background:#cfff20;color:#071014;font-weight:950;font-size:11px;
+}
+#jbV20LastText{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e9f0f2;font-size:11px;font-weight:800}
+#jbV20Recent{
+ position:fixed;right:12px;bottom:calc(74px + env(safe-area-inset-bottom));z-index:7000;
+ width:250px;padding:9px;border-radius:11px;background:rgba(4,12,17,.93);
+ border:1px solid rgba(255,255,255,.07);box-shadow:0 10px 35px rgba(0,0,0,.3);
+}
+#jbV20Recent strong{display:block;color:#7f939d;font-size:8px;letter-spacing:.12em;margin-bottom:6px}
+#jbV20Recent div{font-size:10px;color:#dce5e8;padding:4px 0;border-top:1px solid rgba(255,255,255,.045)}
+#jbV20Recent div:first-of-type{border-top:0}
+
+body.v20-match .summary-card,
+body.v20-match .side-stack,
+body.v20-match .export-box,
+body.v20-match .tablewrap,
+body.v20-match .heat-info{display:none!important}
+body.v20-match .main-grid{grid-template-columns:1fr!important}
+body.v20-match .tracker{width:100%!important}
+body.v20-match .action-zone{padding-bottom:76px!important}
+body.v20-match .stat-btn{min-height:82px!important}
+body.v20-match .stat-btn b{font-size:13px!important}
+body.v20-match .player-tab{min-height:52px!important;font-size:12px!important}
+body.v20-match .cat{min-height:42px!important;font-size:11px!important}
+body.v20-match .games{font-size:62px!important}
+
+body.v20-analysis #jbV20Last,
+body.v20-analysis #jbV20Recent{display:none!important}
+body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px,.66fr)!important}
+
+@media (min-width:900px) and (max-width:1400px) and (orientation:landscape){
+ body.v20-match .topbar{grid-template-columns:minmax(0,1.05fr) minmax(330px,.95fr)!important;margin-bottom:8px!important}
+ body.v20-match .main-grid{display:block!important}
+ body.v20-match .actions-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}
+ body.v20-match .stat-btn{min-height:76px!important}
+ body.v20-match .category-tabs{overflow-x:auto!important;flex-wrap:nowrap!important;-webkit-overflow-scrolling:touch}
+ body.v20-match .cat{flex:0 0 auto!important}
+ #jbV20Recent{width:220px}
+}
+@media(max-width:760px){
+ #jbV20Bar{overflow-x:auto}
+ #jbV20Bar .v20-title{display:none}
+ #jbV20Bar button{white-space:nowrap}
+ #jbV20Recent{display:none}
+}
+</style>
+
+<script id="jb-v20-match-mode-js">
+(function(){
+ const MODE_KEY='jb_scout_v20_mode';
+ let mode=localStorage.getItem(MODE_KEY)||'match';
+ let recent=[];
+ const qs=s=>document.querySelector(s);
+
+ function install(){
+   if(document.getElementById('jbV20Bar')) return;
+   const wrap=qs('.wrap'); if(!wrap)return;
+
+   const bar=document.createElement('div');
+   bar.id='jbV20Bar';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   wrap.insertBefore(bar,wrap.firstChild);
+
+   const last=document.createElement('div');
+   last.id='jbV20Last';
+   last.innerHTML='<button id="v20Undo">↶ DESFAZER</button><div id="jbV20LastText">Nenhum registro ainda</div>';
+   document.body.appendChild(last);
+
+   const rec=document.createElement('div');
+   rec.id='jbV20Recent';
+   rec.innerHTML='<strong>ÚLTIMOS REGISTROS</strong><div>—</div>';
+   document.body.appendChild(rec);
+
+   document.getElementById('v20Match').onclick=()=>setMode('match');
+   document.getElementById('v20Analysis').onclick=()=>setMode('analysis');
+   document.getElementById('v20Undo').onclick=undoLast;
+   document.getElementById('v20Finish').onclick=finishGame;
+   setMode(mode);
+ }
+
+ function setMode(m){
+   mode=m; localStorage.setItem(MODE_KEY,m);
+   document.body.classList.toggle('v20-match',m==='match');
+   document.body.classList.toggle('v20-analysis',m==='analysis');
+   document.getElementById('v20Match')?.classList.toggle('active',m==='match');
+   document.getElementById('v20Analysis')?.classList.toggle('active',m==='analysis');
+ }
+
+ function updateRecent(){
+   const box=document.getElementById('jbV20Recent');
+   if(box) box.innerHTML='<strong>ÚLTIMOS REGISTROS</strong>'+(recent.length?recent.map(x=>'<div>'+x+'</div>').join(''):'<div>—</div>');
+ }
+
+ function undoLast(){
+   const h=state.statHistory;
+   if(!h||!h.length)return;
+   const x=h.pop();
+   if(x.type==='stat' && state.players[x.player]?.stats?.[x.key]>0) state.players[x.player].stats[x.key]--;
+   if(x.type==='zone' && state.players[x.player]?.zones?.[x.key]>0) state.players[x.player].zones[x.key]--;
+   if(typeof render==='function')render();
+   recent.unshift('↶ Último registro desfeito');
+   recent=recent.slice(0,3); updateRecent();
+   const last=document.getElementById('jbV20LastText');
+   if(last)last.textContent='Último registro desfeito';
+ }
+
+ function finishGame(){
+   setMode('analysis');
+   const target=qs('.summary-card')||qs('.side-stack');
+   if(target)setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'start'}),100);
+ }
+
+ const wait=setInterval(()=>{
+   if(typeof window.scoutFeedback==='function' && !window.scoutFeedback.v20wrapped){
+     clearInterval(wait);
+     const original=window.scoutFeedback;
+     const wrapped=function(type,label,athlete,key){
+       original(type,label,athlete,key);
+       const text=(athlete||'Atleta')+' • '+(label||'Registro')+' +1';
+       const last=document.getElementById('jbV20LastText');
+       if(last)last.textContent='Último: '+text;
+       recent.unshift(text); recent=recent.slice(0,3); updateRecent();
+     };
+     wrapped.v20wrapped=true;
+     window.scoutFeedback=wrapped;
+   }
+ },120);
+
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(install,120),{once:true});
+ else setTimeout(install,120);
+})();
+</script>
+
 </body>
 </html>
