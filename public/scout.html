@@ -476,15 +476,15 @@ function add(k,btn,type,label){
  const athlete=state.players[current].name;
  state.players[current].stats[k]++;
  state.statHistory.push({type:'stat',player:current,key:k});
- scoutFeedback(btn,type,label||k,athlete);
  render();
+ setTimeout(()=>scoutFeedback(type,label||k,athlete,k),20);
 }
 function addZone(i,btn){
  const athlete=state.players[current].name;
  state.players[current].zones[i]++;
  state.statHistory.push({type:'zone',player:current,key:i});
- scoutFeedback(btn,'info','Zona '+(i+1),athlete);
  render();
+ setTimeout(()=>scoutFeedback('info','Zona '+(i+1),athlete,'zone-'+i),20);
 }
 function undoStat(){const x=state.statHistory.pop();if(!x)return;if(x.type==='stat'&&state.players[x.player].stats[x.key]>0)state.players[x.player].stats[x.key]--;if(x.type==='zone'&&state.players[x.player].zones[x.key]>0)state.players[x.player].zones[x.key]--;render()}
 function resetPlayer(){if(confirm('Zerar todas as estatísticas deste aluno?')){state.players[current].stats=blank();state.players[current].zones=blankZones();state.statHistory=state.statHistory.filter(x=>x.player!==current);render()}}
@@ -634,188 +634,118 @@ render();
 </script>
 
 
-<style id="jb-scout-v191-feedback-css">
-/* Feedback imediato para registro no iPad */
-.stat-btn,.zone{
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
+
+
+
+<style id="jb-scout-v192-feedback-css">
+.stat-btn,.zone{ -webkit-tap-highlight-color:transparent!important; touch-action:manipulation!important; }
+.stat-btn.jb-hit,.zone.jb-hit{
+ animation:jbTap .36s cubic-bezier(.2,.9,.2,1)!important;
+ outline:3px solid #cfff20!important; outline-offset:-3px!important;
+ box-shadow:0 0 0 5px rgba(207,255,32,.18),0 0 34px rgba(207,255,32,.34)!important;
 }
-.stat-btn.jb-feedback-hit,
-.zone.jb-feedback-hit{
-  animation:jbScoutTap .24s ease-out!important;
-  box-shadow:0 0 0 3px rgba(207,255,32,.32),0 0 26px rgba(207,255,32,.16)!important;
+.stat-btn.good.jb-hit{outline-color:#49ff9d!important}
+.stat-btn.bad.jb-hit{outline-color:#ff4c5b!important}
+.stat-btn.warn.jb-hit{outline-color:#ffc642!important}
+@keyframes jbTap{0%{transform:scale(1)}30%{transform:scale(.91);filter:brightness(1.55)}65%{transform:scale(1.04)}100%{transform:scale(1)}}
+
+#jbFeedbackFlash{position:fixed;inset:0;z-index:2147483645;pointer-events:none;opacity:0;box-sizing:border-box}
+#jbFeedbackFlash.show{animation:jbFlash .42s ease-out}
+#jbFeedbackFlash.good{--f:#49ff9d}.bad#jbFeedbackFlash{--f:#ff4c5b}
+#jbFeedbackFlash.bad{--f:#ff4c5b}.warn#jbFeedbackFlash{--f:#ffc642}
+#jbFeedbackFlash.warn{--f:#ffc642}.info#jbFeedbackFlash{--f:#cfff20}
+#jbFeedbackFlash.info{--f:#cfff20}
+@keyframes jbFlash{0%{opacity:1;border:10px solid var(--f)}55%{opacity:.72;border:5px solid var(--f)}100%{opacity:0;border:0 solid transparent}}
+
+#jbFeedbackToast{
+ position:fixed;top:max(14px,env(safe-area-inset-top));left:50%;z-index:2147483646;
+ transform:translate(-50%,-18px) scale(.94);opacity:0;pointer-events:none;
+ min-width:310px;max-width:min(650px,calc(100vw - 36px));padding:14px 20px;border-radius:14px;
+ background:rgba(3,10,14,.98);border:2px solid #cfff20;box-shadow:0 18px 55px rgba(0,0,0,.55);
+ color:#fff;text-align:center;font-size:15px;font-weight:900;transition:.14s ease;
 }
-.stat-btn.bad.jb-feedback-hit{
-  box-shadow:0 0 0 3px rgba(255,104,116,.32),0 0 25px rgba(255,104,116,.14)!important;
-}
-.stat-btn.good.jb-feedback-hit{
-  box-shadow:0 0 0 3px rgba(53,209,125,.34),0 0 25px rgba(53,209,125,.15)!important;
-}
-@keyframes jbScoutTap{
-  0%{transform:scale(1)}
-  42%{transform:scale(.955)}
-  72%{transform:scale(1.018)}
-  100%{transform:scale(1)}
-}
-#jbScoutFeedbackToast{
-  position:fixed;
-  left:50%;
-  bottom:calc(24px + env(safe-area-inset-bottom));
-  z-index:99999;
-  transform:translate(-50%,18px) scale(.96);
-  opacity:0;
-  pointer-events:none;
-  min-width:220px;
-  max-width:min(520px,calc(100vw - 32px));
-  padding:11px 16px;
-  border-radius:999px;
-  background:rgba(4,13,18,.94);
-  border:1px solid rgba(207,255,32,.26);
-  box-shadow:0 14px 45px rgba(0,0,0,.38);
-  color:#f3f8f9;
-  text-align:center;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.01em;
-  transition:opacity .14s ease,transform .18s ease;
-  backdrop-filter:blur(18px);
-}
-#jbScoutFeedbackToast.show{
-  opacity:1;
-  transform:translate(-50%,0) scale(1);
-}
-#jbScoutFeedbackToast.good{border-color:rgba(53,209,125,.38)}
-#jbScoutFeedbackToast.bad{border-color:rgba(255,104,116,.38)}
-#jbScoutFeedbackToast.warn{border-color:rgba(245,187,85,.38)}
-#jbScoutSoundToggle{
-  min-height:38px!important;
-  white-space:nowrap;
-}
-#jbScoutSoundToggle.sound-on{
-  border-color:rgba(207,255,32,.30)!important;
-  color:var(--primary)!important;
-  background:rgba(207,255,32,.08)!important;
-}
-@media(max-width:1100px) and (orientation:landscape){
-  #jbScoutFeedbackToast{
-    bottom:calc(16px + env(safe-area-inset-bottom));
-    font-size:11px;
-    padding:9px 14px;
-  }
-}
+#jbFeedbackToast.show{opacity:1;transform:translate(-50%,0) scale(1)}
+#jbFeedbackToast.good{border-color:#49ff9d}.bad#jbFeedbackToast{border-color:#ff4c5b}
+#jbFeedbackToast.bad{border-color:#ff4c5b}.warn#jbFeedbackToast{border-color:#ffc642}
+#jbFeedbackToast.warn{border-color:#ffc642}
+#jbFeedbackToast .plus{display:inline-grid;place-items:center;width:30px;height:30px;margin-right:8px;border-radius:50%;background:#cfff20;color:#071014}
+
+#jbScoutSoundToggle{min-height:40px!important;white-space:nowrap}
+#jbScoutSoundToggle.on{border-color:rgba(207,255,32,.45)!important;color:var(--primary)!important}
 </style>
 
-<script id="jb-scout-v191-feedback-js">
+<script id="jb-scout-v192-feedback-js">
 (function(){
- const SOUND_KEY='jb_scout_feedback_sound_v191';
- let soundOn=localStorage.getItem(SOUND_KEY)!=='0';
- let audioCtx=null;
- let toastTimer=null;
+ const KEY='jb_scout_sound_v192';
+ let soundOn=localStorage.getItem(KEY)!=='0', ctx=null, toastTimer=null;
 
- function ensureAudio(){
-   if(!audioCtx){
-     try{
-       audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-     }catch(e){ return null; }
-   }
-   if(audioCtx.state==='suspended'){
-     try{ audioCtx.resume(); }catch(e){}
-   }
-   return audioCtx;
+ function audio(){
+   try{
+     if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();
+     if(ctx.state==='suspended')ctx.resume();
+     return ctx;
+   }catch(e){return null}
  }
-
- function tone(type){
+ function beep(type){
    if(!soundOn)return;
-   const ctx=ensureAudio();
-   if(!ctx)return;
-
-   const osc=ctx.createOscillator();
-   const gain=ctx.createGain();
-   const now=ctx.currentTime;
-
-   let freq=610;
-   if(type==='good')freq=760;
-   else if(type==='bad')freq=310;
-   else if(type==='warn')freq=500;
-   else if(type==='info')freq=640;
-
-   osc.type='sine';
-   osc.frequency.setValueAtTime(freq,now);
-   gain.gain.setValueAtTime(0.0001,now);
-   gain.gain.exponentialRampToValueAtTime(0.10,now+.008);
-   gain.gain.exponentialRampToValueAtTime(0.0001,now+.075);
-
-   osc.connect(gain);
-   gain.connect(ctx.destination);
-   osc.start(now);
-   osc.stop(now+.085);
+   const c=audio(); if(!c)return;
+   const now=c.currentTime, master=c.createGain(), comp=c.createDynamicsCompressor();
+   let a=1080,b=1660,d=.12;
+   if(type==='good'){a=1280;b=1940}
+   if(type==='bad'){a=620;b=880;d=.15}
+   if(type==='warn'){a=820;b=1260}
+   master.gain.setValueAtTime(.0001,now);
+   master.gain.exponentialRampToValueAtTime(.36,now+.005);
+   master.gain.exponentialRampToValueAtTime(.0001,now+d);
+   [a,b].forEach((f,i)=>{
+     const o=c.createOscillator(),g=c.createGain();
+     o.type=i===0?'square':'sine';o.frequency.value=f;g.gain.value=i===0?.65:.38;
+     o.connect(g);g.connect(master);o.start(now);o.stop(now+d+.01);
+   });
+   comp.threshold.value=-20;comp.ratio.value=8;comp.attack.value=.001;comp.release.value=.05;
+   master.connect(comp);comp.connect(c.destination);
  }
-
  function vibrate(type){
-   // Funciona apenas nos navegadores/dispositivos que expõem a API.
-   if(navigator.vibrate){
-     try{navigator.vibrate(type==='bad'?[18,20,18]:18)}catch(e){}
-   }
+   if(!navigator.vibrate)return;
+   try{navigator.vibrate(type==='bad'?[32,22,32]:[28])}catch(e){}
  }
-
- function showToast(type,label,athlete){
-   let t=document.getElementById('jbScoutFeedbackToast');
-   if(!t){
-     t=document.createElement('div');
-     t.id='jbScoutFeedbackToast';
-     document.body.appendChild(t);
-   }
-   t.className='';
-   t.id='jbScoutFeedbackToast';
-   if(type)t.classList.add(type);
-   t.textContent='✓ '+label+'  •  '+athlete+'  +1';
-   requestAnimationFrame(()=>t.classList.add('show'));
-   clearTimeout(toastTimer);
-   toastTimer=setTimeout(()=>t.classList.remove('show'),720);
+ function flash(type){
+   let f=document.getElementById('jbFeedbackFlash');
+   if(!f){f=document.createElement('div');f.id='jbFeedbackFlash';document.body.appendChild(f)}
+   f.className='';f.id='jbFeedbackFlash';f.classList.add(type||'info');void f.offsetWidth;f.classList.add('show');
  }
-
- window.scoutFeedback=function(btn,type,label,athlete){
-   if(btn){
-     btn.classList.remove('jb-feedback-hit');
-     void btn.offsetWidth;
-     btn.classList.add('jb-feedback-hit');
-     setTimeout(()=>btn.classList.remove('jb-feedback-hit'),280);
+ function toast(type,label,athlete){
+   let t=document.getElementById('jbFeedbackToast');
+   if(!t){t=document.createElement('div');t.id='jbFeedbackToast';document.body.appendChild(t)}
+   t.className='';t.id='jbFeedbackToast';t.classList.add(type||'info');
+   t.innerHTML='<span class="plus">+1</span>'+label+' • '+athlete;
+   void t.offsetWidth;t.classList.add('show');clearTimeout(toastTimer);
+   toastTimer=setTimeout(()=>t.classList.remove('show'),1100);
+ }
+ function hit(key){
+   let btn=null;
+   if(String(key).startsWith('zone-')){
+     const i=+String(key).split('-')[1];btn=document.querySelectorAll('.zone')[i];
+   }else{
+     btn=[...document.querySelectorAll('.stat-btn')].find(b=>(b.getAttribute('onclick')||'').includes("add('"+key+"'"));
    }
-   tone(type);
-   vibrate(type);
-   showToast(type,label,athlete);
+   if(btn){btn.classList.add('jb-hit');setTimeout(()=>btn.classList.remove('jb-hit'),390)}
+ }
+ window.scoutFeedback=function(type,label,athlete,key){
+   hit(key);beep(type);vibrate(type);flash(type);toast(type,label,athlete);
  };
 
- function installToggle(){
+ function install(){
    if(document.getElementById('jbScoutSoundToggle'))return;
-   const toolbar=document.querySelector('.action-zone .toolbar') ||
-                 document.querySelector('.tracker .toolbar');
-   if(!toolbar)return;
-
-   const b=document.createElement('button');
-   b.id='jbScoutSoundToggle';
-   b.type='button';
-   b.className='btn btn-light';
-   const sync=()=>{
-     b.textContent=soundOn?'🔊 Som ON':'🔇 Som OFF';
-     b.classList.toggle('sound-on',soundOn);
-     b.setAttribute('aria-pressed',String(soundOn));
-   };
-   b.onclick=()=>{
-     soundOn=!soundOn;
-     localStorage.setItem(SOUND_KEY,soundOn?'1':'0');
-     if(soundOn)tone('info');
-     sync();
-   };
-   toolbar.appendChild(b);
-   sync();
+   const host=document.querySelector('.action-zone .toolbar')||document.querySelector('.tracker .toolbar')||document.querySelector('.category-head');
+   if(!host)return;
+   const b=document.createElement('button');b.id='jbScoutSoundToggle';b.type='button';b.className='btn btn-light';
+   const sync=()=>{b.textContent=soundOn?'🔊 Som forte ON':'🔇 Som OFF';b.classList.toggle('on',soundOn)};
+   b.onclick=()=>{soundOn=!soundOn;localStorage.setItem(KEY,soundOn?'1':'0');sync();if(soundOn)beep('info')};
+   host.appendChild(b);sync();
  }
-
- if(document.readyState==='loading'){
-   document.addEventListener('DOMContentLoaded',()=>setTimeout(installToggle,100),{once:true});
- }else{
-   setTimeout(installToggle,100);
- }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(install,150),{once:true});
+ else setTimeout(install,150);
 })();
 </script>
 
