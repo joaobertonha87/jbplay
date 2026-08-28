@@ -475,22 +475,56 @@ function selectPlayer(i){current=i;render()}
 function jbAutoScoreTarget(playerIndex,key){
  // Retorna 0/1 para a dupla que deve receber o ponto ou null para não mexer no placar.
  const ownPointKeys=new Set([
-   'winner','ace','devolucaoWinner',
-   'pontoAtaque','pontoDefesa',
-   'quarentaGanho','breakpointGanho',
-   'finSmash','finVoleioFH','finVoleioBH','finGancho','finCurta','finDrive',
-   'finErroAdversario'
+   'ace',
+   'breakpointGanho',
+   'devolucaoWinner',
+   'finCurta',
+   'finDrive',
+   'finErroAdversario',
+   'finGancho',
+   'finSmash',
+   'finVoleioBH',
+   'finVoleioFH',
+   'pontoAtaque',
+   'pontoDefesa',
+   'primeiraBolaGanha',
+   'primeiraBolaGanho',
+   'primeiraBolaWin',
+   'primeiraGanha',
+   'quarentaGanho',
+   'winner'
  ]);
  const opponentPointKeys=new Set([
-   'erroNaoForcado','erroForcado','duplaFalta','erroDevolucao',
-   'primeiraBolaPerdida','primeiraBolaErro',
-   'quarentaPerdido','breakpointPerdido',
-   'enfForehand','enfBackhand','enfVoleioFH','enfVoleioBH',
-   'enfSmash','enfGancho','enfCurta','enfDefesa'
+   'breakpointPerdido',
+   'duplaFalta',
+   'enfBackhand',
+   'enfCurta',
+   'enfDefesa',
+   'enfForehand',
+   'enfGancho',
+   'enfSmash',
+   'enfVoleioBH',
+   'enfVoleioFH',
+   'erroDeSaque',
+   'erroDevolucao',
+   'erroForcado',
+   'erroNaoForcado',
+   'erroSaque',
+   'primeiraBolaErro',
+   'primeiraBolaPerdida',
+   'quarentaPerdido',
+   'saqueErrado',
+   'saqueErro'
  ]);
  const teamIndex=playerIndex<2?0:1;
  if(ownPointKeys.has(key))return teamIndex;
  if(opponentPointKeys.has(key))return 1-teamIndex;
+
+ // Fallback por nome da chave para tolerar variações futuras.
+ const kk=(key||'').toString().toLowerCase();
+ if(kk.includes('primeira') && kk.includes('ganh')) return teamIndex;
+ if(kk.includes('saque') && kk.includes('erro')) return 1-teamIndex;
+ if(kk.includes('erro') && kk.includes('saque')) return 1-teamIndex;
  return null;
 }
 function add(k,btn,type,label){
@@ -880,7 +914,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V21.1</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V21.2</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
