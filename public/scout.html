@@ -472,10 +472,55 @@ function rename(i,v){state.players[i].name=v.trim()||`Aluno ${i+1}`;render()}
 function setMode(m){state.mode=m;if(m==='standard'&&categories.find(c=>c.id===currentCat)?.advanced)currentCat='ponto';render()}
 function setCat(id){currentCat=id;render()}
 function selectPlayer(i){current=i;render()}
+function jbAutoScoreTarget(playerIndex,key){
+ // Retorna 0/1 para a dupla que deve receber o ponto ou null para não mexer no placar.
+ const ownPointKeys=new Set([
+   'winner','ace','devolucaoWinner',
+   'pontoAtaque','pontoDefesa',
+   'quarentaGanho','breakpointGanho',
+   'finSmash','finVoleioFH','finVoleioBH','finGancho','finCurta','finDrive',
+   'finErroAdversario'
+ ]);
+ const opponentPointKeys=new Set([
+   'erroNaoForcado','erroForcado','duplaFalta','erroDevolucao',
+   'primeiraBolaPerdida','primeiraBolaErro',
+   'quarentaPerdido','breakpointPerdido',
+   'enfForehand','enfBackhand','enfVoleioFH','enfVoleioBH',
+   'enfSmash','enfGancho','enfCurta','enfDefesa'
+ ]);
+ const teamIndex=playerIndex<2?0:1;
+ if(ownPointKeys.has(key))return teamIndex;
+ if(opponentPointKeys.has(key))return 1-teamIndex;
+ return null;
+}
 function add(k,btn,type,label){
  const athlete=state.players[current].name;
+ const scoreBefore=JSON.parse(JSON.stringify(state.score));
+ const playerBefore=current;
+
  state.players[current].stats[k]++;
- state.statHistory.push({type:'stat',player:current,key:k});
+ const hist={type:'stat',player:current,key:k};
+
+ const target=jbAutoScoreTarget(current,k);
+ if(target!==null && !state.finished){
+   hist.autoScore=true;
+   hist.scoreBefore=scoreBefore;
+   hist.scoreTeam=target;
+   state.statHistory.push(hist);
+
+   // Usa a função oficial do placar do próprio Scout.
+   point(target);
+
+   const teamLabel=target===0?team(0):team(1);
+   setTimeout(()=>{
+     scoutFeedback(type,label||k,athlete,k);
+     const last=document.getElementById('jbV20LastText');
+     if(last)last.textContent='Último: '+athlete+' • '+(label||k)+' | PONTO → '+teamLabel;
+   },20);
+   return;
+ }
+
+ state.statHistory.push(hist);
  render();
  setTimeout(()=>scoutFeedback(type,label||k,athlete,k),20);
 }
@@ -486,7 +531,7 @@ function addZone(i,btn){
  render();
  setTimeout(()=>scoutFeedback('info','Zona '+(i+1),athlete,'zone-'+i),20);
 }
-function undoStat(){const x=state.statHistory.pop();if(!x)return;if(x.type==='stat'&&state.players[x.player].stats[x.key]>0)state.players[x.player].stats[x.key]--;if(x.type==='zone'&&state.players[x.player].zones[x.key]>0)state.players[x.player].zones[x.key]--;render()}
+function undoStat(){const x=state.statHistory.pop();if(!x)return;if(x.type==='stat'&&state.players[x.player].stats[x.key]>0)state.players[x.player].stats[x.key]--;if(x.type==='zone'&&state.players[x.player].zones[x.key]>0)state.players[x.player].zones[x.key]--;if(x.autoScore&&x.scoreBefore){state.score=JSON.parse(JSON.stringify(x.scoreBefore));state.finished=false;}render()}
 function resetPlayer(){if(confirm('Zerar todas as estatísticas deste aluno?')){state.players[current].stats=blank();state.players[current].zones=blankZones();state.statHistory=state.statHistory.filter(x=>x.player!==current);render()}}
 function labelPoint(n){const normal=document.getElementById('format').value==='normal';return normal?['0','15','30','40','AD'][Math.min(n,4)]:['0','15','30','40'][Math.min(n,3)]}
 function point(t){if(state.finished)return;const s=state.score;s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));s.points[t]++;const normal=document.getElementById('format').value==='normal';let won=normal?(s.points[t]>=4&&s.points[t]-s.points[1-t]>=2):(s.points[t]>=4);if(won){s.games[t]++;s.points=[0,0];autoFinish()}render()}
@@ -835,7 +880,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V21.1</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -874,11 +919,15 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    const x=h.pop();
    if(x.type==='stat' && state.players[x.player]?.stats?.[x.key]>0) state.players[x.player].stats[x.key]--;
    if(x.type==='zone' && state.players[x.player]?.zones?.[x.key]>0) state.players[x.player].zones[x.key]--;
+   if(x.autoScore && x.scoreBefore){
+     state.score=JSON.parse(JSON.stringify(x.scoreBefore));
+     state.finished=false;
+   }
    if(typeof render==='function')render();
-   recent.unshift('↶ Último registro desfeito');
+   recent.unshift(x.autoScore?'↶ Estatística + placar desfeitos':'↶ Último registro desfeito');
    recent=recent.slice(0,3); updateRecent();
    const last=document.getElementById('jbV20LastText');
-   if(last)last.textContent='Último registro desfeito';
+   if(last)last.textContent=x.autoScore?'Estatística + placar desfeitos':'Último registro desfeito';
  }
 
  function finishGame(){
@@ -903,6 +952,32 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    }
  },120);
 
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(install,120),{once:true});
+ else setTimeout(install,120);
+})();
+</script>
+
+
+<style id="jb-v211-autoscore-css">
+#jbAutoScoreChip{
+ display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:6px 10px;border-radius:999px;
+ background:rgba(207,255,32,.10);border:1px solid rgba(207,255,32,.22);
+ color:#cfff20;font-size:9px;font-weight:950;letter-spacing:.04em;white-space:nowrap
+}
+#jbAutoScoreChip::before{content:'●';font-size:8px}
+</style>
+<script id="jb-v211-autoscore-ui">
+(function(){
+ function install(){
+   if(document.getElementById('jbAutoScoreChip'))return;
+   const bar=document.getElementById('jbV20Bar');
+   if(!bar)return;
+   const chip=document.createElement('div');
+   chip.id='jbAutoScoreChip';
+   chip.textContent='PLACAR AUTOMÁTICO';
+   const finish=document.getElementById('v20Finish');
+   if(finish)bar.insertBefore(chip,finish);else bar.appendChild(chip);
+ }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(install,120),{once:true});
  else setTimeout(install,120);
 })();
