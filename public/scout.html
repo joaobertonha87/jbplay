@@ -461,6 +461,8 @@ let state=JSON.parse(localStorage.getItem('jb_scout_pro_v2')||'null')||{
  score:{games:[0,0],points:[0,0],history:[]},statHistory:[],finished:false
 };
 for(const p of state.players){if(!p.stats)p.stats=blank();for(const [k] of allDefs)if(!(k in p.stats))p.stats[k]=0;if(!p.zones)p.zones=blankZones()}
+if(!state.smartPoints)state.smartPoints=[];
+if(state.servingTeam===undefined)state.servingTeam=0;
 let current=0,currentCat='ponto';
 const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0.0%';
 const pair=(a,b)=>pct(a,a+b);
@@ -540,10 +542,28 @@ function add(k,btn,type,label){
    hist.autoScore=true;
    hist.scoreBefore=scoreBefore;
    hist.scoreTeam=target;
+   // V22: guarda o contexto completo ANTES do ponto.
+   const v22Before={
+     games:[...state.score.games],
+     points:[...state.score.points],
+     servingTeam:Number(state.servingTeam||0),
+     format:(document.getElementById('format')?.value||'normal'),
+     gamesToWin:Number(document.getElementById('gamesToWin')?.value||6)
+   };
+   hist.v22ContextBefore=v22Before;
    state.statHistory.push(hist);
 
    // Usa a função oficial do placar do próprio Scout.
    point(target);
+
+   // V22: registra o ponto como uma unidade completa.
+   if(typeof window.jbV22RecordPoint==='function'){
+     window.jbV22RecordPoint({
+       athleteIndex:playerBefore, athlete:athlete, key:k, label:(label||k),
+       type:type, scoringTeam:target, before:v22Before,
+       after:{games:[...state.score.games],points:[...state.score.points]}
+     });
+   }
 
    const teamLabel=target===0?team(0):team(1);
    setTimeout(()=>{
@@ -565,7 +585,7 @@ function addZone(i,btn){
  render();
  setTimeout(()=>scoutFeedback('info','Zona '+(i+1),athlete,'zone-'+i),20);
 }
-function undoStat(){const x=state.statHistory.pop();if(!x)return;if(x.type==='stat'&&state.players[x.player].stats[x.key]>0)state.players[x.player].stats[x.key]--;if(x.type==='zone'&&state.players[x.player].zones[x.key]>0)state.players[x.player].zones[x.key]--;if(x.autoScore&&x.scoreBefore){state.score=JSON.parse(JSON.stringify(x.scoreBefore));state.finished=false;}render()}
+function undoStat(){const x=state.statHistory.pop();if(!x)return;if(x.type==='stat'&&state.players[x.player].stats[x.key]>0)state.players[x.player].stats[x.key]--;if(x.type==='zone'&&state.players[x.player].zones[x.key]>0)state.players[x.player].zones[x.key]--;if(x.autoScore&&x.scoreBefore){state.score=JSON.parse(JSON.stringify(x.scoreBefore));state.finished=false;if(state.smartPoints&&state.smartPoints.length)state.smartPoints.pop();}render();if(typeof window.jbV22Refresh==='function')window.jbV22Refresh()}
 function resetPlayer(){if(confirm('Zerar todas as estatísticas deste aluno?')){state.players[current].stats=blank();state.players[current].zones=blankZones();state.statHistory=state.statHistory.filter(x=>x.player!==current);render()}}
 function labelPoint(n){const normal=document.getElementById('format').value==='normal';return normal?['0','15','30','40','AD'][Math.min(n,4)]:['0','15','30','40'][Math.min(n,3)]}
 function point(t){if(state.finished)return;const s=state.score;s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));s.points[t]++;const normal=document.getElementById('format').value==='normal';let won=normal?(s.points[t]>=4&&s.points[t]-s.points[1-t]>=2):(s.points[t]>=4);if(won){s.games[t]++;s.points=[0,0];autoFinish()}render()}
@@ -914,7 +934,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V21.2</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V22</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -956,6 +976,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(x.autoScore && x.scoreBefore){
      state.score=JSON.parse(JSON.stringify(x.scoreBefore));
      state.finished=false;
+     if(state.smartPoints && state.smartPoints.length) state.smartPoints.pop();
    }
    if(typeof render==='function')render();
    recent.unshift(x.autoScore?'↶ Estatística + placar desfeitos':'↶ Último registro desfeito');
@@ -1014,6 +1035,103 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(install,120),{once:true});
  else setTimeout(install,120);
+})();
+</script>
+
+
+<style id="jb-v22-smart-point-css">
+#jbV22Panel{margin:8px 0 10px;padding:10px;border-radius:12px;background:rgba(6,16,22,.95);border:1px solid rgba(207,255,32,.14)}
+#jbV22Top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#jbV22Top strong{font-size:9px;letter-spacing:.12em;color:#cfff20;margin-right:auto}
+.jbV22Serve{min-height:40px;padding:7px 10px;border-radius:9px;border:1px solid rgba(255,255,255,.09);background:#10202a;color:#c9d5da;font-size:10px;font-weight:900}
+.jbV22Serve.active{background:#cfff20;color:#071014;border-color:#cfff20}
+#jbV22Momentum{margin-top:8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.jbV22Card{padding:8px;border-radius:9px;background:#0b1921;border:1px solid rgba(255,255,255,.055);min-width:0}
+.jbV22Card small{display:block;color:#738892;font-size:8px;font-weight:850;letter-spacing:.08em}
+.jbV22Card b{display:block;color:#edf4f6;font-size:11px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#jbV22Trail{display:flex;gap:5px;overflow-x:auto;margin-top:7px;padding-bottom:2px;scrollbar-width:none}
+#jbV22Trail::-webkit-scrollbar{display:none}
+#jbV22Trail span{flex:0 0 auto;padding:5px 7px;border-radius:999px;background:#0d1d25;border:1px solid rgba(255,255,255,.06);font-size:9px;color:#cbd7dc}
+#jbV22Trail span.hot{color:#cfff20;border-color:rgba(207,255,32,.25)}
+#jbV22Trail span.pressure{color:#ffd36a;border-color:rgba(255,211,106,.28)}
+@media(max-width:760px){#jbV22Momentum{grid-template-columns:1fr}}
+</style>
+
+<script id="jb-v22-smart-point-js">
+(function(){
+ function q(s){return document.querySelector(s)}
+ function pairName(t){return t===0?team(0):team(1)}
+ function pLabel(n,normal){
+   if(normal)return ['0','15','30','40','AD'][Math.min(Number(n)||0,4)]||String(n);
+   return ['0','15','30','40'][Math.min(Number(n)||0,3)]||String(n);
+ }
+ function scoreText(x){
+   const normal=x.format==='normal';
+   return pLabel(x.points[0],normal)+' × '+pLabel(x.points[1],normal)+' | Games '+x.games[0]+' × '+x.games[1];
+ }
+ function isDeciding40(before){
+   return before.format!=='normal' && before.points[0]===3 && before.points[1]===3;
+ }
+ function isBreakPoint(before, scoringTeam){
+   const server=Number(before.servingTeam||0), receiver=1-server;
+   if(scoringTeam!==receiver)return false;
+   const rp=before.points[receiver], sp=before.points[server];
+   if(before.format!=='normal') return rp>=3; // inclui 40x40 no ponto decisivo
+   return rp>=3 && rp>=sp+1; // 40-0/15/30 ou vantagem do recebedor
+ }
+ function streak(){
+   const a=state.smartPoints||[]; if(!a.length)return {team:null,n:0};
+   const t=a[a.length-1].scoringTeam; let n=0;
+   for(let i=a.length-1;i>=0&&a[i].scoringTeam===t;i--)n++;
+   return {team:t,n};
+ }
+ window.jbV22RecordPoint=function(d){
+   const rec={
+     id:Date.now()+'-'+Math.random().toString(36).slice(2,7),
+     at:new Date().toISOString(),
+     athleteIndex:d.athleteIndex,athlete:d.athlete,key:d.key,label:d.label,type:d.type,
+     scoringTeam:d.scoringTeam,before:d.before,after:d.after,
+     deciding40:isDeciding40(d.before),
+     breakPoint:isBreakPoint(d.before,d.scoringTeam),
+     gameWon:d.after.games[d.scoringTeam]>d.before.games[d.scoringTeam]
+   };
+   state.smartPoints.push(rec);
+   save();
+   window.jbV22Refresh();
+ }
+ function install(){
+   if(q('#jbV22Panel'))return;
+   const anchor=q('#jbAutoScoreChip')?.closest('#jbV20Bar') || q('#jbV20Bar') || q('.topbar');
+   if(!anchor)return;
+   const el=document.createElement('div');
+   el.id='jbV22Panel';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V22</strong><button class="jbV22Serve" id="jbV22Serve0">SAQUE • DUPLA A/B</button><button class="jbV22Serve" id="jbV22Serve1">SAQUE • DUPLA C/D</button></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   anchor.insertAdjacentElement('afterend',el);
+   q('#jbV22Serve0').onclick=()=>setServer(0);
+   q('#jbV22Serve1').onclick=()=>setServer(1);
+   window.jbV22Refresh();
+ }
+ function setServer(t){
+   state.servingTeam=t;save();window.jbV22Refresh();
+ }
+ window.jbV22Refresh=function(){
+   const a=state.smartPoints||[], st=streak();
+   const s=q('#jbV22Streak');
+   if(s)s.textContent=st.n>=2?('🔥 '+pairName(st.team)+' • '+st.n+' seguidos'):(st.n?pairName(st.team)+' • '+st.n+' ponto':'—');
+   const f=q('#jbV22Forty'); if(f)f.textContent=String(a.filter(x=>x.deciding40).length);
+   const b=q('#jbV22BP'); if(b)b.textContent=String(a.filter(x=>x.breakPoint&&x.gameWon).length);
+   [0,1].forEach(t=>q('#jbV22Serve'+t)?.classList.toggle('active',Number(state.servingTeam||0)===t));
+   const tr=q('#jbV22Trail');
+   if(tr){
+     tr.innerHTML=a.slice(-8).reverse().map((x,i)=>{
+       const cls=i===0?'hot':((x.deciding40||x.breakPoint)?'pressure':'');
+       const tags=[x.deciding40?'40×40':'',x.breakPoint?'BP':'',x.gameWon?'GAME':''].filter(Boolean).join(' • ');
+       return '<span class="'+cls+'">'+pairName(x.scoringTeam)+' +1 • '+x.label+(tags?' • '+tags:'')+'</span>';
+     }).join('') || '<span>Nenhum ponto automático registrado</span>';
+   }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(install,160),{once:true});
+ else setTimeout(install,160);
 })();
 </script>
 
