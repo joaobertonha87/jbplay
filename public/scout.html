@@ -959,7 +959,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V24.1</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V24.2</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1129,7 +1129,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V24.1</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V24.2</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -1432,8 +1432,19 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       <div class="v236card"><small>WINNERS / ERROS</small><b>${c.winners} / ${c.errors}</b></div>
     </div>
     <div class="v236sec"><h3>DESEMPENHO TÉCNICO</h3><div class="v236rows">
-      <div class="v236card"><div class="v236row"><span>Saque</span><strong>${c.serve}%</strong></div><div class="v236row"><span>Devolução</span><strong>${c.ret}%</strong></div><div class="v236row"><span>1ª bola</span><strong>${c.first}%</strong></div><div class="v236row"><span>40×40</span><strong>${c.forty}%</strong></div><div class="v236row"><span>Breakpoints</span><strong>${c.bp}%</strong></div></div>
-      <div class="v236card"><div class="v236row"><span>Smash</span><strong>${c.smash}%</strong></div><div class="v236row"><span>Gancho</span><strong>${c.gancho}%</strong></div><div class="v236row"><span>Curta</span><strong>${c.curta}%</strong></div><div class="v236row"><span>Defesa</span><strong>${c.defesa}%</strong></div></div>
+      <div class="v236card">
+        <div class="v236row"><span>Saque</span><strong>Acerto ${c.serve}% • Erro ${100-c.serve}%</strong></div>
+        <div class="v236row"><span>Devolução</span><strong>Acerto ${c.ret}% • Erro ${100-c.ret}%</strong></div>
+        <div class="v236row"><span>1ª bola</span><strong>Acerto ${c.first}% • Erro ${100-c.first}%</strong></div>
+        <div class="v236row"><span>40×40</span><strong>Ganho ${c.forty}% • Perdido ${100-c.forty}%</strong></div>
+        <div class="v236row"><span>Breakpoints</span><strong>Ganho ${c.bp}% • Perdido ${100-c.bp}%</strong></div>
+      </div>
+      <div class="v236card">
+        <div class="v236row"><span>Smash</span><strong>Acerto ${c.smash}% • Erro ${100-c.smash}%</strong></div>
+        <div class="v236row"><span>Gancho</span><strong>Acerto ${c.gancho}% • Erro ${100-c.gancho}%</strong></div>
+        <div class="v236row"><span>Curta</span><strong>Acerto ${c.curta}% • Erro ${100-c.curta}%</strong></div>
+        <div class="v236row"><span>Defesa</span><strong>Acerto ${c.defesa}% • Erro ${100-c.defesa}%</strong></div>
+      </div>
     </div></div>
     <div class="v236sec"><h3>🎯 PRIORIDADES DE TREINO</h3><div class="v236card v236priority">${pr.map((x,j)=>(j+1)+'. '+e(x[0])+' — '+x[1]+'%').join('<br>')}</div></div>
     <div class="v236sec"><h3>ESTATÍSTICAS COMPLETAS DO ALUNO</h3><div class="v236stats">${statsGroups(p)}</div></div>`;
@@ -1551,6 +1562,16 @@ button:active,.btn:active,.stat-btn:active{transform:scale(.975)}
 @media print{
  #jbV236Report{font-family:Arial,sans-serif!important}
  #jbV236Report .v236card,#jbV236Report .v236group{box-shadow:none!important;border:1px solid #d7d7d7!important}
+}
+</style>
+
+
+<style id="jb-v242-dual-percent-css">
+.v236row strong{font-size:10px}
+.v236row strong{white-space:nowrap}
+@media(max-width:760px){
+ .v236row{align-items:flex-start;flex-direction:column}
+ .v236row strong{white-space:normal}
 }
 </style>
 
