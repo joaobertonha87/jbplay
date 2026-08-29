@@ -445,7 +445,12 @@ const categories=[
  ]},
  {id:'finalizacao',name:'Finalização',desc:'Como o ponto foi encerrado',defs:[
   ['finSmash','Finalização smash','good'],['finVoleioFH','Finalização voleio FH','good'],['finVoleioBH','Finalização voleio BH','good'],
-  ['finGancho','Finalização gancho','good'],['finCurta','Finalização curta','good'],['finDrive','Finalização drive','good'],['finErroAdversario','Erro do adversário','warn']
+  ['finGancho','Finalização gancho','good'],['finCurta','Finalização curta','good'],['finErroAdversario','Erro do adversário','warn'],
+   ['finSmashErro','Erro de smash','bad'],
+   ['finVoleioFHErro','Erro de voleio FH','bad'],
+   ['finVoleioBHErro','Erro de voleio BH','bad'],
+   ['finGanchoErro','Erro de gancho','bad'],
+   ['finCurtaErro','Erro de curta','bad']
  ]},
  {id:'erros',name:'Erros',desc:'Origem dos erros não forçados',advanced:true,defs:[
   ['enfForehand','ENF forehand','bad'],['enfBackhand','ENF backhand','bad'],['enfVoleioFH','ENF voleio FH','bad'],['enfVoleioBH','ENF voleio BH','bad'],
@@ -482,7 +487,7 @@ function jbAutoScoreTarget(playerIndex,key){
    'breakpointGanho',
    'devolucaoWinner',
    'finCurta',
-   'finDrive',
+   
    'finErroAdversario',
    'finGancho',
    'finSmash',
@@ -518,7 +523,13 @@ function jbAutoScoreTarget(playerIndex,key){
    'quarentaPerdido',
    'saqueErrado',
    'saqueErro'
- ]);
+ ,
+   'finSmashErro',
+   'finVoleioFHErro',
+   'finVoleioBHErro',
+   'finGanchoErro',
+   'finCurtaErro',
+   'finDriveErro']);
  const teamIndex=playerIndex<2?0:1;
  if(ownPointKeys.has(key))return teamIndex;
  if(opponentPointKeys.has(key))return 1-teamIndex;
@@ -610,9 +621,9 @@ function metrics(p){
  const retTotal=s.devolucaoDentro+s.devolucaoWinner+s.erroDevolucao+s.devolucaoCurta+s.devolucaoProfunda+s.devolucaoLob;
  const firstTotal=s.primeiraBolaGanha+s.primeiraBolaPerdida+s.primeiraBolaErro;
  const forty=s.quarentaGanho+s.quarentaPerdido,bp=s.breakpointGanho+s.breakpointPerdido;
- const fin=sumKeys(s,['finSmash','finVoleioFH','finVoleioBH','finGancho','finCurta','finDrive','finErroAdversario']);
+ const fin=sumKeys(s,['finSmash','finVoleioFH','finVoleioBH','finGancho','finCurta','finErroAdversario']);
  const enf=sumKeys(s,['enfForehand','enfBackhand','enfVoleioFH','enfVoleioBH','enfSmash','enfGancho','enfCurta','enfDefesa']);
- const winners=s.winner+s.devolucaoWinner+sumKeys(s,['finSmash','finVoleioFH','finVoleioBH','finGancho','finCurta','finDrive']);
+ const winners=s.winner+s.devolucaoWinner+sumKeys(s,['finSmash','finVoleioFH','finVoleioBH','finGancho','finCurta']);
  const errors=s.erroNaoForcado+s.erroForcado+s.erroSaque+s.duplaFalta+s.erroDevolucao+enf;
  return{
   total,srvTotal,retTotal,firstTotal,forty,bp,fin,enf,winners,errors,
@@ -946,7 +957,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V23</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V23.3</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1116,7 +1127,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V23</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V23.3</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -1230,19 +1241,77 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 @media(max-width:900px){.v23grid4,.v23players,.v23prior{grid-template-columns:1fr 1fr}}@media(max-width:560px){.v23grid4,.v23players,.v23prior,.v23teams{grid-template-columns:1fr}.v23head{align-items:flex-start;flex-direction:column}}
 @media print{body>*:not(#jbV23){display:none!important}#jbV23{display:block!important;position:static!important;background:#fff!important;color:#111!important}.v23card{background:#fff!important;color:#111!important;border-color:#bbb!important}.v23actions{display:none!important}.v23row strong{color:#111!important}}
 </style>
+
+<style id="jb-v233-complete-stats-css">
+.v23fullstats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.v23statgroup{background:#0d1b23;border:1px solid #20323b;border-radius:12px;padding:10px;min-width:0}
+.v23statgroup h4{margin:0 0 7px;color:#cfff20;font-size:11px;letter-spacing:.07em}
+.v23athleteblock{padding:8px 0;border-top:1px solid #1b2d35}
+.v23athleteblock:first-of-type{border-top:0}
+.v23athleteblock>strong{display:block;font-size:11px;margin-bottom:5px}
+.v23statline{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:3px 0;font-size:9px}
+.v23statline span{color:#a3b2b8;min-width:0}
+.v23statline b{font-size:10px;white-space:nowrap}
+.v23pair{color:#dfffa0!important}
+@media(max-width:800px){.v23fullstats{grid-template-columns:1fr}}
+</style>
 <div id="jbV23"><div id="jbV23In"><div class="v23head"><div><h2>JB SCOUT • DASHBOARD PÓS-JOGO</h2><small id="v23sub"></small></div><div class="v23actions"><button class="v23btn" id="v23back">Voltar</button><button class="v23btn" id="v23pdf">PDF / Imprimir</button><button class="v23btn hot" id="v23new">Nova partida</button></div></div><div id="v23content"></div></div></div>
 <script id="jb-v23-js">
 (function(){
 const $=x=>document.querySelector(x), pc=(a,b)=>b?Math.round(a*100/b):0, sum=(o,k)=>k.reduce((n,x)=>n+(+o[x]||0),0);
 const e=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-function calc(p){let x=p.stats||{},w=(x.winner||0)+(x.devolucaoWinner||0)+sum(x,['finSmash','finVoleioFH','finVoleioBH','finGancho','finCurta','finDrive']),er=(x.erroNaoForcado||0)+(x.erroForcado||0)+(x.erroSaque||0)+(x.duplaFalta||0)+(x.erroDevolucao||0)+sum(x,['enfForehand','enfBackhand','enfVoleioFH','enfVoleioBH','enfSmash','enfGancho','enfCurta','enfDefesa']),si=(x.primeiroSaque||0)+(x.segundoSaque||0),st=si+(x.erroSaque||0)+(x.duplaFalta||0),rt=sum(x,['devolucaoDentro','devolucaoWinner','erroDevolucao','devolucaoCurta','devolucaoProfunda','devolucaoLob']),fb=(x.primeiraBolaGanha||0)+(x.primeiraBolaPerdida||0)+(x.primeiraBolaErro||0),sv=pc(si,st),rv=pc(Math.max(0,rt-(x.erroDevolucao||0)),rt),fv=pc(x.primeiraBolaGanha||0,fb),eff=Math.max(0,Math.min(100,Math.round(50+(w-er)*5+(sv-50)*.12+(rv-50)*.12+(fv-50)*.10)));return{w,er,sv,rv,fv,eff,f40:pc(x.quarentaGanho||0,(x.quarentaGanho||0)+(x.quarentaPerdido||0)),bp:pc(x.breakpointGanho||0,(x.breakpointGanho||0)+(x.breakpointPerdido||0))}}
+function calc(p){let x=p.stats||{},w=(x.winner||0)+(x.devolucaoWinner||0)+sum(x,['finSmash','finVoleioFH','finVoleioBH','finGancho','finCurta']),er=(x.erroNaoForcado||0)+(x.erroForcado||0)+(x.erroSaque||0)+(x.duplaFalta||0)+(x.erroDevolucao||0)+sum(x,['enfForehand','enfBackhand','enfVoleioFH','enfVoleioBH','enfSmash','enfGancho','enfCurta','enfDefesa'])+sum(x,['finSmashErro','finVoleioFHErro','finVoleioBHErro','finGanchoErro','finCurtaErro']),si=(x.primeiroSaque||0)+(x.segundoSaque||0),st=si+(x.erroSaque||0)+(x.duplaFalta||0),rt=sum(x,['devolucaoDentro','devolucaoWinner','erroDevolucao','devolucaoCurta','devolucaoProfunda','devolucaoLob']),fb=(x.primeiraBolaGanha||0)+(x.primeiraBolaPerdida||0)+(x.primeiraBolaErro||0),sv=pc(si,st),rv=pc(Math.max(0,rt-(x.erroDevolucao||0)),rt),fv=pc(x.primeiraBolaGanha||0,fb),eff=Math.max(0,Math.min(100,Math.round(50+(w-er)*5+(sv-50)*.12+(rv-50)*.12+(fv-50)*.10)));return{w,er,sv,rv,fv,eff,f40:pc(x.quarentaGanho||0,(x.quarentaGanho||0)+(x.quarentaPerdido||0)),bp:pc(x.breakpointGanho||0,(x.breakpointGanho||0)+(x.breakpointPerdido||0))}}
 function pri(p,c){let x=p.stats||{},a=[['Saque',c.sv],['Devolução',c.rv],['1ª bola',c.fv],['Smash',pc(x.smashAcerto||0,(x.smashAcerto||0)+(x.smashErro||0))],['Defesa',pc(x.defesaAcerto||0,(x.defesaAcerto||0)+(x.defesaErro||0))]];return a.sort((x,y)=>x[1]-y[1]).slice(0,3)}
 function bestStreak(a){let b={t:null,n:0},c={t:null,n:0};a.forEach(x=>{c=x.scoringTeam===c.t?{t:c.t,n:c.n+1}:{t:x.scoringTeam,n:1};if(c.n>b.n)b={...c}});return b}
+
+function v233QuickCategories(){
+  try{
+    return categories.filter(cat=>cat && Array.isArray(cat.defs) && cat.id!=='mapa');
+  }catch(err){ return []; }
+}
+function v233PairMap(){
+  return {
+    forehandAcerto:'forehandErro',backhandAcerto:'backhandErro',
+    voleiForehandAcerto:'voleiForehandErro',voleiBackhandAcerto:'voleiBackhandErro',
+    smashAcerto:'smashErro',ganchoAcerto:'ganchoErro',curtaAcerto:'curtaErro',
+    defesaAcerto:'defesaErro',rainbowAcerto:'rainbowErro',anomaloAcerto:'anomaloErro',
+    finSmash:'finSmashErro',finVoleioFH:'finVoleioFHErro',finVoleioBH:'finVoleioBHErro',
+    finGancho:'finGanchoErro',finCurta:'finCurtaErro'
+  };
+}
+function v233CompleteStats(){
+  const cats=v233QuickCategories(), pairMap=v233PairMap();
+  return cats.map(cat=>{
+    const athletes=state.players.map(p=>{
+      const st=p.stats||{};
+      const lines=[];
+      const used=new Set();
+      for(const d of cat.defs){
+        const key=d[0], label=d[1];
+        if(used.has(key))continue;
+        if(pairMap[key]){
+          const ek=pairMap[key], errDef=cat.defs.find(x=>x[0]===ek);
+          const ac=Number(st[key]||0), er=Number(st[ek]||0), total=ac+er;
+          lines.push(`<div class="v23statline"><span class="v23pair">${e(label.replace(/^Finalização /,'').replace(/Acerto$/,'').trim())} • acertos/erros</span><b>${ac} / ${er}${total?' • '+pc(ac,total)+'%':''}</b></div>`);
+          used.add(key);used.add(ek);continue;
+        }
+        // avoid repeating error keys already paired with an acerto
+        if(Object.values(pairMap).includes(key)){used.add(key);continue}
+        lines.push(`<div class="v23statline"><span>${e(label)}</span><b>${Number(st[key]||0)}</b></div>`);
+        used.add(key);
+      }
+      return `<div class="v23athleteblock"><strong>${e(p.name)}</strong>${lines.join('')}</div>`;
+    }).join('');
+    return `<div class="v23statgroup"><h4>${e(cat.name)}</h4>${athletes}</div>`;
+  }).join('');
+}
+
 window.jbV23ShowDashboard=function(){let a=state.smartPoints||[],c=state.players.map(calc),ga=state.score.games[0],gb=state.score.games[1],bs=bestStreak(a),mins=Math.max(0,Math.floor((Date.now()-(+state.matchStartedAt||Date.now()))/60000));$('#v23sub').textContent=team(0)+' '+ga+' × '+gb+' '+team(1);
 let cards=state.players.map((p,i)=>{let q=c[i];return `<div class="v23card"><b>${e(p.name)}</b><small>EFICIÊNCIA</small><b class="v23eff">${q.eff}</b><div class="v23row"><span>Winners / Erros</span><strong>${q.w} / ${q.er}</strong></div><div class="v23row"><span>Saque</span><strong>${q.sv}%</strong></div><div class="v23row"><span>Devolução</span><strong>${q.rv}%</strong></div><div class="v23row"><span>1ª bola</span><strong>${q.fv}%</strong></div><div class="v23row"><span>40×40 / BP</span><strong>${q.f40}% / ${q.bp}%</strong></div></div>`}).join('');
 let priorities=state.players.map((p,i)=>`<div class="v23card"><small>${e(p.name)}</small><b>🎯 O QUE TREINAR</b>${pri(p,c[i]).map((x,j)=>`<div class="v23row"><span>${j+1}. ${x[0]}</span><strong>${x[1]}%</strong></div>`).join('')}</div>`).join('');
 let trail=a.slice(-20).map(x=>`<span class="v23pill ${(x.deciding40||x.breakPoint)?'press':''}">${e(x.athlete)} • ${e(x.label)}${x.deciding40?' • 40×40':''}${x.breakPoint?' • BP':''}</span>`).join('')||'<span class="v23pill">Sem pontos registrados</span>';
-$('#v23content').innerHTML=`<div class="v23grid4"><div class="v23card"><small>RESULTADO</small><b>${ga} × ${gb}</b></div><div class="v23card"><small>VENCEDOR</small><b>${ga===gb?'—':e(ga>gb?team(0):team(1))}</b></div><div class="v23card"><small>PONTOS</small><b>${a.length}</b></div><div class="v23card"><small>DURAÇÃO</small><b>${mins} min</b></div></div><div class="v23sec"><h3>COMPARATIVO DOS 4 JOGADORES</h3><div class="v23players">${cards}</div></div><div class="v23sec"><h3>MOMENTO DA PARTIDA</h3><div class="v23card"><div class="v23row"><span>Maior sequência</span><strong>${bs.n?e(bs.t===0?team(0):team(1))+' • '+bs.n+' pontos':'—'}</strong></div><div class="v23trail">${trail}</div></div></div><div class="v23sec"><h3>PRIORIDADES DE TREINO • SEM IA</h3><div class="v23prior">${priorities}</div></div>`;
+$('#v23content').innerHTML=`<div class="v23grid4"><div class="v23card"><small>RESULTADO</small><b>${ga} × ${gb}</b></div><div class="v23card"><small>VENCEDOR</small><b>${ga===gb?'—':e(ga>gb?team(0):team(1))}</b></div><div class="v23card"><small>PONTOS</small><b>${a.length}</b></div><div class="v23card"><small>DURAÇÃO</small><b>${mins} min</b></div></div><div class="v23sec"><h3>COMPARATIVO DOS 4 JOGADORES</h3><div class="v23players">${cards}</div></div><div class="v23sec"><h3>MOMENTO DA PARTIDA</h3><div class="v23card"><div class="v23row"><span>Maior sequência</span><strong>${bs.n?e(bs.t===0?team(0):team(1))+' • '+bs.n+' pontos':'—'}</strong></div><div class="v23trail">${trail}</div></div></div><div class="v23sec"><h3>PRIORIDADES DE TREINO • SEM IA</h3><div class="v23prior">${priorities}</div></div>
+<div class="v23sec"><h3>ESTATÍSTICAS COMPLETAS • TODOS OS REGISTROS RÁPIDOS</h3><div class="v23fullstats">${v233CompleteStats()}</div></div>`;
 $('#jbV23').classList.add('open')}
 function install(){$('#v23back').onclick=()=>$('#jbV23').classList.remove('open');$('#v23pdf').onclick=()=>window.print();$('#v23new').onclick=()=>{$('#jbV23').classList.remove('open');newMatch()}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
