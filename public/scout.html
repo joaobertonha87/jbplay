@@ -960,7 +960,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V26.5</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V26.6</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1130,7 +1130,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V26.5</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V26.6</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -2267,7 +2267,7 @@ window.jbV25SaveSession=function(){
 function avg(a,k){return a.length?Math.round(a.reduce((n,s)=>n+(+(s.metrics?.[k]||0)),0)/a.length):0}
 function trend(c,p){let d=c-p;return d>1?`<span class="v265trend up">↑ +${d} pp</span>`:d<-1?`<span class="v265trend down">↓ ${d} pp</span>`:`<span class="v265trend flat">→ ${d} pp</span>`}
 function showEvolution(i){evoPlayer=Number.isFinite(i)?i:0;renderEvolution();$('#v265Evolution').classList.add('open')}
-function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V26.5 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
+function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V26.6 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
 let vals=F.map(([id,label])=>({id,label,cur:+(cur.metrics?.[id]||0),first:+(first.metrics?.[id]||0),avg:avg(a,id)})),pri=[...vals].map(v=>({...v,need:100-v.cur})).sort((x,y)=>y.need-x.need).slice(0,5);
 h.innerHTML=`<div class="v265hero"><div class="v265card"><small>ALUNO</small><b>${esc(p.name)}</b></div><div class="v265card"><small>SESSÕES</small><b>${a.length}</b></div><div class="v265card"><small>PRIMEIRA</small><b>${new Date(first.at).toLocaleDateString('pt-BR')}</b></div><div class="v265card"><small>ATUAL</small><b>${new Date(cur.at).toLocaleDateString('pt-BR')}</b></div></div><div class="v265sec"><h3>EVOLUÇÃO DOS 14 FUNDAMENTOS</h3><div class="v265fund">${vals.map(v=>`<div class="v265row"><div class="v265rowtop"><b>${v.label}</b>${trend(v.cur,v.first)}</div><div class="v265counts"><span>Inicial ${v.first}%</span><span>Atual ${v.cur}% • média ${v.avg}%</span></div><div class="v265bar v265ok"><i style="width:${v.cur}%"></i></div></div>`).join('')}</div></div><div class="v265sec"><h3>PRIORIDADES ATUAIS</h3><div class="v265priority">${pri.map((v,j)=>`<div class="v265card"><small>${j+1}ª PRIORIDADE</small><b>${v.label}</b><b class="v265need">${v.need}%</b><small>necessidade de treino</small></div>`).join('')}</div></div><div class="v265sec"><h3>SESSÕES</h3><div class="v265table"><div class="v265tablein"><div class="v265thead"><span>Data</span>${F.map(x=>`<span>${x[1]}</span>`).join('')}</div>${a.slice().reverse().map(x=>`<div class="v265tr"><strong>${new Date(x.at).toLocaleDateString('pt-BR')}</strong>${F.map(f=>`<b>${+(x.metrics?.[f[0]]||0)}%</b>`).join('')}</div>`).join('')}</div></div></div>`}
 window.jbV26OpenReport=showEvolution;
@@ -2277,6 +2277,54 @@ function install(){
  document.querySelectorAll('.v265filter').forEach(b=>b.onclick=()=>{document.querySelectorAll('.v265filter').forEach(x=>x.classList.remove('on'));b.classList.add('on');evoLimit=+b.dataset.n;renderEvolution()});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+
+
+<style id="jb-v266-force-css">
+/* V26.6 — força a interface nova e remove entradas antigas */
+body.v20-match #v263,
+body.v20-match #jbV262Fast,
+body.v20-match #jbV261Guide,
+body.v20-match .category-tabs,
+body.v20-match .action-zone,
+body.v20-match .side-stack,
+body.v20-match .comparison,
+body.v20-match .export-box{display:none!important}
+body.v20-match #v264{display:block!important}
+#jbV236OpenBtn,#jbV26ReportBtn{display:none!important}
+#v266ReportBar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+#v266ReportBar button{min-height:42px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#0d1b23;color:#fff;padding:9px 12px;font-weight:900}
+#v266ReportBar button.primary{background:#cfff20;color:#071014;border-color:#cfff20}
+#v266Version{
+ position:fixed;right:10px;bottom:10px;z-index:99999;
+ background:#cfff20;color:#071014;border-radius:999px;
+ padding:6px 9px;font-size:8px;font-weight:950;letter-spacing:.05em;
+ box-shadow:0 6px 20px rgba(0,0,0,.25)
+}
+@media print{#v266Version,#v266ReportBar{display:none!important}}
+</style>
+<div id="v266Version">V26.6 • 14 FUNDAMENTOS</div>
+<script id="jb-v266-force-js">
+(function(){
+ function install(){
+   // Remove visualmente botões antigos para não abrir relatórios antigos.
+   ['jbV236OpenBtn','jbV26ReportBtn'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none'});
+   // Cria atalhos explícitos para os relatórios novos.
+   if(!document.getElementById('v266ReportBar')){
+     const bar=document.createElement('div');bar.id='v266ReportBar';
+     bar.innerHTML='<button type="button" class="primary" id="v266Individual">Relatório individual • 14 fundamentos</button><button type="button" id="v266Evolution">Evolução • 14 fundamentos</button>';
+     const ref=document.getElementById('jbV25HistoryBtn');
+     if(ref&&ref.parentNode) ref.parentNode.insertBefore(bar,ref.nextSibling);
+     else {
+       const host=document.querySelector('.export-box')||document.querySelector('.side-stack')||document.querySelector('.tracker');
+       if(host) host.appendChild(bar); else document.body.appendChild(bar);
+     }
+     document.getElementById('v266Individual').onclick=()=>window.jbV236OpenIndividual?.();
+     document.getElementById('v266Evolution').onclick=()=>window.jbV26OpenReport?.(typeof current==='number'?current:0);
+   }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 </script>
 
