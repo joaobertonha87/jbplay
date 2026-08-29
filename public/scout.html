@@ -934,7 +934,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V22</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V22.1</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1105,14 +1105,26 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V22</strong><button class="jbV22Serve" id="jbV22Serve0">SAQUE • DUPLA A/B</button><button class="jbV22Serve" id="jbV22Serve1">SAQUE • DUPLA C/D</button></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V22.1</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
-   q('#jbV22Serve0').onclick=()=>setServer(0);
-   q('#jbV22Serve1').onclick=()=>setServer(1);
+   [0,1].forEach(t=>{
+     const btn=q('#jbV22Serve'+t);
+     if(!btn)return;
+     btn.addEventListener('click',()=>setServer(t));
+     btn.addEventListener('pointerdown',ev=>{
+       if(ev.pointerType==='touch'){
+         setServer(t);
+       }
+     });
+   });
    window.jbV22Refresh();
  }
  function setServer(t){
-   state.servingTeam=t;save();window.jbV22Refresh();
+   state.servingTeam=Number(t);
+   save();
+   window.jbV22Refresh();
+   const last=document.getElementById('jbV20LastText');
+   if(last)last.textContent='🎾 Saque selecionado: '+pairName(Number(t));
  }
  window.jbV22Refresh=function(){
    const a=state.smartPoints||[], st=streak();
@@ -1120,7 +1132,17 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(s)s.textContent=st.n>=2?('🔥 '+pairName(st.team)+' • '+st.n+' seguidos'):(st.n?pairName(st.team)+' • '+st.n+' ponto':'—');
    const f=q('#jbV22Forty'); if(f)f.textContent=String(a.filter(x=>x.deciding40).length);
    const b=q('#jbV22BP'); if(b)b.textContent=String(a.filter(x=>x.breakPoint&&x.gameWon).length);
-   [0,1].forEach(t=>q('#jbV22Serve'+t)?.classList.toggle('active',Number(state.servingTeam||0)===t));
+   [0,1].forEach(t=>{
+     const btn=q('#jbV22Serve'+t);
+     const active=Number(state.servingTeam||0)===t;
+     if(btn){
+       btn.classList.toggle('active',active);
+       btn.setAttribute('aria-pressed',active?'true':'false');
+       btn.setAttribute('title',active?'Dupla sacando agora':'Toque para selecionar como dupla sacadora');
+     }
+   });
+   const sn=q('#jbV22ServerNow');
+   if(sn)sn.textContent='🎾 Sacando agora: '+pairName(Number(state.servingTeam||0));
    const tr=q('#jbV22Trail');
    if(tr){
      tr.innerHTML=a.slice(-8).reverse().map((x,i)=>{
@@ -1134,6 +1156,36 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
  else setTimeout(install,160);
 })();
 </script>
+
+
+<style id="jb-v221-serve-selector-css">
+#jbV22Top{align-items:flex-start}
+.jbV22ServeGroup{display:flex;gap:7px;flex-wrap:wrap}
+.jbV22Serve{
+  display:flex;align-items:center;gap:8px;min-width:154px;justify-content:flex-start;
+  position:relative;overflow:hidden;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent
+}
+.jbV22Serve span:last-child{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
+.jbV22Serve small{display:block;font-size:7px;letter-spacing:.08em;opacity:.72;margin-bottom:3px}
+.jbV22Serve .jbV22Ball{
+  display:none;flex:0 0 auto;font-size:20px;line-height:1;
+  filter:drop-shadow(0 0 5px rgba(207,255,32,.45))
+}
+.jbV22Serve.active .jbV22Ball{display:inline-block}
+.jbV22Serve.active{
+  background:#cfff20;color:#071014;border-color:#cfff20;
+  box-shadow:0 0 0 2px rgba(207,255,32,.12) inset
+}
+#jbV22ServerNow{
+  margin-top:7px;padding:7px 9px;border-radius:9px;
+  background:rgba(207,255,32,.08);border:1px solid rgba(207,255,32,.16);
+  color:#dfffa0;font-size:10px;font-weight:900
+}
+@media(max-width:760px){
+  .jbV22ServeGroup{width:100%}
+  .jbV22Serve{flex:1 1 calc(50% - 4px);min-width:0}
+}
+</style>
 
 </body>
 </html>
