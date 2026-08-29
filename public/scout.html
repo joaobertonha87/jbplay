@@ -959,7 +959,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V24.2</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V24.3</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1129,7 +1129,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V24.2</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V24.3</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -1399,9 +1399,39 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    const eff=Math.max(0,Math.min(100,Math.round(50+(winners-errors)*5+(serve-50)*.12+(ret-50)*.12+(first-50)*.10)));
    return {winners,errors,serve,ret,first,smash,gancho,curta,defesa,forty,bp,eff}
  }
- function priority(c){
-   return [['Saque',c.serve],['Devolução',c.ret],['1ª bola',c.first],['Smash',c.smash],['Gancho',c.gancho],['Curta',c.curta],['Defesa',c.defesa]]
-     .sort((a,b)=>a[1]-b[1]).slice(0,3);
+ function priority(p){
+   const x=p.stats||{};
+   const need=(errors,successes)=>{
+     const er=Number(errors||0), ok=Number(successes||0), total=er+ok;
+     return total?Math.round(er*100/total):0;
+   };
+
+   const saqueOk=(x.primeiroSaque||0)+(x.segundoSaque||0);
+   const saqueEr=(x.erroSaque||0)+(x.duplaFalta||0);
+
+   const devOk=(x.devolucaoDentro||0)+(x.devolucaoWinner||0)+(x.devolucaoCurta||0)+(x.devolucaoProfunda||0)+(x.devolucaoLob||0);
+   const devEr=(x.erroDevolucao||0);
+
+   const smashOk=(x.smashAcerto||0)+(x.finSmash||0);
+   const smashEr=(x.smashErro||0)+(x.finSmashErro||0);
+
+   const ganchoOk=(x.ganchoAcerto||0)+(x.finGancho||0);
+   const ganchoEr=(x.ganchoErro||0)+(x.finGanchoErro||0);
+
+   const curtaOk=(x.curtaAcerto||0)+(x.finCurta||0);
+   const curtaEr=(x.curtaErro||0)+(x.finCurtaErro||0);
+
+   const defesaOk=(x.defesaAcerto||0);
+   const defesaEr=(x.defesaErro||0);
+
+   return [
+     ['Saque',need(saqueEr,saqueOk),saqueEr,saqueOk],
+     ['Defesa',need(defesaEr,defesaOk),defesaEr,defesaOk],
+     ['Smash',need(smashEr,smashOk),smashEr,smashOk],
+     ['Curta',need(curtaEr,curtaOk),curtaEr,curtaOk],
+     ['Gancho',need(ganchoEr,ganchoOk),ganchoEr,ganchoOk],
+     ['Devolução',need(devEr,devOk),devEr,devOk]
+   ].sort((a,b)=>b[1]-a[1]);
  }
  function statsGroups(p){
    const st=p.stats||{};
@@ -1419,7 +1449,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    $('#jbV236Chooser').classList.add('open');$('#jbV236Chooser').setAttribute('aria-hidden','false');
  }
  function showReport(i){
-   const p=state.players[i], c=calc(p), pr=priority(c), ga=state.score.games[0],gb=state.score.games[1];
+   const p=state.players[i], c=calc(p), pr=priority(p), ga=state.score.games[0],gb=state.score.games[1];
    const teamIndex=i<2?0:1;
    const ownGames=state.score.games[teamIndex], oppGames=state.score.games[1-teamIndex];
    $('#v236Title').textContent='RELATÓRIO INDIVIDUAL • '+p.name;
@@ -1446,7 +1476,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         <div class="v236row"><span>Defesa</span><strong>Acerto ${c.defesa}% • Erro ${100-c.defesa}%</strong></div>
       </div>
     </div></div>
-    <div class="v236sec"><h3>🎯 PRIORIDADES DE TREINO</h3><div class="v236card v236priority">${pr.map((x,j)=>(j+1)+'. '+e(x[0])+' — '+x[1]+'%').join('<br>')}</div></div>
+    <div class="v236sec"><h3>🎯 PRIORIDADES DE TREINO • NECESSIDADE BASEADA NOS ERROS</h3>
+<div class="v236card v236priority">
+${pr.map((x,j)=>`<div class="v236need ${x[1]>=50?'high':x[1]>=25?'mid':'low'}">
+  <div class="v236needtop"><span>${j+1}. ${e(x[0])}</span><strong>${x[1]}%</strong></div>
+  <div class="v236needbar"><i style="width:${x[1]}%"></i></div>
+  <small>Erros: ${x[2]} • Acertos: ${x[3]}</small>
+</div>`).join('')}
+</div></div>
     <div class="v236sec"><h3>ESTATÍSTICAS COMPLETAS DO ALUNO</h3><div class="v236stats">${statsGroups(p)}</div></div>`;
    $('#jbV236Chooser').classList.remove('open');$('#jbV236Chooser').setAttribute('aria-hidden','true');
    $('#jbV236Report').classList.add('open');$('#jbV236Report').setAttribute('aria-hidden','false');$('#jbV236Report').scrollTop=0;
@@ -1573,6 +1610,20 @@ button:active,.btn:active,.stat-btn:active{transform:scale(.975)}
  .v236row{align-items:flex-start;flex-direction:column}
  .v236row strong{white-space:normal}
 }
+</style>
+
+
+<style id="jb-v243-priority-error-css">
+.v236need{padding:9px 0;border-top:1px solid rgba(255,255,255,.06)}
+.v236need:first-child{border-top:0}
+.v236needtop{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;font-weight:900}
+.v236needtop strong{font-size:13px}
+.v236needbar{height:7px;margin:6px 0 5px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+.v236needbar i{display:block;height:100%;border-radius:999px;background:#cfff20}
+.v236need.high .v236needbar i{background:#ff7182}
+.v236need.mid .v236needbar i{background:#ffc75a}
+.v236need.low .v236needbar i{background:#2ee6a6}
+.v236need small{color:#879aa2;font-size:9px}
 </style>
 
 </body>
