@@ -957,7 +957,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V23.3</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V23.4</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1127,7 +1127,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V23.3</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V23.4</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -1260,8 +1260,16 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 (function(){
 const $=x=>document.querySelector(x), pc=(a,b)=>b?Math.round(a*100/b):0, sum=(o,k)=>k.reduce((n,x)=>n+(+o[x]||0),0);
 const e=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-function calc(p){let x=p.stats||{},w=(x.winner||0)+(x.devolucaoWinner||0)+sum(x,['finSmash','finVoleioFH','finVoleioBH','finGancho','finCurta']),er=(x.erroNaoForcado||0)+(x.erroForcado||0)+(x.erroSaque||0)+(x.duplaFalta||0)+(x.erroDevolucao||0)+sum(x,['enfForehand','enfBackhand','enfVoleioFH','enfVoleioBH','enfSmash','enfGancho','enfCurta','enfDefesa'])+sum(x,['finSmashErro','finVoleioFHErro','finVoleioBHErro','finGanchoErro','finCurtaErro']),si=(x.primeiroSaque||0)+(x.segundoSaque||0),st=si+(x.erroSaque||0)+(x.duplaFalta||0),rt=sum(x,['devolucaoDentro','devolucaoWinner','erroDevolucao','devolucaoCurta','devolucaoProfunda','devolucaoLob']),fb=(x.primeiraBolaGanha||0)+(x.primeiraBolaPerdida||0)+(x.primeiraBolaErro||0),sv=pc(si,st),rv=pc(Math.max(0,rt-(x.erroDevolucao||0)),rt),fv=pc(x.primeiraBolaGanha||0,fb),eff=Math.max(0,Math.min(100,Math.round(50+(w-er)*5+(sv-50)*.12+(rv-50)*.12+(fv-50)*.10)));return{w,er,sv,rv,fv,eff,f40:pc(x.quarentaGanho||0,(x.quarentaGanho||0)+(x.quarentaPerdido||0)),bp:pc(x.breakpointGanho||0,(x.breakpointGanho||0)+(x.breakpointPerdido||0))}}
-function pri(p,c){let x=p.stats||{},a=[['Saque',c.sv],['Devolução',c.rv],['1ª bola',c.fv],['Smash',pc(x.smashAcerto||0,(x.smashAcerto||0)+(x.smashErro||0))],['Defesa',pc(x.defesaAcerto||0,(x.defesaAcerto||0)+(x.defesaErro||0))]];return a.sort((x,y)=>x[1]-y[1]).slice(0,3)}
+function calc(p){let x=p.stats||{},w=(x.winner||0)+(x.devolucaoWinner||0)+sum(x,['finSmash','finVoleioFH','finVoleioBH','finGancho','finCurta']),er=(x.erroNaoForcado||0)+(x.erroForcado||0)+(x.erroSaque||0)+(x.duplaFalta||0)+(x.erroDevolucao||0)+sum(x,['enfForehand','enfBackhand','enfVoleioFH','enfVoleioBH','enfSmash','enfGancho','enfCurta','enfDefesa'])+sum(x,['finSmashErro','finVoleioFHErro','finVoleioBHErro','finGanchoErro','finCurtaErro']),si=(x.primeiroSaque||0)+(x.segundoSaque||0),st=si+(x.erroSaque||0)+(x.duplaFalta||0),rt=sum(x,['devolucaoDentro','devolucaoWinner','erroDevolucao','devolucaoCurta','devolucaoProfunda','devolucaoLob']),fb=(x.primeiraBolaGanha||0)+(x.primeiraBolaPerdida||0)+(x.primeiraBolaErro||0),sv=pc(si,st),rv=pc(Math.max(0,rt-(x.erroDevolucao||0)),rt),fv=pc(x.primeiraBolaGanha||0,fb),eff=Math.max(0,Math.min(100,Math.round(50+(w-er)*5+(sv-50)*.12+(rv-50)*.12+(fv-50)*.10)));return{
+ w,er,sv,rv,fv,eff,
+ f40:pc(x.quarentaGanho||0,(x.quarentaGanho||0)+(x.quarentaPerdido||0)),
+ bp:pc(x.breakpointGanho||0,(x.breakpointGanho||0)+(x.breakpointPerdido||0)),
+ smash:pc(x.smashAcerto||0,(x.smashAcerto||0)+(x.smashErro||0)),
+ gancho:pc(x.ganchoAcerto||0,(x.ganchoAcerto||0)+(x.ganchoErro||0)),
+ curta:pc(x.curtaAcerto||0,(x.curtaAcerto||0)+(x.curtaErro||0)),
+ defesa:pc(x.defesaAcerto||0,(x.defesaAcerto||0)+(x.defesaErro||0))
+}}
+function pri(p,c){let a=[['Saque',c.sv],['Devolução',c.rv],['1ª bola',c.fv],['Smash',c.smash],['Gancho',c.gancho],['Curta',c.curta],['Defesa',c.defesa]];return a.sort((x,y)=>x[1]-y[1]).slice(0,3)}
 function bestStreak(a){let b={t:null,n:0},c={t:null,n:0};a.forEach(x=>{c=x.scoringTeam===c.t?{t:c.t,n:c.n+1}:{t:x.scoringTeam,n:1};if(c.n>b.n)b={...c}});return b}
 
 function v233QuickCategories(){
@@ -1307,7 +1315,9 @@ function v233CompleteStats(){
 }
 
 window.jbV23ShowDashboard=function(){let a=state.smartPoints||[],c=state.players.map(calc),ga=state.score.games[0],gb=state.score.games[1],bs=bestStreak(a),mins=Math.max(0,Math.floor((Date.now()-(+state.matchStartedAt||Date.now()))/60000));$('#v23sub').textContent=team(0)+' '+ga+' × '+gb+' '+team(1);
-let cards=state.players.map((p,i)=>{let q=c[i];return `<div class="v23card"><b>${e(p.name)}</b><small>EFICIÊNCIA</small><b class="v23eff">${q.eff}</b><div class="v23row"><span>Winners / Erros</span><strong>${q.w} / ${q.er}</strong></div><div class="v23row"><span>Saque</span><strong>${q.sv}%</strong></div><div class="v23row"><span>Devolução</span><strong>${q.rv}%</strong></div><div class="v23row"><span>1ª bola</span><strong>${q.fv}%</strong></div><div class="v23row"><span>40×40 / BP</span><strong>${q.f40}% / ${q.bp}%</strong></div></div>`}).join('');
+let cards=state.players.map((p,i)=>{let q=c[i];return `<div class="v23card"><b>${e(p.name)}</b><small>EFICIÊNCIA</small><b class="v23eff">${q.eff}</b><div class="v23row"><span>Winners / Erros</span><strong>${q.w} / ${q.er}</strong></div><div class="v23row"><span>Saque</span><strong>${q.sv}%</strong></div><div class="v23row"><span>Devolução</span><strong>${q.rv}%</strong></div><div class="v23row"><span>1ª bola</span><strong>${q.fv}%</strong></div><div class="v23row"><span>40×40 / BP</span><strong>${q.f40}% / ${q.bp}%</strong></div>
+<div class="v23row"><span>Smash / Gancho</span><strong>${q.smash}% / ${q.gancho}%</strong></div>
+<div class="v23row"><span>Curta / Defesa</span><strong>${q.curta}% / ${q.defesa}%</strong></div></div>`}).join('');
 let priorities=state.players.map((p,i)=>`<div class="v23card"><small>${e(p.name)}</small><b>🎯 O QUE TREINAR</b>${pri(p,c[i]).map((x,j)=>`<div class="v23row"><span>${j+1}. ${x[0]}</span><strong>${x[1]}%</strong></div>`).join('')}</div>`).join('');
 let trail=a.slice(-20).map(x=>`<span class="v23pill ${(x.deciding40||x.breakPoint)?'press':''}">${e(x.athlete)} • ${e(x.label)}${x.deciding40?' • 40×40':''}${x.breakPoint?' • BP':''}</span>`).join('')||'<span class="v23pill">Sem pontos registrados</span>';
 $('#v23content').innerHTML=`<div class="v23grid4"><div class="v23card"><small>RESULTADO</small><b>${ga} × ${gb}</b></div><div class="v23card"><small>VENCEDOR</small><b>${ga===gb?'—':e(ga>gb?team(0):team(1))}</b></div><div class="v23card"><small>PONTOS</small><b>${a.length}</b></div><div class="v23card"><small>DURAÇÃO</small><b>${mins} min</b></div></div><div class="v23sec"><h3>COMPARATIVO DOS 4 JOGADORES</h3><div class="v23players">${cards}</div></div><div class="v23sec"><h3>MOMENTO DA PARTIDA</h3><div class="v23card"><div class="v23row"><span>Maior sequência</span><strong>${bs.n?e(bs.t===0?team(0):team(1))+' • '+bs.n+' pontos':'—'}</strong></div><div class="v23trail">${trail}</div></div></div><div class="v23sec"><h3>PRIORIDADES DE TREINO • SEM IA</h3><div class="v23prior">${priorities}</div></div>
