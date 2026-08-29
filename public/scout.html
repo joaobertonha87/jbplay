@@ -554,18 +554,7 @@ function add(k,btn,type,label){
    state.statHistory.push(hist);
 
    // Usa a função oficial do placar do próprio Scout.
-   const jbGamesBeforeServe=[...state.score.games];
    point(target);
-
-   // V22.2: terminou um game? troca automaticamente a dupla sacadora.
-   const jbGameFinished =
-     state.score.games[0]!==jbGamesBeforeServe[0] ||
-     state.score.games[1]!==jbGamesBeforeServe[1];
-
-   if(jbGameFinished){
-     state.servingTeam = Number(state.servingTeam||0)===0 ? 1 : 0;
-     save();
-   }
 
    // V22: registra o ponto como uma unidade completa.
    if(typeof window.jbV22RecordPoint==='function'){
@@ -600,11 +589,19 @@ function addZone(i,btn){
 function undoStat(){const x=state.statHistory.pop();if(!x)return;if(x.type==='stat'&&state.players[x.player].stats[x.key]>0)state.players[x.player].stats[x.key]--;if(x.type==='zone'&&state.players[x.player].zones[x.key]>0)state.players[x.player].zones[x.key]--;if(x.autoScore&&x.scoreBefore){state.score=JSON.parse(JSON.stringify(x.scoreBefore));state.finished=false;if(state.smartPoints&&state.smartPoints.length)state.smartPoints.pop();}render();if(typeof window.jbV22Refresh==='function')window.jbV22Refresh()}
 function resetPlayer(){if(confirm('Zerar todas as estatísticas deste aluno?')){state.players[current].stats=blank();state.players[current].zones=blankZones();state.statHistory=state.statHistory.filter(x=>x.player!==current);render()}}
 function labelPoint(n){const normal=document.getElementById('format').value==='normal';return normal?['0','15','30','40','AD'][Math.min(n,4)]:['0','15','30','40'][Math.min(n,3)]}
-function point(t){if(state.finished)return;const s=state.score;s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));s.points[t]++;const normal=document.getElementById('format').value==='normal';let won=normal?(s.points[t]>=4&&s.points[t]-s.points[1-t]>=2):(s.points[t]>=4);if(won){s.games[t]++;s.points=[0,0];autoFinish()}render()}
+
+function jbV224SwitchServerAfterGame(){
+ state.servingTeam = Number(state.servingTeam||0)===0 ? 1 : 0;
+ save();
+ render();
+ if(typeof window.jbV22Refresh==='function') window.jbV22Refresh();
+}
+
+function point(t){if(state.finished)return;const s=state.score;s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));s.points[t]++;const normal=document.getElementById('format').value==='normal';let won=normal?(s.points[t]>=4&&s.points[t]-s.points[1-t]>=2):(s.points[t]>=4);if(won){s.games[t]++;s.points=[0,0];autoFinish();render();jbV224SwitchServerAfterGame();return}render()}
 function game(t){if(state.finished)return;const s=state.score;s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));s.games[t]++;s.points=[0,0];autoFinish();render()}
 function autoFinish(){const n=Number(document.getElementById('gamesToWin').value||6),[a,b]=state.score.games;if((a>=n||b>=n)&&Math.abs(a-b)>=2)state.finished=true}
 function undoScore(){const x=state.score.history.pop();if(x){state.score.games=x.games;state.score.points=x.points;state.finished=false;render()}}
-function finishMatch(){state.finished=true;render()}
+function finishMatch(){state.finished=true;render();jbV224SwitchServerAfterGame()}
 function metrics(p){
  const s=p.stats;
  const total=sumKeys(s,['winner','erroNaoForcado','erroForcado','linhaFita','pontoAtaque','pontoDefesa']);
@@ -948,7 +945,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V22.3</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V22.4</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1119,7 +1116,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V22.3</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V22.4</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -1136,6 +1133,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
  function setServer(t){
    state.servingTeam=Number(t);
    save();
+   if(typeof render==='function')render();
    window.jbV22Refresh();
    const last=document.getElementById('jbV20LastText');
    if(last)last.textContent='🎾 Saque selecionado: '+pairName(Number(t));
