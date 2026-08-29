@@ -959,7 +959,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V23.6</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V24</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1129,7 +1129,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V23.6</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V24</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -1455,6 +1455,102 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 </script>
+
+
+<style id="jb-v24-premium-ui">
+:root{
+ --v24-bg:#071014;--v24-panel:#0b171d;--v24-panel2:#0e1d24;
+ --v24-line:rgba(255,255,255,.075);--v24-text:#f4f8f9;
+ --v24-muted:#84979f;--v24-lime:#cfff20;--v24-good:#2ee6a6;
+ --v24-bad:#ff7182;--v24-warn:#ffc75a;
+}
+body{
+ background:
+ radial-gradient(circle at 10% 0%,rgba(207,255,32,.055),transparent 28%),
+ linear-gradient(180deg,#081116 0%,#061015 100%)!important;
+ color:var(--v24-text)!important;
+}
+.card,.panel,.tracker-card,.summary-card,.side-stack>*,#jbV22Panel{
+ background:linear-gradient(145deg,rgba(15,31,39,.98),rgba(8,21,27,.98))!important;
+ border:1px solid var(--v24-line)!important;
+ box-shadow:0 12px 30px rgba(0,0,0,.18)!important;
+ border-radius:16px!important;
+}
+button,.btn,.stat-btn{transition:transform .12s ease,border-color .12s ease,background .12s ease,box-shadow .12s ease}
+button:active,.btn:active,.stat-btn:active{transform:scale(.975)}
+.player-tab{
+ border-radius:12px!important;min-height:54px!important;border:1px solid var(--v24-line)!important;
+ background:#0d1b22!important;color:#b9c7cc!important;font-weight:900!important
+}
+.player-tab.active{
+ background:linear-gradient(135deg,#d9ff35,#bce900)!important;color:#071014!important;
+ box-shadow:0 7px 20px rgba(207,255,32,.16)!important
+}
+.cat-tab{
+ min-height:48px!important;border-radius:11px!important;background:#0b1920!important;
+ border:1px solid var(--v24-line)!important;color:#d7e1e4!important;font-weight:850!important
+}
+.cat-tab.active{border-color:rgba(207,255,32,.55)!important;color:var(--v24-lime)!important;background:rgba(207,255,32,.075)!important}
+.stat-btn{
+ border-radius:14px!important;min-height:80px!important;padding:13px!important;
+ background:linear-gradient(145deg,#10232a,#0b1a20)!important;border:1px solid rgba(255,255,255,.08)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important
+}
+.stat-btn.good{background:linear-gradient(145deg,rgba(26,79,62,.68),rgba(13,40,34,.86))!important;border-color:rgba(46,230,166,.22)!important}
+.stat-btn.bad{background:linear-gradient(145deg,rgba(80,35,43,.62),rgba(43,20,26,.88))!important;border-color:rgba(255,113,130,.22)!important}
+.stat-btn.warn{background:linear-gradient(145deg,rgba(74,59,28,.62),rgba(42,33,18,.88))!important;border-color:rgba(255,199,90,.24)!important}
+.stat-btn b{font-size:14px!important;line-height:1.15!important}.stat-btn small{color:#93a5ac!important}
+#jbV22Panel{padding:12px!important}
+.jbV22Card{border-radius:11px!important;background:rgba(5,15,20,.52)!important}
+.jbV22Serve{border-radius:11px!important}
+.jbV22Serve.active{background:linear-gradient(135deg,#dcff3f,#bde900)!important;box-shadow:0 7px 18px rgba(207,255,32,.14)!important}
+.score-card,.scoreboard,.placar{
+ border-radius:17px!important;background:linear-gradient(135deg,#0d2027,#09181e)!important
+}
+#scoreNameA,#scoreNameB{font-weight:900!important;letter-spacing:.01em}
+.jbScoreServeBall{font-size:22px!important}
+#jbV20Bar{
+ backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+ background:rgba(6,16,21,.88)!important;border:1px solid rgba(255,255,255,.07)!important;
+ box-shadow:0 10px 30px rgba(0,0,0,.2)!important
+}
+#jbV23,#jbV236Chooser,#jbV236Report{
+ background:
+ radial-gradient(circle at 50% -10%,rgba(207,255,32,.07),transparent 30%),
+ rgba(5,13,17,.97)!important
+}
+.v23head,.v236head{
+ background:rgba(5,13,17,.91)!important;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
+ border-bottom:1px solid rgba(255,255,255,.06)!important
+}
+.v23head h2,.v236head h2{font-size:20px!important;letter-spacing:-.02em}
+.v23card,.v236card,.v236group,.v23statgroup{
+ background:linear-gradient(145deg,rgba(15,31,39,.98),rgba(8,20,26,.98))!important;
+ border:1px solid rgba(255,255,255,.075)!important;border-radius:15px!important;
+ box-shadow:0 10px 25px rgba(0,0,0,.16)!important
+}
+.v23eff{font-size:30px!important;text-shadow:0 0 18px rgba(207,255,32,.16)}
+.v236student{
+ background:linear-gradient(145deg,#10222a,#09181e)!important;border:1px solid rgba(255,255,255,.08)!important;
+ border-radius:15px!important;box-shadow:0 9px 22px rgba(0,0,0,.17)!important
+}
+.v236student:hover,.v236student:focus{border-color:var(--v24-lime)!important;box-shadow:0 0 0 2px rgba(207,255,32,.08),0 12px 25px rgba(0,0,0,.22)!important}
+.v236btn,.v23btn{border-radius:10px!important}
+.v236btn.hot,.v23btn.hot,.v23btn.primary{background:linear-gradient(135deg,#dcff3f,#bde900)!important;color:#071014!important}
+.v236hero .v236card:nth-child(3) b{color:var(--v24-lime)!important;font-size:25px!important}
+.v236sec h3,.v23sec h3{font-size:10px!important;letter-spacing:.13em!important;margin-top:14px!important}
+.v236row,.v23row{border-color:rgba(255,255,255,.055)!important}
+.v236row span,.v23row span{color:#91a4ab!important}
+.v236row strong,.v23row strong{font-weight:900!important}
+@media(min-width:900px){
+ .tracker-layout{gap:12px!important}
+ .actions-grid{gap:9px!important}
+}
+@media print{
+ #jbV236Report{font-family:Arial,sans-serif!important}
+ #jbV236Report .v236card,#jbV236Report .v236group{box-shadow:none!important;border:1px solid #d7d7d7!important}
+}
+</style>
 
 </body>
 </html>
