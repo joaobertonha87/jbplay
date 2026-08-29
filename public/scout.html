@@ -554,7 +554,18 @@ function add(k,btn,type,label){
    state.statHistory.push(hist);
 
    // Usa a função oficial do placar do próprio Scout.
+   const jbGamesBeforeServe=[...state.score.games];
    point(target);
+
+   // V22.2: terminou um game? troca automaticamente a dupla sacadora.
+   const jbGameFinished =
+     state.score.games[0]!==jbGamesBeforeServe[0] ||
+     state.score.games[1]!==jbGamesBeforeServe[1];
+
+   if(jbGameFinished){
+     state.servingTeam = Number(state.servingTeam||0)===0 ? 1 : 0;
+     save();
+   }
 
    // V22: registra o ponto como uma unidade completa.
    if(typeof window.jbV22RecordPoint==='function'){
@@ -566,6 +577,7 @@ function add(k,btn,type,label){
    }
 
    const teamLabel=target===0?team(0):team(1);
+   if(typeof window.jbV22Refresh==='function') window.jbV22Refresh();
    setTimeout(()=>{
      scoutFeedback(type,label||k,athlete,k);
      const last=document.getElementById('jbV20LastText');
@@ -934,7 +946,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V22.1</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V22.2</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1105,7 +1117,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V22.1</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V22.2</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -1186,6 +1198,112 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
   .jbV22Serve{flex:1 1 calc(50% - 4px);min-width:0}
 }
 </style>
+
+
+<style id="jb-v222-live-server-ball-css">
+.jbLiveServerBall{
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-left:6px;font-size:18px;line-height:1;vertical-align:middle;
+  filter:drop-shadow(0 0 5px rgba(207,255,32,.48));
+  animation:jbServerBallPulse 1.4s ease-in-out infinite
+}
+@keyframes jbServerBallPulse{
+  0%,100%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.12);opacity:.82}
+}
+.jbLiveServingCard{
+  outline:2px solid rgba(207,255,32,.45)!important;
+  box-shadow:0 0 0 3px rgba(207,255,32,.07) inset!important
+}
+@media(prefers-reduced-motion:reduce){
+  .jbLiveServerBall{animation:none}
+}
+</style>
+
+<script id="jb-v222-live-server-ball-js">
+(function(){
+  function normalize(x){
+    return (x||'').toString().trim().replace(/\s+/g,' ').toLowerCase();
+  }
+
+  function currentTeamText(t){
+    try{return normalize(team(t))}catch(e){return t===0?'dupla a/b':'dupla c/d'}
+  }
+
+  function clearBalls(){
+    document.querySelectorAll('.jbLiveServerBall').forEach(x=>x.remove());
+    document.querySelectorAll('.jbLiveServingCard').forEach(x=>x.classList.remove('jbLiveServingCard'));
+  }
+
+  function decorateScoreboard(){
+    if(!window.state)return;
+    clearBalls();
+
+    const serving=Number(state.servingTeam||0);
+    const wanted=currentTeamText(serving);
+
+    // Try to find the live-score team label by text, avoiding setup/history controls.
+    const candidates=[...document.querySelectorAll(
+      '.score-card *, .scoreboard *, .placar *, .score *, .team, .team-name, .duo, .pair, h2, h3, strong, b, span'
+    )];
+
+    let target=null;
+    for(const el of candidates){
+      if(!el || el.closest('#jbV22Panel') || el.closest('#jbV20Bar') || el.closest('#jbV20Recent')) continue;
+      const text=normalize(el.textContent);
+      if(text && (text===wanted || text.includes(wanted))){
+        const rect=el.getBoundingClientRect();
+        if(rect.width>0 && rect.height>0){
+          target=el;
+          break;
+        }
+      }
+    }
+
+    if(target){
+      const ball=document.createElement('span');
+      ball.className='jbLiveServerBall';
+      ball.textContent='🎾';
+      ball.setAttribute('aria-label','Sacando agora');
+      ball.title='Sacando agora';
+      target.appendChild(ball);
+
+      const card=target.closest('.score-card,.team-card,.score-team,.placar-time,.team,.side');
+      if(card)card.classList.add('jbLiveServingCard');
+    }
+  }
+
+  window.jbV22DecorateScoreboard=decorateScoreboard;
+
+  // Re-decorate after each render, because Scout rebuilds parts of the DOM.
+  const wait=setInterval(()=>{
+    if(typeof window.render!=='function' || window.render.v222wrapped)return;
+    clearInterval(wait);
+    const original=window.render;
+    const wrapped=function(){
+      const r=original.apply(this,arguments);
+      setTimeout(decorateScoreboard,0);
+      return r;
+    };
+    wrapped.v222wrapped=true;
+    window.render=wrapped;
+    setTimeout(decorateScoreboard,30);
+  },100);
+
+  // Also repaint when selecting server manually.
+  document.addEventListener('click',function(ev){
+    if(ev.target.closest && ev.target.closest('.jbV22Serve')){
+      setTimeout(decorateScoreboard,30);
+    }
+  });
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',()=>setTimeout(decorateScoreboard,250),{once:true});
+  }else{
+    setTimeout(decorateScoreboard,250);
+  }
+})();
+</script>
 
 </body>
 </html>
