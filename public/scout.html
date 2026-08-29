@@ -960,7 +960,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V25</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V26.2</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1130,7 +1130,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V25</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V26.2</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -1682,6 +1682,447 @@ function open(i){selected=Number.isFinite(i)?i:0;rs();render();$('#jbV25History'
 window.jbV25OpenHistory=open;
 function install(){$('#v25Close').onclick=()=>$('#jbV25History').classList.remove('open');$('#v25Clear').onclick=()=>{const p=state.players[selected];if(confirm('Apagar histórico de '+p.name+'?')){const db=read();delete db[p.profileId];write(db);render()}};if(!document.getElementById('jbV25HistoryBtn')){const b=document.createElement('button');b.id='jbV25HistoryBtn';b.className='btn btn-light';b.type='button';b.textContent='Histórico / Evolução';b.onclick=()=>open(current||0);const r=document.getElementById('jbV236OpenBtn');if(r&&r.parentNode)r.parentNode.insertBefore(b,r.nextSibling);else document.body.appendChild(b)}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+
+
+<style>
+#v26{display:none;position:fixed;inset:0;z-index:200000;background:#071014;color:#fff;overflow:auto;padding:18px}#v26.open{display:block}.v26p{max-width:1050px;margin:auto}.v26h{display:flex;justify-content:space-between;align-items:center;gap:10px}.v26brand{display:flex;gap:12px;align-items:center}.v26brand img{width:85px;height:58px;object-fit:contain;background:white;border-radius:10px}.v26btn{padding:10px 13px;border-radius:10px;border:1px solid #40535b;background:#10212a;color:white;font-weight:900}.v26btn.hot{background:#cfff20;color:#071014}.v26sel,.v26filters{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.v26sel button,.v26filters button{padding:9px 12px;border-radius:10px;border:1px solid #33464f;background:#0d1b23;color:white;font-weight:900}.v26sel button.on,.v26filters button.on{border-color:#cfff20;color:#cfff20}.v26grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.v26c{background:#0d1b23;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px}.v26c small{color:#81949d;font-weight:800}.v26c b{display:block;font-size:18px;margin:5px 0}.v26up{color:#2ee6a6}.v26dn{color:#ff7182}.v26eq{color:#ffc75a}.v26bar{height:8px;background:#1c2a30;border-radius:10px;overflow:hidden}.v26bar i{display:block;height:100%;background:#cfff20}.v26sec{margin-top:14px}.v26sec h3{color:#cfff20;font-size:11px;letter-spacing:.1em}.v26chart{display:flex;align-items:flex-end;gap:6px;height:190px;padding:12px;background:#0d1b23;border-radius:14px;overflow-x:auto}.v26col{min-width:44px;display:flex;gap:2px;align-items:flex-end;height:160px}.v26col i{width:6px;background:#cfff20;border-radius:4px 4px 0 0}@media(max-width:700px){.v26grid{grid-template-columns:1fr 1fr}.v26h{align-items:flex-start;flex-direction:column}}@media print{body>*:not(#v26){display:none!important}#v26{display:block!important;position:static;background:white!important;color:#111!important}.v26btn,.v26sel,.v26filters{display:none!important}.v26c,.v26chart{background:white!important;color:#111!important;border:1px solid #ccc!important}}
+</style>
+<div id="v26"><div class="v26p"><div class="v26h"><div class="v26brand"><img src="jb-bertonha-logo.jpg"><div><h2>RELATÓRIO DE EVOLUÇÃO</h2><small>JB Beach Tennis • acompanhamento individual</small></div></div><div><button class="v26btn" onclick="v26Close()">Voltar</button> <button class="v26btn hot" onclick="print()">PDF / Imprimir</button></div></div><div id="v26sel" class="v26sel"></div><div class="v26filters"><button data-n="5" class="on">Últimas 5</button><button data-n="10">Últimas 10</button><button data-n="0">Todas</button></div><div id="v26body"></div></div></div>
+<script>
+(function(){const K='jb_scout_student_history_v25',L=[['serve','Saque'],['defesa','Defesa'],['smash','Smash'],['curta','Curta'],['gancho','Gancho'],['ret','Devolução']];let si=0,n=5;
+function D(){try{return JSON.parse(localStorage.getItem(K)||'{}')}catch(e){return {}}}function A(a,k){return a.length?Math.round(a.reduce((x,y)=>x+(+y.metrics[k]||0),0)/a.length):0}function T(c,p){let d=c-p;return d>1?'<span class="v26up">↑ +'+d+' pp</span>':d<-1?'<span class="v26dn">↓ '+d+' pp</span>':'<span class="v26eq">→ '+d+' pp</span>'}function F(t){return new Date(t).toLocaleDateString('pt-BR')}
+function S(){let h=document.getElementById('v26sel');h.innerHTML=state.players.map((p,i)=>'<button data-i="'+i+'" class="'+(i==si?'on':'')+'">'+p.name+'</button>').join('');h.querySelectorAll('button').forEach(b=>b.onclick=()=>{si=+b.dataset.i;S();R()})}
+function R(){let p=state.players[si],all=D()[p.profileId]||[],a=n?all.slice(-n):all,h=document.getElementById('v26body');if(!a.length){h.innerHTML='<div class="v26c"><b>Nenhuma sessão salva.</b><small>Finalize partidas para criar o histórico.</small></div>';return}let f=a[0],c=a[a.length-1],v=L.map(x=>[x[0],x[1],c.metrics[x[0]]||0,f.metrics[x[0]]||0,A(a,x[0])]),best=[...v].sort((x,y)=>y[2]-x[2])[0],worst=[...v].sort((x,y)=>x[2]-y[2])[0],pri=[...v].map(x=>[x[1],100-x[2]]).sort((x,y)=>y[1]-x[1]).slice(0,3),now=Math.round(v.reduce((x,y)=>x+y[2],0)/6),old=Math.round(v.reduce((x,y)=>x+y[3],0)/6);
+let cards=v.map(x=>'<div class="v26c"><small>'+x[1]+'</small><b>'+x[2]+'%</b>'+T(x[2],x[3])+'<div class="v26bar"><i style="width:'+x[2]+'%"></i></div><small>Inicial '+x[3]+'% • Média '+x[4]+'%</small></div>').join('');
+let chart='<div class="v26chart">'+a.map((q,i)=>'<div class="v26col" title="'+F(q.at)+'">'+L.map(x=>'<i style="height:'+Math.max(2,q.metrics[x[0]]||0)+'%"></i>').join('')+'</div>').join('')+'</div>';
+h.innerHTML='<div class="v26grid"><div class="v26c"><small>ALUNO</small><b>'+p.name+'</b></div><div class="v26c"><small>SESSÕES ANALISADAS</small><b>'+a.length+'</b></div><div class="v26c"><small>ÍNDICE TÉCNICO</small><b>'+now+'%</b>'+T(now,old)+'</div></div><div class="v26sec"><h3>PRIMEIRA AVALIAÇÃO × ATUAL</h3><div class="v26grid">'+cards+'</div></div><div class="v26sec"><h3>EVOLUÇÃO POR SESSÃO</h3>'+chart+'</div><div class="v26sec"><h3>PRIORIDADES DE TREINO</h3><div class="v26grid">'+pri.map((x,i)=>'<div class="v26c"><small>'+(i+1)+'ª PRIORIDADE</small><b>'+x[0]+'</b><div class="v26bar"><i style="width:'+x[1]+'%"></i></div><small>'+x[1]+'% de necessidade</small></div>').join('')+'</div></div><div class="v26sec"><h3>RESUMO</h3><div class="v26c">Melhor indicador atual: <b>'+best[1]+' '+best[2]+'%</b> Principal atenção: <b>'+worst[1]+' '+worst[2]+'%</b></div></div>'}
+window.jbV26OpenReport=i=>{si=Number.isFinite(i)?i:0;S();R();document.getElementById('v26').classList.add('open')};window.v26Close=()=>document.getElementById('v26').classList.remove('open');
+function I(){document.querySelectorAll('.v26filters button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.v26filters button').forEach(x=>x.classList.remove('on'));b.classList.add('on');n=+b.dataset.n;R()});let q=document.createElement('button');q.className='btn btn-light';q.textContent='Relatório de Evolução';q.onclick=()=>jbV26OpenReport(current||0);let r=document.getElementById('jbV25HistoryBtn');if(r&&r.parentNode)r.parentNode.insertBefore(q,r.nextSibling);else document.body.appendChild(q)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',I);else I()})();
+</script>
+
+<style id="jb-v261-ui">
+/* V26.1 — camada visual/intuitiva, sem alterar cálculos */
+:root{
+ --v261-bg:#050b0f; --v261-panel:#0a151b; --v261-panel2:#0d1c24;
+ --v261-line:rgba(255,255,255,.075); --v261-lime:#d2ff28;
+ --v261-text:#f5f8fa; --v261-muted:#8fa1aa;
+}
+body{
+ background:
+ radial-gradient(circle at 15% -10%,rgba(210,255,40,.065),transparent 28%),
+ radial-gradient(circle at 100% 18%,rgba(84,229,255,.035),transparent 22%),
+ linear-gradient(160deg,#050b0f,#071117 52%,#050a0e)!important;
+}
+.wrap{padding:10px 12px calc(18px + env(safe-area-inset-bottom))!important}
+.card{
+ border-radius:16px!important;
+ border:1px solid var(--v261-line)!important;
+ box-shadow:0 14px 34px rgba(0,0,0,.22)!important;
+}
+.topbar{gap:9px!important;margin-bottom:9px!important}
+.main-grid{gap:9px!important}
+.section-title{margin-bottom:9px!important}
+.section-title h2{font-size:14px!important;letter-spacing:-.01em}
+.eyebrow{color:#71848e!important}
+
+/* Barra de operação */
+#jbV20Bar{
+ top:max(6px,env(safe-area-inset-top))!important;
+ margin:6px 8px 8px!important;
+ padding:7px!important;
+ border-radius:15px!important;
+ border:1px solid rgba(255,255,255,.085)!important;
+ background:rgba(7,17,23,.94)!important;
+ backdrop-filter:blur(18px)!important;
+ box-shadow:0 12px 30px rgba(0,0,0,.28)!important;
+}
+#jbV20Bar button{
+ min-height:44px!important;
+ padding:9px 13px!important;
+ border-radius:10px!important;
+ font-size:11px!important;
+}
+#jbV20Bar button.active{
+ background:linear-gradient(135deg,#dcff35,#b9ef16)!important;
+ color:#061014!important;
+ box-shadow:0 6px 15px rgba(201,255,40,.14)!important;
+}
+#v20Undo{background:#111f28!important}
+#v20Finish{background:rgba(255,104,116,.075)!important}
+
+/* Placar com leitura instantânea */
+.score-card{
+ border-radius:16px!important;
+ background:
+ radial-gradient(circle at 50% -35%,rgba(210,255,40,.09),transparent 42%),
+ linear-gradient(145deg,#0d1d26,#071219)!important;
+}
+.games{font-size:58px!important;letter-spacing:-.055em}
+.points{color:var(--v261-lime)!important;font-size:15px!important}
+.score-vs{opacity:.55}
+.score-name{font-size:11px!important;color:#d4dde2!important}
+
+/* Jogadores = primeiro passo visual */
+.player-tabs{
+ padding:8px 8px 0!important;
+ gap:7px!important;
+}
+.player-tab{
+ min-height:54px!important;
+ border-radius:11px 11px 0 0!important;
+ background:#09171e!important;
+ border-color:rgba(255,255,255,.07)!important;
+ color:#9fb0b8!important;
+ font-size:11px!important;
+ position:relative;
+}
+.player-tab.active{
+ background:linear-gradient(145deg,#d9ff38,#b5ea18)!important;
+ color:#061014!important;
+ box-shadow:0 -5px 22px rgba(207,255,35,.12)!important;
+}
+.player-tab.active:after{
+ content:"REGISTRANDO";
+ display:block;
+ font-size:7px;
+ letter-spacing:.08em;
+ margin-top:3px;
+ opacity:.65;
+}
+
+/* Categorias = segundo passo */
+.category-tabs{
+ padding:8px!important;
+ gap:6px!important;
+ background:#07141a!important;
+}
+.cat{
+ min-height:43px!important;
+ border-radius:10px!important;
+ background:#0b1920!important;
+ font-size:10.5px!important;
+ padding:8px 12px!important;
+}
+.cat.active{
+ background:rgba(210,255,40,.11)!important;
+ color:#dcff62!important;
+ border-color:rgba(210,255,40,.34)!important;
+ box-shadow:inset 0 0 0 1px rgba(210,255,40,.04)!important;
+}
+
+/* Área de lançamento = terceiro passo */
+.action-zone{padding:10px!important}
+.category-head{
+ align-items:center!important;
+ background:rgba(255,255,255,.025);
+ border:1px solid rgba(255,255,255,.055);
+ border-radius:12px;
+ padding:9px 11px;
+ margin-bottom:9px!important;
+}
+.category-head h3{font-size:15px!important}
+.category-head p{font-size:10px!important}
+
+.actions-grid{gap:8px!important}
+.stat-btn{
+ min-height:76px!important;
+ border-radius:14px!important;
+ padding:11px!important;
+ transition:transform .08s ease,filter .08s ease,box-shadow .08s ease!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.018)!important;
+}
+.stat-btn:active{transform:scale(.975)!important;filter:brightness(1.14)!important}
+.stat-btn b{font-size:12.5px!important;letter-spacing:-.01em}
+.stat-btn small{font-size:8.5px!important;opacity:.72}
+.stat-btn.good{
+ background:linear-gradient(145deg,rgba(46,230,166,.13),rgba(46,230,166,.055))!important;
+ border-color:rgba(46,230,166,.25)!important;
+}
+.stat-btn.bad{
+ background:linear-gradient(145deg,rgba(255,113,130,.14),rgba(255,113,130,.05))!important;
+ border-color:rgba(255,113,130,.27)!important;
+}
+.stat-btn.warn{
+ background:linear-gradient(145deg,rgba(255,199,90,.13),rgba(255,199,90,.045))!important;
+ border-color:rgba(255,199,90,.25)!important;
+}
+
+/* Guia contextual ao vivo */
+#jbV261Guide{
+ display:grid;
+ grid-template-columns:auto 1fr auto 1fr auto 1.15fr;
+ gap:7px;
+ align-items:center;
+ margin:0 8px 8px;
+ padding:8px 10px;
+ border:1px solid rgba(255,255,255,.075);
+ border-radius:13px;
+ background:linear-gradient(145deg,rgba(11,27,35,.96),rgba(7,18,24,.96));
+ box-shadow:0 10px 25px rgba(0,0,0,.18);
+}
+.v261step{
+ width:23px;height:23px;border-radius:50%;
+ display:grid;place-items:center;
+ background:rgba(210,255,40,.12);
+ color:var(--v261-lime);
+ border:1px solid rgba(210,255,40,.25);
+ font-size:9px;font-weight:950;
+}
+.v261label{min-width:0}
+.v261label small{
+ display:block;color:#71858e;font-size:7.5px;font-weight:950;letter-spacing:.09em;
+}
+.v261label b{
+ display:block;color:#f3f8f9;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.v261arrow{color:#53666f;font-size:12px}
+
+/* Botões secundários mais previsíveis */
+.toolbar .btn,.export-box .btn{
+ border-radius:10px!important;
+ min-height:42px!important;
+ font-size:10.5px!important;
+}
+.btn-light,.btn-dark{
+ background:#0c1a22!important;
+ color:#dce5e9!important;
+ border:1px solid rgba(255,255,255,.08)!important;
+}
+.btn-primary{
+ background:linear-gradient(135deg,#dcff35,#b9ef16)!important;
+ color:#061014!important;
+}
+
+/* Painel lateral menos visualmente pesado */
+.side-stack .card{background:linear-gradient(180deg,#0b181f,#081218)!important}
+.kpis{gap:7px!important}
+.kpi{border-radius:12px!important;padding:9px!important}
+.kpi b{font-size:18px!important}
+
+/* V25 / V26 consistência visual */
+#jbV25History,#v26{
+ background:
+ radial-gradient(circle at 15% -10%,rgba(210,255,40,.06),transparent 28%),
+ #061015!important;
+}
+.v25card,.v25metric,.v26c,.v26chart{
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.02),0 10px 24px rgba(0,0,0,.12)!important;
+}
+
+/* iPad landscape: manter tudo rápido e sem apertar */
+@media(min-width:900px) and (orientation:landscape){
+ body.v20-match .actions-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ body.v20-match .stat-btn{min-height:78px!important}
+ body.v20-match .main-grid{padding-bottom:8px!important}
+ #jbV261Guide{position:sticky;top:66px;z-index:40}
+}
+@media(min-width:1180px) and (orientation:landscape){
+ body.v20-match .actions-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+ #jbV261Guide{grid-template-columns:auto 1fr auto 1fr}
+ #jbV261Guide .v261-last-arrow,#jbV261Guide .v261-last{display:none}
+ .games{font-size:48px!important}
+ .stat-btn{min-height:72px!important}
+}
+@media print{#jbV261Guide{display:none!important}}
+</style>
+
+<script id="jb-v261-ui-js">
+(function(){
+ function q(s){return document.querySelector(s)}
+ function text(el, fallback){return el?(el.textContent||'').trim():fallback}
+ function activePlayer(){
+   return text(q('.player-tab.active'),'Selecione o aluno').replace(/REGISTRANDO/gi,'').trim()
+ }
+ function activeCategory(){
+   return text(q('.cat.active'),'Selecione a categoria')
+ }
+ function ensureGuide(){
+   if(document.getElementById('jbV261Guide'))return;
+   const g=document.createElement('div');
+   g.id='jbV261Guide';
+   g.innerHTML='<span class="v261step">1</span><div class="v261label"><small>ALUNO</small><b id="v261Player">—</b></div><span class="v261arrow">›</span><span class="v261step">2</span><div class="v261label"><small>CATEGORIA</small><b id="v261Cat">—</b></div><span class="v261-last-arrow v261arrow">›</span><div class="v261-last v261label"><small>AGORA</small><b>Toque no acontecimento</b></div>';
+   const tracker=q('.tracker');
+   if(tracker&&tracker.parentNode)tracker.parentNode.insertBefore(g,tracker);
+   update();
+ }
+ function update(){
+   const a=document.getElementById('v261Player'),b=document.getElementById('v261Cat');
+   if(a)a.textContent=activePlayer();
+   if(b)b.textContent=activeCategory();
+ }
+ function improveLabels(){
+   const u=document.getElementById('v20Undo'); if(u)u.innerHTML='↶ Desfazer';
+   const f=document.getElementById('v20Finish'); if(f)f.innerHTML='✓ Finalizar jogo';
+   const m=document.getElementById('v20Match'); if(m)m.innerHTML='● Jogo';
+   const a=document.getElementById('v20Analysis'); if(a)a.innerHTML='▦ Análise';
+ }
+ function install(){
+   ensureGuide(); improveLabels(); update();
+   document.addEventListener('click',e=>{
+     if(e.target.closest('.player-tab,.cat'))setTimeout(update,30);
+   });
+   const host=q('#playerTabs')||document.body;
+   new MutationObserver(()=>setTimeout(update,10)).observe(host,{childList:true,subtree:true,attributes:true,classFilter:['class']});
+   const cats=q('#categoryTabs');
+   if(cats)new MutationObserver(()=>setTimeout(update,10)).observe(cats,{childList:true,subtree:true,attributes:true});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+
+
+<style id="jb-v262-fast-css">
+#jbV262Fast{
+ margin:0 8px 8px;
+ border:1px solid rgba(255,255,255,.075);
+ border-radius:14px;
+ background:linear-gradient(145deg,rgba(10,25,32,.98),rgba(7,17,23,.98));
+ box-shadow:0 12px 28px rgba(0,0,0,.19);
+ overflow:hidden;
+}
+.v262head{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ padding:9px 10px;
+}
+.v262title{display:flex;align-items:center;gap:8px;min-width:0}
+.v262bolt{
+ width:26px;height:26px;border-radius:9px;display:grid;place-items:center;
+ background:rgba(210,255,40,.12);color:#d2ff28;border:1px solid rgba(210,255,40,.2);
+ font-size:13px;font-weight:950;
+}
+.v262title b{display:block;font-size:11px}
+.v262title small{display:block;color:#7f939c;font-size:8px;margin-top:1px}
+.v262toggle{
+ border:1px solid rgba(255,255,255,.1);background:#0d1b23;color:#dce7eb;
+ border-radius:9px;min-height:36px;padding:7px 10px;font-weight:900;font-size:9px
+}
+.v262body{padding:0 9px 9px}
+.v262players{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:7px}
+.v262player{
+ min-height:42px;border-radius:10px;border:1px solid rgba(255,255,255,.08);
+ background:#0a171e;color:#9fb0b8;font-size:10px;font-weight:900;padding:6px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.v262player.on{
+ background:linear-gradient(135deg,#dcff35,#b9ef16);
+ color:#061014;border-color:#cfff20;
+ box-shadow:0 5px 15px rgba(210,255,40,.11)
+}
+.v262actions{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.v262act{
+ min-height:55px;border-radius:11px;padding:7px;
+ border:1px solid rgba(255,255,255,.08);
+ background:#0c1a22;color:#f3f8fa;font-weight:950;font-size:9.5px;
+ display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+ transition:.08s ease;
+}
+.v262act:active{transform:scale(.975);filter:brightness(1.14)}
+.v262act small{font-size:7px;opacity:.58;margin-top:2px;font-weight:800}
+.v262act.good{background:linear-gradient(145deg,rgba(46,230,166,.14),rgba(46,230,166,.05));border-color:rgba(46,230,166,.27)}
+.v262act.bad{background:linear-gradient(145deg,rgba(255,113,130,.14),rgba(255,113,130,.05));border-color:rgba(255,113,130,.27)}
+#jbV262Fast.compact .v262body{display:none}
+#jbV262Last{
+ margin-top:7px;padding:7px 9px;border-radius:9px;
+ background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);
+ color:#9fb0b8;font-size:8px;font-weight:850;
+}
+#jbV262Last b{color:#eef5f7}
+@media(min-width:900px) and (orientation:landscape){
+ body.v20-match #jbV262Fast{position:sticky;top:118px;z-index:39}
+}
+@media(max-width:720px){
+ .v262actions{grid-template-columns:repeat(2,1fr)}
+ .v262players{grid-template-columns:repeat(2,1fr)}
+}
+@media print{#jbV262Fast{display:none!important}}
+</style>
+
+<div id="jbV262Fast">
+ <div class="v262head">
+  <div class="v262title"><span class="v262bolt">⚡</span><div><b>MODO RÁPIDO</b><small>Aluno + ação em poucos toques</small></div></div>
+  <button type="button" id="v262Toggle" class="v262toggle">Recolher</button>
+ </div>
+ <div class="v262body">
+  <div class="v262players" id="v262Players"></div>
+  <div class="v262actions" id="v262Actions"></div>
+  <div id="jbV262Last">Pronto para registrar.</div>
+ </div>
+</div>
+
+<script id="jb-v262-fast-js">
+(function(){
+ const STORE='jb_scout_v262_fast_compact';
+ const defs=[
+  ['winner','Winner','good','Ponto'],
+  ['erroNaoForcado','Erro não forçado','bad','Ponto'],
+  ['erroForcado','Erro forçado','bad','Ponto'],
+  ['ace','Ace','good','Saque'],
+  ['erroSaque','Erro de saque','bad','Saque'],
+  ['erroDevolucao','Erro devolução','bad','Devolução'],
+  ['smashAcerto','Smash acerto','good','Golpes'],
+  ['smashErro','Smash erro','bad','Golpes']
+ ];
+ function $(x){return document.querySelector(x)}
+ function esc(x){return String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+ function playerName(i){return state?.players?.[i]?.name||('Aluno '+(i+1))}
+ function renderPlayers(){
+   const h=$('#v262Players'); if(!h||!window.state&&!state)return;
+   h.innerHTML=state.players.map((p,i)=>'<button type="button" class="v262player '+(i===current?'on':'')+'" data-i="'+i+'">'+esc(p.name)+'</button>').join('');
+   h.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+     const i=+b.dataset.i;
+     if(typeof selectPlayer==='function')selectPlayer(i); else current=i;
+     renderPlayers();
+     flashLast('Aluno selecionado: <b>'+esc(playerName(i))+'</b>');
+   });
+ }
+ function renderActions(){
+   const h=$('#v262Actions'); if(!h)return;
+   h.innerHTML=defs.map(d=>'<button type="button" class="v262act '+d[2]+'" data-k="'+d[0]+'"><b>'+d[1]+'</b><small>'+d[3]+'</small></button>').join('');
+   h.querySelectorAll('button').forEach((b,idx)=>b.onclick=()=>{
+     const d=defs[idx], athlete=playerName(current);
+     if(typeof add==='function'){
+       add(d[0],b,d[2],d[1]);
+       setTimeout(()=>{
+         renderPlayers();
+         flashLast('<b>'+esc(athlete)+'</b> • '+esc(d[1])+' registrado');
+       },30);
+     }
+   });
+ }
+ function flashLast(html){
+   const x=$('#jbV262Last'); if(!x)return;
+   x.innerHTML=html;
+   x.animate?.([{opacity:.55,transform:'translateY(-2px)'},{opacity:1,transform:'translateY(0)'}],{duration:180});
+ }
+ function setCompact(v){
+   const box=$('#jbV262Fast'),bt=$('#v262Toggle'); if(!box||!bt)return;
+   box.classList.toggle('compact',v);
+   bt.textContent=v?'Expandir':'Recolher';
+   localStorage.setItem(STORE,v?'1':'0');
+ }
+ function mount(){
+   const box=$('#jbV262Fast');
+   const guide=$('#jbV261Guide');
+   const tracker=document.querySelector('.tracker');
+   if(box){
+     if(guide&&guide.parentNode) guide.parentNode.insertBefore(box,guide.nextSibling);
+     else if(tracker&&tracker.parentNode) tracker.parentNode.insertBefore(box,tracker);
+   }
+   renderPlayers();renderActions();
+   setCompact(localStorage.getItem(STORE)==='1');
+   $('#v262Toggle').onclick=()=>setCompact(!$('#jbV262Fast').classList.contains('compact'));
+   document.addEventListener('click',e=>{
+     if(e.target.closest('.player-tab')) setTimeout(renderPlayers,25);
+   });
+   const pt=document.querySelector('.player-tabs')||document.body;
+   new MutationObserver(()=>setTimeout(renderPlayers,20)).observe(pt,{subtree:true,childList:true,attributes:true});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();
 </script>
 
