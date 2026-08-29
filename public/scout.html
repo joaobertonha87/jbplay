@@ -630,9 +630,9 @@ function metrics(p){
   serveRate:pct(srvIn,srvTotal),firstServeRate:pct(s.primeiroSaque,s.primeiroSaque+s.segundoSaque+s.erroSaque+s.duplaFalta),
   returnRate:pct(retTotal-s.erroDevolucao,retTotal),firstBallRate:pct(s.primeiraBolaGanha,firstTotal),
   fortyRate:pct(s.quarentaGanho,forty),bpRate:pct(s.breakpointGanho,bp),
-  smashRate:pct(s.smashAcerto||0,(s.smashAcerto||0)+(s.smashErro||0)),
-  ganchoRate:pct(s.ganchoAcerto||0,(s.ganchoAcerto||0)+(s.ganchoErro||0)),
-  curtaRate:pct(s.curtaAcerto||0,(s.curtaAcerto||0)+(s.curtaErro||0)),
+  smashRate:pct((s.smashAcerto||0)+(s.finSmash||0),(s.smashAcerto||0)+(s.finSmash||0)+(s.smashErro||0)+(s.finSmashErro||0)),
+  ganchoRate:pct((s.ganchoAcerto||0)+(s.finGancho||0),(s.ganchoAcerto||0)+(s.finGancho||0)+(s.ganchoErro||0)+(s.finGanchoErro||0)),
+  curtaRate:pct((s.curtaAcerto||0)+(s.finCurta||0),(s.curtaAcerto||0)+(s.finCurta||0)+(s.curtaErro||0)+(s.finCurtaErro||0)),
   defesaRate:pct(s.defesaAcerto||0,(s.defesaAcerto||0)+(s.defesaErro||0))
  }
 }
@@ -959,7 +959,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V24</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V24.1</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1129,7 +1129,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V24</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V24.1</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -1391,8 +1391,10 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    const rt=sum(x,['devolucaoDentro','devolucaoWinner','erroDevolucao','devolucaoCurta','devolucaoProfunda','devolucaoLob']);
    const fb=(x.primeiraBolaGanha||0)+(x.primeiraBolaPerdida||0)+(x.primeiraBolaErro||0);
    const serve=pc(sin,st), ret=pc(Math.max(0,rt-(x.erroDevolucao||0)),rt), first=pc(x.primeiraBolaGanha||0,fb);
-   const smash=pc(x.smashAcerto||0,(x.smashAcerto||0)+(x.smashErro||0)), gancho=pc(x.ganchoAcerto||0,(x.ganchoAcerto||0)+(x.ganchoErro||0));
-   const curta=pc(x.curtaAcerto||0,(x.curtaAcerto||0)+(x.curtaErro||0)), defesa=pc(x.defesaAcerto||0,(x.defesaAcerto||0)+(x.defesaErro||0));
+   const smash=pc((x.smashAcerto||0)+(x.finSmash||0),(x.smashAcerto||0)+(x.finSmash||0)+(x.smashErro||0)+(x.finSmashErro||0)),
+   gancho=pc((x.ganchoAcerto||0)+(x.finGancho||0),(x.ganchoAcerto||0)+(x.finGancho||0)+(x.ganchoErro||0)+(x.finGanchoErro||0));
+   const curta=pc((x.curtaAcerto||0)+(x.finCurta||0),(x.curtaAcerto||0)+(x.finCurta||0)+(x.curtaErro||0)+(x.finCurtaErro||0)),
+   defesa=pc(x.defesaAcerto||0,(x.defesaAcerto||0)+(x.defesaErro||0));
    const forty=pc(x.quarentaGanho||0,(x.quarentaGanho||0)+(x.quarentaPerdido||0)), bp=pc(x.breakpointGanho||0,(x.breakpointGanho||0)+(x.breakpointPerdido||0));
    const eff=Math.max(0,Math.min(100,Math.round(50+(winners-errors)*5+(serve-50)*.12+(ret-50)*.12+(first-50)*.10)));
    return {winners,errors,serve,ret,first,smash,gancho,curta,defesa,forty,bp,eff}
