@@ -469,6 +469,7 @@ for(const p of state.players){if(!p.stats)p.stats=blank();for(const [k] of allDe
 if(!state.smartPoints)state.smartPoints=[];
 if(state.servingTeam===undefined)state.servingTeam=0;
 if(!state.matchStartedAt)state.matchStartedAt=Date.now();
+state.players.forEach((p,i)=>{if(!p.profileId)p.profileId='jb25_'+i+'_'+Math.random().toString(36).slice(2,9)});
 let current=0,currentCat='ponto';
 const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0.0%';
 const pair=(a,b)=>pct(a,a+b);
@@ -722,7 +723,7 @@ function exportCSV(){
  const csv=rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(';')).join('\n');
  const blob=new Blob(["\ufeff"+csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='jb-scout-pro.csv';a.click();URL.revokeObjectURL(a.href)
 }
-function newMatch(){if(confirm('Criar nova partida e zerar placar e estatísticas?')){state.players.forEach(p=>{p.stats=blank();p.zones=blankZones()});state.score={games:[0,0],points:[0,0],history:[]};state.statHistory=[];state.smartPoints=[];state.matchStartedAt=Date.now();state.finished=false;render()}}
+function newMatch(){if(confirm('Criar nova partida e zerar placar e estatísticas?')){state.players.forEach(p=>{p.stats=blank();p.zones=blankZones()});state.score={games:[0,0],points:[0,0],history:[]};state.statHistory=[];state.smartPoints=[];state.matchStartedAt=Date.now();state.finished=false;window.jbV25LastSavedMatch=null;render()}}
 document.getElementById('setNo').addEventListener('change',render);
 render();
 </script>
@@ -959,7 +960,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V24.5</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V25</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1011,7 +1012,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
  }
 
  function finishGame(){
-   setMode('analysis'); state.finished=true; save();
+   setMode('analysis'); state.finished=true; if(typeof window.jbV25SaveSession==='function')window.jbV25SaveSession(); save();
    if(typeof window.jbV23ShowDashboard==='function'){setTimeout(()=>window.jbV23ShowDashboard(),80);return;}
  }
 
@@ -1129,7 +1130,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V24.5</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V25</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -1637,6 +1638,52 @@ button:active,.btn:active,.stat-btn:active{transform:scale(.975)}
  .v244brand{margin-bottom:8px!important}
 }
 </style>
+
+
+<style id="jb-v25-history-css">
+#jbV25History{display:none;position:fixed;inset:0;z-index:100010;background:rgba(5,13,17,.97);overflow:auto;padding:16px;color:#eef5f7}
+#jbV25History.open{display:block}.v25box{max-width:1120px;margin:auto}.v25head{display:flex;justify-content:space-between;gap:10px;align-items:center;position:sticky;top:0;background:rgba(5,13,17,.94);padding:8px 0;z-index:3}
+.v25head h2{margin:0;font-size:20px}.v25actions{display:flex;gap:7px}.v25btn{border:1px solid #33464f;background:#10212a;color:#fff;border-radius:10px;padding:10px 12px;font-weight:900}.v25btn.hot{background:#cfff20;color:#071014}
+.v25students{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.v25student{padding:14px;border-radius:13px;border:1px solid rgba(255,255,255,.08);background:#0d1b23;color:#fff;font-weight:900}.v25student.active{border-color:#cfff20;color:#cfff20}
+.v25hero{display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:8px;margin-top:10px}.v25card,.v25metric{background:#0d1b23;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:11px}.v25card small,.v25metric small{color:#81949d;font-size:9px;font-weight:900}.v25card b{display:block;margin-top:4px;font-size:18px}
+.v25sec{margin-top:12px}.v25sec h3{color:#cfff20;font-size:10px;letter-spacing:.12em}.v25metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.v25metric-top{display:flex;justify-content:space-between}.v25trend.up{color:#2ee6a6}.v25trend.down{color:#ff7182}.v25trend.flat{color:#ffc75a}
+.v25bar{height:8px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;margin-top:7px}.v25bar i{display:block;height:100%;background:#cfff20}.v25priority{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.v25scroll{overflow:auto}.v25session{display:grid;grid-template-columns:110px 1fr repeat(6,70px);gap:7px;align-items:center;padding:8px;border-radius:10px;background:#0d1b23;border:1px solid rgba(255,255,255,.06);font-size:9px;min-width:800px}
+.v25session.head{background:transparent;border:0;color:#81949d;font-weight:900}
+@media(max-width:900px){.v25students{grid-template-columns:1fr 1fr}.v25hero,.v25metrics{grid-template-columns:1fr 1fr}.v25priority{grid-template-columns:1fr}}
+@media(max-width:560px){.v25students,.v25hero,.v25metrics{grid-template-columns:1fr}.v25head{align-items:flex-start;flex-direction:column}}
+</style>
+<div id="jbV25History"><div class="v25box">
+<div class="v25head"><div><h2>HISTÓRICO E EVOLUÇÃO DO ALUNO</h2><small>Comparativo entre sessões salvas</small></div><div class="v25actions"><button class="v25btn" id="v25Close">Voltar</button><button class="v25btn hot" id="v25Clear">Limpar histórico</button></div></div>
+<div class="v25students" id="v25Students"></div><div id="v25Content"></div>
+</div></div>
+<script id="jb-v25-history-js">
+(function(){
+const KEY='jb_scout_student_history_v25',$=x=>document.querySelector(x),pc=(a,b)=>b?Math.round(a*100/b):0,sum=(o,k)=>k.reduce((n,x)=>n+(+o[x]||0),0);let selected=0;
+const esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function read(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){return {}}} function write(x){localStorage.setItem(KEY,JSON.stringify(x))}
+function met(p){const x=p.stats||{},si=(x.primeiroSaque||0)+(x.segundoSaque||0),st=si+(x.erroSaque||0)+(x.duplaFalta||0),rt=sum(x,['devolucaoDentro','devolucaoWinner','erroDevolucao','devolucaoCurta','devolucaoProfunda','devolucaoLob']);return{
+serve:pc(si,st),ret:pc(Math.max(0,rt-(x.erroDevolucao||0)),rt),
+smash:pc((x.smashAcerto||0)+(x.finSmash||0),(x.smashAcerto||0)+(x.finSmash||0)+(x.smashErro||0)+(x.finSmashErro||0)),
+gancho:pc((x.ganchoAcerto||0)+(x.finGancho||0),(x.ganchoAcerto||0)+(x.finGancho||0)+(x.ganchoErro||0)+(x.finGanchoErro||0)),
+curta:pc((x.curtaAcerto||0)+(x.finCurta||0),(x.curtaAcerto||0)+(x.finCurta||0)+(x.curtaErro||0)+(x.finCurtaErro||0)),
+defesa:pc(x.defesaAcerto||0,(x.defesaAcerto||0)+(x.defesaErro||0))}}
+function fmt(t){const d=new Date(t);return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+function avg(a,k){const x=a.slice(-5);return x.length?Math.round(x.reduce((n,s)=>n+(s.metrics[k]||0),0)/x.length):0}
+function tr(c,p){const d=c-p;return d>1?'<span class="v25trend up">↑ +'+d+' pp</span>':d<-1?'<span class="v25trend down">↓ '+d+' pp</span>':'<span class="v25trend flat">→ '+d+' pp</span>'}
+window.jbV25SaveSession=function(){const id=String(state.matchStartedAt||'')+'_'+state.score.games.join('-');if(window.jbV25LastSavedMatch===id)return;const db=read();state.players.forEach((p,i)=>{const pid=p.profileId||(p.profileId='jb25_'+i);(db[pid]||(db[pid]=[])).push({at:Date.now(),name:p.name,score:[...state.score.games],metrics:met(p)});if(db[pid].length>100)db[pid]=db[pid].slice(-100)});write(db);window.jbV25LastSavedMatch=id}
+function rs(){const h=$('#v25Students');h.innerHTML=state.players.map((p,i)=>'<button class="v25student '+(i===selected?'active':'')+'" data-i="'+i+'">'+esc(p.name)+'</button>').join('');h.querySelectorAll('button').forEach(b=>b.onclick=()=>{selected=+b.dataset.i;rs();render()})}
+function render(){const p=state.players[selected],a=(read()[p.profileId]||[]),h=$('#v25Content');if(!a.length){h.innerHTML='<div class="v25card" style="margin-top:10px"><b>Nenhuma sessão salva ainda</b><small>Finalize partidas para criar o histórico.</small></div>';return}const c=a[a.length-1],pr=a.length>1?a[a.length-2]:c,L=[['serve','Saque'],['defesa','Defesa'],['smash','Smash'],['curta','Curta'],['gancho','Gancho'],['ret','Devolução']];
+const mh=L.map(([k,l])=>'<div class="v25metric"><div class="v25metric-top"><span>'+l+'</span>'+tr(c.metrics[k]||0,pr.metrics[k]||0)+'</div><b>'+(c.metrics[k]||0)+'%</b><small>Média últimas 5: '+avg(a,k)+'%</small><div class="v25bar"><i style="width:'+(c.metrics[k]||0)+'%"></i></div></div>').join('');
+const ps=L.map(([k,l])=>[l,100-(c.metrics[k]||0)]).sort((x,y)=>y[1]-x[1]).slice(0,3);
+const rows=a.slice().reverse().map(x=>'<div class="v25session"><strong>'+fmt(x.at)+'</strong><span>'+esc(x.name)+'</span><b>'+x.metrics.serve+'%</b><b>'+x.metrics.defesa+'%</b><b>'+x.metrics.smash+'%</b><b>'+x.metrics.curta+'%</b><b>'+x.metrics.gancho+'%</b><b>'+x.metrics.ret+'%</b></div>').join('');
+h.innerHTML='<div class="v25hero"><div class="v25card"><small>ALUNO</small><b>'+esc(p.name)+'</b></div><div class="v25card"><small>SESSÕES</small><b>'+a.length+'</b></div><div class="v25card"><small>ÚLTIMA SESSÃO</small><b>'+fmt(c.at)+'</b></div><div class="v25card"><small>PLACAR</small><b>'+c.score[0]+' × '+c.score[1]+'</b></div></div><div class="v25sec"><h3>EVOLUÇÃO TÉCNICA</h3><div class="v25metrics">'+mh+'</div></div><div class="v25sec"><h3>PRIORIDADES ATUAIS</h3><div class="v25priority">'+ps.map((x,i)=>'<div class="v25card"><small>'+(i+1)+'ª PRIORIDADE</small><b>'+x[0]+'</b><div class="v25bar"><i style="width:'+x[1]+'%"></i></div><small>'+x[1]+'% de necessidade</small></div>').join('')+'</div></div><div class="v25sec"><h3>HISTÓRICO DE SESSÕES</h3><div class="v25scroll"><div class="v25session head"><span>Data</span><span>Aluno</span><span>Saque</span><span>Defesa</span><span>Smash</span><span>Curta</span><span>Gancho</span><span>Devol.</span></div>'+rows+'</div></div>'}
+function open(i){selected=Number.isFinite(i)?i:0;rs();render();$('#jbV25History').classList.add('open')}
+window.jbV25OpenHistory=open;
+function install(){$('#v25Close').onclick=()=>$('#jbV25History').classList.remove('open');$('#v25Clear').onclick=()=>{const p=state.players[selected];if(confirm('Apagar histórico de '+p.name+'?')){const db=read();delete db[p.profileId];write(db);render()}};if(!document.getElementById('jbV25HistoryBtn')){const b=document.createElement('button');b.id='jbV25HistoryBtn';b.className='btn btn-light';b.type='button';b.textContent='Histórico / Evolução';b.onclick=()=>open(current||0);const r=document.getElementById('jbV236OpenBtn');if(r&&r.parentNode)r.parentNode.insertBefore(b,r.nextSibling);else document.body.appendChild(b)}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
 
 </body>
 </html>
