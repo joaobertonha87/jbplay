@@ -630,8 +630,10 @@ function metrics(p){
   serveRate:pct(srvIn,srvTotal),firstServeRate:pct(s.primeiroSaque,s.primeiroSaque+s.segundoSaque+s.erroSaque+s.duplaFalta),
   returnRate:pct(retTotal-s.erroDevolucao,retTotal),firstBallRate:pct(s.primeiraBolaGanha,firstTotal),
   fortyRate:pct(s.quarentaGanho,forty),bpRate:pct(s.breakpointGanho,bp),
-  smashRate:pair(s.smashAcerto,s.smashErro),ganchoRate:pair(s.ganchoAcerto,s.ganchoErro),
-  curtaRate:pair(s.curtaAcerto,s.curtaErro),defesaRate:pair(s.defesaAcerto,s.defesaErro)
+  smashRate:pct(s.smashAcerto||0,(s.smashAcerto||0)+(s.smashErro||0)),
+  ganchoRate:pct(s.ganchoAcerto||0,(s.ganchoAcerto||0)+(s.ganchoErro||0)),
+  curtaRate:pct(s.curtaAcerto||0,(s.curtaAcerto||0)+(s.curtaErro||0)),
+  defesaRate:pct(s.defesaAcerto||0,(s.defesaAcerto||0)+(s.defesaErro||0))
  }
 }
 function insightText(p,m){
@@ -957,7 +959,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V23.4</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V23.6</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1127,7 +1129,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V23.4</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V23.6</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -1255,7 +1257,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 .v23pair{color:#dfffa0!important}
 @media(max-width:800px){.v23fullstats{grid-template-columns:1fr}}
 </style>
-<div id="jbV23"><div id="jbV23In"><div class="v23head"><div><h2>JB SCOUT • DASHBOARD PÓS-JOGO</h2><small id="v23sub"></small></div><div class="v23actions"><button class="v23btn" id="v23back">Voltar</button><button class="v23btn" id="v23pdf">PDF / Imprimir</button><button class="v23btn hot" id="v23new">Nova partida</button></div></div><div id="v23content"></div></div></div>
+<div id="jbV23"><div id="jbV23In"><div class="v23head"><div><h2>JB SCOUT • DASHBOARD PÓS-JOGO</h2><small id="v23sub"></small></div><div class="v23actions"><button class="v23btn" id="v23back">Voltar</button><button class="v23btn" id="v23pdf">PDF / Imprimir</button><button class="v23btn" id="v23individual">Relatório individual</button><button class="v23btn hot" id="v23new">Nova partida</button></div></div><div id="v23content"></div></div></div>
 <script id="jb-v23-js">
 (function(){
 const $=x=>document.querySelector(x), pc=(a,b)=>b?Math.round(a*100/b):0, sum=(o,k)=>k.reduce((n,x)=>n+(+o[x]||0),0);
@@ -1323,8 +1325,134 @@ let trail=a.slice(-20).map(x=>`<span class="v23pill ${(x.deciding40||x.breakPoin
 $('#v23content').innerHTML=`<div class="v23grid4"><div class="v23card"><small>RESULTADO</small><b>${ga} × ${gb}</b></div><div class="v23card"><small>VENCEDOR</small><b>${ga===gb?'—':e(ga>gb?team(0):team(1))}</b></div><div class="v23card"><small>PONTOS</small><b>${a.length}</b></div><div class="v23card"><small>DURAÇÃO</small><b>${mins} min</b></div></div><div class="v23sec"><h3>COMPARATIVO DOS 4 JOGADORES</h3><div class="v23players">${cards}</div></div><div class="v23sec"><h3>MOMENTO DA PARTIDA</h3><div class="v23card"><div class="v23row"><span>Maior sequência</span><strong>${bs.n?e(bs.t===0?team(0):team(1))+' • '+bs.n+' pontos':'—'}</strong></div><div class="v23trail">${trail}</div></div></div><div class="v23sec"><h3>PRIORIDADES DE TREINO • SEM IA</h3><div class="v23prior">${priorities}</div></div>
 <div class="v23sec"><h3>ESTATÍSTICAS COMPLETAS • TODOS OS REGISTROS RÁPIDOS</h3><div class="v23fullstats">${v233CompleteStats()}</div></div>`;
 $('#jbV23').classList.add('open')}
-function install(){$('#v23back').onclick=()=>$('#jbV23').classList.remove('open');$('#v23pdf').onclick=()=>window.print();$('#v23new').onclick=()=>{$('#jbV23').classList.remove('open');newMatch()}}
+function install(){$('#v23back').onclick=()=>$('#jbV23').classList.remove('open');$('#v23pdf').onclick=()=>window.print();$('#v23individual').onclick=()=>{if(window.jbV236OpenIndividual)window.jbV236OpenIndividual()};$('#v23new').onclick=()=>{$('#jbV23').classList.remove('open');newMatch()}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+
+
+<style id="jb-v236-individual-css">
+#jbV236Chooser,#jbV236Report{display:none;position:fixed;inset:0;z-index:100000;background:#071016f4;overflow:auto;padding:16px;color:#eef5f7}
+#jbV236Chooser.open,#jbV236Report.open{display:block}
+.v236box{max-width:980px;margin:0 auto}.v236head{display:flex;justify-content:space-between;gap:10px;align-items:center;position:sticky;top:0;background:#071016f4;padding:8px 0;z-index:2}
+.v236head h2{margin:0;font-size:18px}.v236grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.v236student{border:1px solid #2a3e47;background:#0d1b23;color:#fff;border-radius:12px;padding:18px 12px;min-height:92px;font-weight:900;font-size:15px;cursor:pointer}
+.v236student:hover,.v236student:focus{border-color:#cfff20;outline:none}.v236actions{display:flex;gap:7px;flex-wrap:wrap}
+.v236btn{border:1px solid #33464f;background:#10212a;color:#fff;border-radius:9px;padding:10px 12px;font-weight:900;cursor:pointer}.v236btn.hot{background:#cfff20;color:#071014;border-color:#cfff20}
+.v236hero{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:8px}.v236card{background:#0d1b23;border:1px solid #20323b;border-radius:12px;padding:11px;min-width:0}
+.v236card small{display:block;color:#81949d;font-size:9px;font-weight:900;letter-spacing:.08em}.v236card b{display:block;margin-top:4px;font-size:17px}
+.v236sec{margin-top:10px}.v236sec h3{margin:0 0 7px;color:#cfff20;font-size:10px;letter-spacing:.1em}
+.v236rows{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.v236row{display:flex;justify-content:space-between;gap:8px;border-top:1px solid #1d2e36;padding:6px 0;font-size:10px}.v236row span{color:#97a7ae}
+.v236priority{font-size:12px;line-height:1.7}.v236stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.v236group{background:#0d1b23;border:1px solid #20323b;border-radius:12px;padding:10px}.v236group h4{margin:0 0 6px;color:#cfff20;font-size:11px}
+@media(max-width:850px){.v236grid{grid-template-columns:repeat(2,1fr)}.v236hero,.v236rows,.v236stats{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.v236grid,.v236hero,.v236rows,.v236stats{grid-template-columns:1fr}.v236head{align-items:flex-start;flex-direction:column}}
+@media print{
+ body>*:not(#jbV236Report){display:none!important}
+ #jbV236Report{display:block!important;position:static!important;background:#fff!important;color:#111!important;padding:0!important}
+ #jbV236Report .v236card,#jbV236Report .v236group{background:#fff!important;color:#111!important;border-color:#bbb!important}
+ #jbV236Report .v236actions{display:none!important}
+ #jbV236Report .v236row strong{color:#111!important}
+}
+</style>
+
+<div id="jbV236Chooser" aria-hidden="true">
+ <div class="v236box">
+  <div class="v236head">
+   <div><h2>RELATÓRIO INDIVIDUAL</h2><small>Selecione o aluno</small></div>
+   <div class="v236actions"><button class="v236btn" id="v236ChooserClose">Fechar</button></div>
+  </div>
+  <div class="v236grid" id="v236Students"></div>
+ </div>
+</div>
+
+<div id="jbV236Report" aria-hidden="true">
+ <div class="v236box">
+  <div class="v236head">
+   <div><h2 id="v236Title">Relatório individual</h2><small id="v236Sub"></small></div>
+   <div class="v236actions">
+    <button class="v236btn" id="v236BackChooser">Trocar aluno</button>
+    <button class="v236btn" id="v236BackScout">Voltar ao Scout</button>
+    <button class="v236btn hot" id="v236Print">PDF / Imprimir</button>
+   </div>
+  </div>
+  <div id="v236Content"></div>
+ </div>
+</div>
+
+<script id="jb-v236-individual-js">
+(function(){
+ const $=x=>document.querySelector(x), pc=(a,b)=>b?Math.round(a*100/b):0, sum=(o,k)=>k.reduce((n,x)=>n+(+o[x]||0),0);
+ const e=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+ function calc(p){
+   const x=p.stats||{}, winners=(x.winner||0)+(x.devolucaoWinner||0)+sum(x,['finSmash','finVoleioFH','finVoleioBH','finGancho','finCurta']);
+   const errors=(x.erroNaoForcado||0)+(x.erroForcado||0)+(x.erroSaque||0)+(x.duplaFalta||0)+(x.erroDevolucao||0)+sum(x,['enfForehand','enfBackhand','enfVoleioFH','enfVoleioBH','enfSmash','enfGancho','enfCurta','enfDefesa'])+sum(x,['finSmashErro','finVoleioFHErro','finVoleioBHErro','finGanchoErro','finCurtaErro']);
+   const sin=(x.primeiroSaque||0)+(x.segundoSaque||0), st=sin+(x.erroSaque||0)+(x.duplaFalta||0);
+   const rt=sum(x,['devolucaoDentro','devolucaoWinner','erroDevolucao','devolucaoCurta','devolucaoProfunda','devolucaoLob']);
+   const fb=(x.primeiraBolaGanha||0)+(x.primeiraBolaPerdida||0)+(x.primeiraBolaErro||0);
+   const serve=pc(sin,st), ret=pc(Math.max(0,rt-(x.erroDevolucao||0)),rt), first=pc(x.primeiraBolaGanha||0,fb);
+   const smash=pc(x.smashAcerto||0,(x.smashAcerto||0)+(x.smashErro||0)), gancho=pc(x.ganchoAcerto||0,(x.ganchoAcerto||0)+(x.ganchoErro||0));
+   const curta=pc(x.curtaAcerto||0,(x.curtaAcerto||0)+(x.curtaErro||0)), defesa=pc(x.defesaAcerto||0,(x.defesaAcerto||0)+(x.defesaErro||0));
+   const forty=pc(x.quarentaGanho||0,(x.quarentaGanho||0)+(x.quarentaPerdido||0)), bp=pc(x.breakpointGanho||0,(x.breakpointGanho||0)+(x.breakpointPerdido||0));
+   const eff=Math.max(0,Math.min(100,Math.round(50+(winners-errors)*5+(serve-50)*.12+(ret-50)*.12+(first-50)*.10)));
+   return {winners,errors,serve,ret,first,smash,gancho,curta,defesa,forty,bp,eff}
+ }
+ function priority(c){
+   return [['Saque',c.serve],['Devolução',c.ret],['1ª bola',c.first],['Smash',c.smash],['Gancho',c.gancho],['Curta',c.curta],['Defesa',c.defesa]]
+     .sort((a,b)=>a[1]-b[1]).slice(0,3);
+ }
+ function statsGroups(p){
+   const st=p.stats||{};
+   let cats=[]; try{cats=categories.filter(c=>c&&Array.isArray(c.defs)&&c.id!=='mapa')}catch(err){}
+   return cats.map(cat=>{
+     let lines=cat.defs.map(d=>`<div class="v236row"><span>${e(d[1])}</span><strong>${Number(st[d[0]]||0)}</strong></div>`).join('');
+     return `<div class="v236group"><h4>${e(cat.name)}</h4>${lines}</div>`;
+   }).join('');
+ }
+ function showChooser(){
+   const grid=$('#v236Students'); if(!grid)return;
+   grid.innerHTML=state.players.map((p,i)=>`<button type="button" class="v236student" data-i="${i}">${e(p.name)}</button>`).join('');
+   grid.querySelectorAll('button').forEach(b=>b.onclick=()=>showReport(Number(b.dataset.i)));
+   $('#jbV236Report').classList.remove('open');$('#jbV236Report').setAttribute('aria-hidden','true');
+   $('#jbV236Chooser').classList.add('open');$('#jbV236Chooser').setAttribute('aria-hidden','false');
+ }
+ function showReport(i){
+   const p=state.players[i], c=calc(p), pr=priority(c), ga=state.score.games[0],gb=state.score.games[1];
+   const teamIndex=i<2?0:1;
+   const ownGames=state.score.games[teamIndex], oppGames=state.score.games[1-teamIndex];
+   $('#v236Title').textContent='RELATÓRIO INDIVIDUAL • '+p.name;
+   $('#v236Sub').textContent=team(0)+' '+ga+' × '+gb+' '+team(1);
+   $('#v236Content').innerHTML=`
+    <div class="v236hero">
+      <div class="v236card"><small>ALUNO</small><b>${e(p.name)}</b></div>
+      <div class="v236card"><small>PLACAR DA DUPLA</small><b>${ownGames} × ${oppGames}</b></div>
+      <div class="v236card"><small>EFICIÊNCIA</small><b>${c.eff}</b></div>
+      <div class="v236card"><small>WINNERS / ERROS</small><b>${c.winners} / ${c.errors}</b></div>
+    </div>
+    <div class="v236sec"><h3>DESEMPENHO TÉCNICO</h3><div class="v236rows">
+      <div class="v236card"><div class="v236row"><span>Saque</span><strong>${c.serve}%</strong></div><div class="v236row"><span>Devolução</span><strong>${c.ret}%</strong></div><div class="v236row"><span>1ª bola</span><strong>${c.first}%</strong></div><div class="v236row"><span>40×40</span><strong>${c.forty}%</strong></div><div class="v236row"><span>Breakpoints</span><strong>${c.bp}%</strong></div></div>
+      <div class="v236card"><div class="v236row"><span>Smash</span><strong>${c.smash}%</strong></div><div class="v236row"><span>Gancho</span><strong>${c.gancho}%</strong></div><div class="v236row"><span>Curta</span><strong>${c.curta}%</strong></div><div class="v236row"><span>Defesa</span><strong>${c.defesa}%</strong></div></div>
+    </div></div>
+    <div class="v236sec"><h3>🎯 PRIORIDADES DE TREINO</h3><div class="v236card v236priority">${pr.map((x,j)=>(j+1)+'. '+e(x[0])+' — '+x[1]+'%').join('<br>')}</div></div>
+    <div class="v236sec"><h3>ESTATÍSTICAS COMPLETAS DO ALUNO</h3><div class="v236stats">${statsGroups(p)}</div></div>`;
+   $('#jbV236Chooser').classList.remove('open');$('#jbV236Chooser').setAttribute('aria-hidden','true');
+   $('#jbV236Report').classList.add('open');$('#jbV236Report').setAttribute('aria-hidden','false');$('#jbV236Report').scrollTop=0;
+ }
+ window.jbV236OpenIndividual=showChooser;
+ function install(){
+   $('#v236ChooserClose').onclick=()=>$('#jbV236Chooser').classList.remove('open');
+   $('#v236BackChooser').onclick=showChooser;
+   $('#v236BackScout').onclick=()=>$('#jbV236Report').classList.remove('open');
+   $('#v236Print').onclick=()=>window.print();
+   // Add direct button beside existing export controls
+   const host=document.querySelector('.actions')||document.querySelector('.side-stack')||document.body;
+   if(!document.getElementById('jbV236OpenBtn')){
+     const b=document.createElement('button'); b.id='jbV236OpenBtn'; b.className='btn btn-light'; b.type='button';
+     b.textContent='Relatório individual'; b.onclick=showChooser;
+     host.appendChild(b);
+   }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 </script>
 
