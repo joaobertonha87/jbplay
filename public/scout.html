@@ -960,7 +960,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V26.6</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V26.7</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1130,7 +1130,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V26.6</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V26.7</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -2267,7 +2267,7 @@ window.jbV25SaveSession=function(){
 function avg(a,k){return a.length?Math.round(a.reduce((n,s)=>n+(+(s.metrics?.[k]||0)),0)/a.length):0}
 function trend(c,p){let d=c-p;return d>1?`<span class="v265trend up">↑ +${d} pp</span>`:d<-1?`<span class="v265trend down">↓ ${d} pp</span>`:`<span class="v265trend flat">→ ${d} pp</span>`}
 function showEvolution(i){evoPlayer=Number.isFinite(i)?i:0;renderEvolution();$('#v265Evolution').classList.add('open')}
-function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V26.6 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
+function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V26.7 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
 let vals=F.map(([id,label])=>({id,label,cur:+(cur.metrics?.[id]||0),first:+(first.metrics?.[id]||0),avg:avg(a,id)})),pri=[...vals].map(v=>({...v,need:100-v.cur})).sort((x,y)=>y.need-x.need).slice(0,5);
 h.innerHTML=`<div class="v265hero"><div class="v265card"><small>ALUNO</small><b>${esc(p.name)}</b></div><div class="v265card"><small>SESSÕES</small><b>${a.length}</b></div><div class="v265card"><small>PRIMEIRA</small><b>${new Date(first.at).toLocaleDateString('pt-BR')}</b></div><div class="v265card"><small>ATUAL</small><b>${new Date(cur.at).toLocaleDateString('pt-BR')}</b></div></div><div class="v265sec"><h3>EVOLUÇÃO DOS 14 FUNDAMENTOS</h3><div class="v265fund">${vals.map(v=>`<div class="v265row"><div class="v265rowtop"><b>${v.label}</b>${trend(v.cur,v.first)}</div><div class="v265counts"><span>Inicial ${v.first}%</span><span>Atual ${v.cur}% • média ${v.avg}%</span></div><div class="v265bar v265ok"><i style="width:${v.cur}%"></i></div></div>`).join('')}</div></div><div class="v265sec"><h3>PRIORIDADES ATUAIS</h3><div class="v265priority">${pri.map((v,j)=>`<div class="v265card"><small>${j+1}ª PRIORIDADE</small><b>${v.label}</b><b class="v265need">${v.need}%</b><small>necessidade de treino</small></div>`).join('')}</div></div><div class="v265sec"><h3>SESSÕES</h3><div class="v265table"><div class="v265tablein"><div class="v265thead"><span>Data</span>${F.map(x=>`<span>${x[1]}</span>`).join('')}</div>${a.slice().reverse().map(x=>`<div class="v265tr"><strong>${new Date(x.at).toLocaleDateString('pt-BR')}</strong>${F.map(f=>`<b>${+(x.metrics?.[f[0]]||0)}%</b>`).join('')}</div>`).join('')}</div></div></div>`}
 window.jbV26OpenReport=showEvolution;
@@ -2282,7 +2282,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v266-force-css">
-/* V26.6 — força a interface nova e remove entradas antigas */
+/* V26.7 — força a interface nova e remove entradas antigas */
 body.v20-match #v263,
 body.v20-match #jbV262Fast,
 body.v20-match #jbV261Guide,
@@ -2304,7 +2304,7 @@ body.v20-match #v264{display:block!important}
 }
 @media print{#v266Version,#v266ReportBar{display:none!important}}
 </style>
-<div id="v266Version">V26.6 • 14 FUNDAMENTOS</div>
+<div id="v266Version">V26.7 • 14 FUNDAMENTOS</div>
 <script id="jb-v266-force-js">
 (function(){
  function install(){
@@ -2323,6 +2323,230 @@ body.v20-match #v264{display:block!important}
      document.getElementById('v266Individual').onclick=()=>window.jbV236OpenIndividual?.();
      document.getElementById('v266Evolution').onclick=()=>window.jbV26OpenReport?.(typeof current==='number'?current:0);
    }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+
+
+<style id="jb-v267-clean-game-css">
+/* V26.7 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
+body.v20-match .main-grid{display:block!important}
+body.v20-match .tracker{max-width:1180px!important;width:100%!important;margin:0 auto!important}
+
+/* Esconde menus/categorias antigos */
+body.v20-match .category-tabs,
+body.v20-match .action-zone,
+body.v20-match #jbV262Fast,
+body.v20-match #v263,
+body.v20-match #jbV261Guide,
+body.v20-match .side-stack,
+body.v20-match .comparison,
+body.v20-match .summary-card,
+body.v20-match .export-box,
+body.v20-match #jbV25HistoryBtn,
+body.v20-match #v266ReportBar,
+body.v20-match #jbV236OpenBtn,
+body.v20-match #jbV26ReportBtn,
+body.v20-match #jbV25History,
+body.v20-match .insight-card,
+body.v20-match .player-card,
+body.v20-match .analytics-card{display:none!important}
+
+/* Oculta os antigos tabs de atleta se existirem duplicados */
+body.v20-match .player-tabs{display:none!important}
+
+/* Mantém apenas placar ao vivo */
+body.v20-match .score-card{display:block!important;max-width:1180px!important;margin:0 auto 10px!important}
+
+/* Painel 14 fundamentos */
+body.v20-match #v264{
+ display:block!important;
+ max-width:1180px!important;
+ margin:0 auto!important;
+}
+
+/* Alunos: mesma linguagem visual atual */
+body.v20-match .v264players{
+ display:grid!important;
+ grid-template-columns:repeat(4,1fr)!important;
+ gap:8px!important;
+ margin:8px 0 10px!important;
+}
+body.v20-match .v264players button{
+ min-height:64px!important;
+ border-radius:14px!important;
+ border:1px solid rgba(255,255,255,.12)!important;
+ background:linear-gradient(145deg,#101d25,#0b171d)!important;
+ color:#d9e2e6!important;
+ font-size:13px!important;
+ font-weight:950!important;
+ box-shadow:none!important;
+}
+body.v20-match .v264players button.on{
+ background:linear-gradient(145deg,#d8ff35,#bdeb16)!important;
+ color:#071014!important;
+ border-color:#cfff20!important;
+ box-shadow:0 0 0 1px rgba(207,255,32,.25),0 9px 24px rgba(179,237,16,.12)!important;
+}
+
+/* Cabeçalho */
+body.v20-match .v264head{
+ background:#0d1b22!important;
+ border:1px solid rgba(255,255,255,.08)!important;
+ border-radius:13px!important;
+ padding:10px 12px!important;
+ margin-bottom:8px!important;
+}
+body.v20-match .v264head b{font-size:12px!important;color:#f4f8f9!important}
+body.v20-match .v264head small{font-size:9px!important;color:#8da0a8!important}
+
+/* 14 fundamentos no mesmo painel, sem abas */
+body.v20-match .v264board{
+ display:grid!important;
+ grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ gap:8px!important;
+}
+body.v20-match .v264row{
+ background:linear-gradient(145deg,#111f27,#0b171d)!important;
+ border:1px solid rgba(255,255,255,.09)!important;
+ border-radius:14px!important;
+ padding:9px!important;
+ min-width:0!important;
+}
+body.v20-match .v264name{
+ font-size:10px!important;
+ font-weight:950!important;
+ color:#f1f5f6!important;
+ margin:0 0 7px 2px!important;
+ text-transform:uppercase!important;
+ letter-spacing:.01em!important;
+ white-space:normal!important;
+ line-height:1.18!important;
+ min-height:24px!important;
+}
+body.v20-match .v264pair{display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important}
+body.v20-match .v264btn{
+ min-height:55px!important;
+ border-radius:10px!important;
+ font-size:9px!important;
+ font-weight:950!important;
+ padding:7px 4px!important;
+}
+body.v20-match .v264btn.good{
+ background:linear-gradient(145deg,rgba(78,221,183,.20),rgba(36,150,125,.10))!important;
+ border:1px solid rgba(65,222,183,.38)!important;
+ color:#81f3d2!important;
+}
+body.v20-match .v264btn.bad{
+ background:linear-gradient(145deg,rgba(229,95,128,.22),rgba(151,56,83,.12))!important;
+ border:1px solid rgba(235,104,136,.38)!important;
+ color:#ff9eb5!important;
+}
+
+/* Barra inferior mínima */
+#v267Bottom{
+ display:none;
+ max-width:1180px;
+ margin:9px auto 0;
+ grid-template-columns:1fr 1fr 1.3fr;
+ gap:8px;
+}
+body.v20-match #v267Bottom{display:grid!important}
+#v267Bottom button{
+ min-height:48px;
+ border-radius:12px;
+ border:1px solid rgba(255,255,255,.1);
+ background:#0e1c23;
+ color:#f5f8f9;
+ font-weight:950;
+ font-size:11px;
+}
+#v267Bottom .sound.on{border-color:#b9ef16;color:#cfff20}
+#v267Bottom .finish{background:linear-gradient(145deg,#d8ff35,#bdeb16);color:#071014;border-color:#cfff20}
+
+/* Remove elementos inferiores antigos no Modo Jogo */
+body.v20-match footer,
+body.v20-match .bottom-summary,
+body.v20-match .compare-wrap,
+body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
+
+/* Identificador */
+#v267Version{
+ position:fixed;right:10px;bottom:8px;z-index:99999;
+ background:#0e1c23;color:#cfff20;border:1px solid rgba(207,255,32,.35);
+ border-radius:999px;padding:5px 8px;font-size:7px;font-weight:950
+}
+@media(min-width:900px) and (max-width:1180px){
+ body.v20-match .v264board{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:850px){
+ body.v20-match .v264board{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:650px){
+ body.v20-match .v264players{grid-template-columns:repeat(2,1fr)!important}
+ body.v20-match .v264board{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #v267Bottom{grid-template-columns:1fr!important}
+}
+@media print{#v267Bottom,#v267Version{display:none!important}}
+</style>
+
+<div id="v267Bottom">
+ <button type="button" id="v267Undo">↶ DESFAZER</button>
+ <button type="button" id="v267Sound" class="sound">🔊 SOM ATIVADO</button>
+ <button type="button" id="v267Finish" class="finish">⚑ FINALIZAR JOGO</button>
+</div>
+<div id="v267Version">V26.7 • JOGO 14F</div>
+
+<script id="jb-v267-clean-game-js">
+(function(){
+ function clickExisting(ids){
+   for(const id of ids){
+     const e=document.getElementById(id);
+     if(e){e.click();return true}
+   }
+   return false;
+ }
+ function install(){
+   const undo=document.getElementById('v267Undo');
+   if(undo) undo.onclick=()=>{
+     if(typeof undoStat==='function') undoStat();
+     else clickExisting(['v20Undo']);
+   };
+
+   const sound=document.getElementById('v267Sound');
+   if(sound){
+     const old=document.querySelector('[id*="Sound"],[onclick*="sound"],[onclick*="Som"]');
+     sound.classList.add('on');
+     sound.onclick=()=>{
+       if(old && old!==sound) old.click();
+       sound.classList.toggle('on');
+       sound.textContent=sound.classList.contains('on')?'🔊 SOM ATIVADO':'🔇 SOM DESATIVADO';
+     };
+   }
+
+   const finish=document.getElementById('v267Finish');
+   if(finish) finish.onclick=()=>{
+     if(!clickExisting(['v20Finish'])){
+       const cand=[...document.querySelectorAll('button')].find(b=>/finalizar jogo/i.test(b.textContent||'') && b!==finish);
+       if(cand)cand.click();
+     }
+   };
+
+   /* Modo jogo abre limpo sempre que o botão for usado */
+   const match=document.getElementById('v20Match');
+   if(match) match.addEventListener('click',()=>setTimeout(()=>document.body.classList.add('v20-match'),20));
+
+   /* Remove da tela de jogo todos os blocos que possam voltar via render() */
+   const clean=()=>{
+     if(!document.body.classList.contains('v20-match')) return;
+     document.querySelectorAll('.category-tabs,.action-zone,#jbV262Fast,#v263,#jbV261Guide,.side-stack,.comparison,.summary-card,.export-box').forEach(e=>e.style.setProperty('display','none','important'));
+     const v264=document.getElementById('v264');
+     if(v264)v264.style.setProperty('display','block','important');
+   };
+   const obs=new MutationObserver(()=>requestAnimationFrame(clean));
+   obs.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style']});
+   clean();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
