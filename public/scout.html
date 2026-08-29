@@ -959,7 +959,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V24.4</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V24.5</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1129,7 +1129,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V24.4</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V24.5</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -1257,7 +1257,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 .v23pair{color:#dfffa0!important}
 @media(max-width:800px){.v23fullstats{grid-template-columns:1fr}}
 </style>
-<div id="jbV23"><div id="jbV23In"><div class="v23head"><div class="v244brand"><img src="assets/jb-bertonha-logo.jpg" alt="João Bertonha Beach Tennis"><div><h2>JB SCOUT • DASHBOARD PÓS-JOGO</h2><small id="v23sub"></small></div></div><div class="v23actions"><button class="v23btn" id="v23back">Voltar</button><button class="v23btn" id="v23pdf">PDF / Imprimir</button><button class="v23btn" id="v23individual">Relatório individual</button><button class="v23btn hot" id="v23new">Nova partida</button></div></div><div id="v23content"></div></div></div>
+<div id="jbV23"><div id="jbV23In"><div class="v23head"><div class="v244brand"><img src="jb-bertonha-logo.jpg" alt="João Bertonha Beach Tennis"><div><h2>JB SCOUT • DASHBOARD PÓS-JOGO</h2><small id="v23sub"></small></div></div><div class="v23actions"><button class="v23btn" id="v23back">Voltar</button><button class="v23btn" id="v23pdf">PDF / Imprimir</button><button class="v23btn" id="v23individual">Relatório individual</button><button class="v23btn hot" id="v23new">Nova partida</button></div></div><div id="v23content"></div></div></div>
 <script id="jb-v23-js">
 (function(){
 const $=x=>document.querySelector(x), pc=(a,b)=>b?Math.round(a*100/b):0, sum=(o,k)=>k.reduce((n,x)=>n+(+o[x]||0),0);
@@ -1369,7 +1369,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <div id="jbV236Report" aria-hidden="true">
  <div class="v236box">
   <div class="v236head">
-   <div class="v244brand"><img src="assets/jb-bertonha-logo.jpg" alt="João Bertonha Beach Tennis"><div><h2 id="v236Title">Relatório individual</h2><small id="v236Sub"></small></div></div>
+   <div class="v244brand"><img src="jb-bertonha-logo.jpg" alt="João Bertonha Beach Tennis"><div><h2 id="v236Title">Relatório individual</h2><small id="v236Sub"></small></div></div>
    <div class="v236actions">
     <button class="v236btn" id="v236BackChooser">Trocar aluno</button>
     <button class="v236btn" id="v236BackScout">Voltar ao Scout</button>
