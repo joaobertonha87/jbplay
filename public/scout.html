@@ -960,7 +960,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V26.2</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V26.5</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1130,7 +1130,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V26.2</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V26.5</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -2123,6 +2123,160 @@ body{
    new MutationObserver(()=>setTimeout(renderPlayers,20)).observe(pt,{subtree:true,childList:true,attributes:true});
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+</script>
+
+
+<style>
+body.v20-match .side-stack,body.v20-match .comparison,body.v20-match .export-box,body.v20-match #jbV261Guide,body.v20-match #jbV262Fast,body.v20-match .category-tabs,body.v20-match .action-zone{display:none!important}
+body.v20-match .main-grid{display:block!important}body.v20-match .tracker{width:100%!important;max-width:1180px!important;margin:auto!important}body.v20-match #v263{display:block!important}
+#v263{display:none;margin-top:8px}.v263p{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:8px}.v263p button{min-height:58px;border-radius:13px;border:1px solid #263942;background:#0b1920;color:#a9bac1;font-weight:900;font-size:12px}.v263p button.on{background:#cfff20;color:#061014;border-color:#cfff20}.v263p button.on:after{content:"REGISTRANDO";display:block;font-size:7px;letter-spacing:.08em;margin-top:3px}
+.v263h{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;background:#0a171e;border:1px solid #203039;border-radius:12px;margin-bottom:7px}.v263h b{font-size:12px}.v263h small{display:block;color:#82969e;font-size:8px}.v263u{padding:9px 11px;border-radius:9px;background:#10212a;color:#fff;border:1px solid #33464f;font-weight:900}
+.v263g{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.v263a{min-height:72px;border-radius:13px;padding:9px;text-align:left;color:#fff;font-weight:900;font-size:11px;border:1px solid #293b43;background:#0c1a22}.v263a:active{transform:scale(.975)}.v263a small{display:block;font-size:7px;opacity:.62;margin-top:4px}.v263a.good{background:rgba(46,230,166,.11);border-color:rgba(46,230,166,.3)}.v263a.bad{background:rgba(255,113,130,.11);border-color:rgba(255,113,130,.3)}.v263a.info{background:rgba(98,181,255,.08)}
+.v263m{margin-top:8px;border:1px solid #203039;border-radius:12px;overflow:hidden}.v263m summary{padding:11px;background:#0a171e;font-weight:900;font-size:10px}.v263m .v263g{padding:8px}.v263last{margin-top:8px;padding:9px;border-radius:10px;background:#0a171e;color:#8ea1a9;font-size:9px}.v263last b{color:#fff}
+@media(max-width:850px){.v263g{grid-template-columns:repeat(4,1fr)}}@media(max-width:650px){.v263p,.v263g{grid-template-columns:repeat(2,1fr)}}@media print{#v263{display:none!important}}
+</style>
+<div id="v263"><div class="v263p" id="v263p"></div><div class="v263h"><div><b>REGISTRO RÁPIDO</b><small id="v263s">Selecione o aluno</small></div><button class="v263u" id="v263u">↶ Desfazer</button></div><div class="v263g" id="v263g"></div><details class="v263m"><summary>＋ Mais registros</summary><div class="v263g" id="v263more"></div></details><div class="v263last" id="v263last">Pronto para registrar.</div></div>
+<script>
+(function(){
+const M=[['winner','Winner','good'],['erroNaoForcado','Erro não forçado','bad'],['erroForcado','Erro forçado','bad'],['ace','Ace','good'],['erroSaque','Erro de saque','bad'],['devolucaoWinner','Devolução winner','good'],['erroDevolucao','Erro devolução','bad'],['smashAcerto','Smash acerto','good'],['smashErro','Smash erro','bad'],['voleiForehandAcerto','Voleio FH acerto','good'],['voleiForehandErro','Voleio FH erro','bad'],['voleiBackhandAcerto','Voleio BH acerto','good'],['voleiBackhandErro','Voleio BH erro','bad'],['defesaAcerto','Defesa acerto','good'],['defesaErro','Defesa erro','bad'],['curtaAcerto','Curta acerto','good'],['curtaErro','Curta erro','bad'],['ganchoAcerto','Gancho acerto','good'],['ganchoErro','Gancho erro','bad']];
+const X=[['primeiroSaque','1º saque dentro','good'],['segundoSaque','2º saque dentro','good'],['duplaFalta','Dupla falta','bad'],['devolucaoDentro','Devolução dentro','good'],['devolucaoCurta','Devolução curta','info'],['devolucaoProfunda','Devolução profunda','info'],['devolucaoLob','Devolução lob','info'],['primeiraBolaGanha','1ª bola ganha','good'],['primeiraBolaPerdida','1ª bola perdida','bad'],['primeiraBolaErro','Erro 1ª bola','bad'],['quarentaGanho','40x40 ganho','good'],['quarentaPerdido','40x40 perdido','bad'],['breakpointGanho','Breakpoint ganho','good'],['breakpointPerdido','Breakpoint perdido','bad']];
+const $=x=>document.querySelector(x);
+function P(){let h=$('#v263p');h.innerHTML=state.players.map((p,i)=>'<button data-i="'+i+'" class="'+(i===current?'on':'')+'">'+p.name+'</button>').join('');h.querySelectorAll('button').forEach(b=>b.onclick=()=>{selectPlayer(+b.dataset.i);P();S()})}
+function S(){let e=$('#v263s');if(e)e.textContent='Marcando para: '+state.players[current].name}
+function B(id,a){let h=$(id);h.innerHTML=a.map((d,i)=>'<button class="v263a '+d[2]+'" data-i="'+i+'"><b>'+d[1]+'</b><small>+1 ocorrência</small></button>').join('');h.querySelectorAll('button').forEach(b=>b.onclick=()=>{let d=a[+b.dataset.i],n=state.players[current].name;add(d[0],b,d[2],d[1]);setTimeout(()=>{P();S();$('#v263last').innerHTML='<b>'+n+'</b> • '+d[1]+' registrado'},25)})}
+function I(){P();S();B('#v263g',M);B('#v263more',X);$('#v263u').onclick=()=>{if(typeof undoStat==='function')undoStat();else document.getElementById('v20Undo')?.click();setTimeout(()=>{P();S()},20)}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',I);else I()})();
+</script>
+
+<style id="jb-v264-css">
+body.v20-match #v263{display:none!important}
+body.v20-match #v264{display:block!important}
+#v264{display:none;margin-top:8px}
+.v264players{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:8px}
+.v264players button{min-height:58px;border:1px solid #263942;border-radius:13px;background:#0b1920;color:#a9bac1;font-weight:950;font-size:12px}
+.v264players button.on{background:linear-gradient(135deg,#dcff35,#b9ef16);color:#061014;border-color:#cfff20;box-shadow:0 7px 20px rgba(207,255,35,.14)}
+.v264players button.on:after{content:"REGISTRANDO";display:block;font-size:7px;letter-spacing:.09em;margin-top:3px;opacity:.65}
+.v264head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 10px;background:#0a171e;border:1px solid #203039;border-radius:12px;margin-bottom:7px}
+.v264head b{font-size:12px}.v264head small{display:block;color:#82969e;font-size:8px}.v264undo{padding:9px 11px;border-radius:9px;background:#10212a;color:#fff;border:1px solid #33464f;font-weight:900}
+.v264board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.v264row{border:1px solid rgba(255,255,255,.075);border-radius:13px;background:linear-gradient(145deg,#0d1b23,#09161c);padding:8px}
+.v264name{font-size:10px;font-weight:950;color:#f3f8fa;margin:0 0 6px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v264pair{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.v264btn{min-height:50px;border-radius:10px;padding:7px 5px;border:1px solid transparent;color:#fff;font-weight:950;font-size:9px}
+.v264btn.good{background:linear-gradient(145deg,rgba(46,230,166,.19),rgba(46,230,166,.07));border-color:rgba(46,230,166,.32);color:#8fffd4}
+.v264btn.bad{background:linear-gradient(145deg,rgba(255,113,130,.19),rgba(255,113,130,.07));border-color:rgba(255,113,130,.32);color:#ffadb7}
+.v264btn:active{transform:scale(.97);filter:brightness(1.18)}
+.v264btn small{display:block;font-size:7px;opacity:.68;margin-top:2px}
+#v264last{margin-top:8px;padding:9px 11px;border-radius:10px;background:#0a171e;border:1px solid #203039;color:#8ea1a9;font-size:9px}#v264last b{color:#fff}
+@media(min-width:1000px) and (orientation:landscape){.v264board{grid-template-columns:repeat(3,minmax(0,1fr))}.v264btn{min-height:54px}}
+@media(max-width:620px){.v264players{grid-template-columns:repeat(2,1fr)}.v264board{grid-template-columns:1fr}}
+@media print{#v264{display:none!important}}
+</style>
+<div id="v264">
+ <div class="v264players" id="v264players"></div>
+ <div class="v264head"><div><b>REGISTRO RÁPIDO • FUNDAMENTOS</b><small id="v264selected">Selecione o aluno</small></div><button class="v264undo" id="v264undo">↶ Desfazer</button></div>
+ <div class="v264board" id="v264board"></div>
+ <div id="v264last">Pronto para registrar.</div>
+</div>
+<script id="jb-v264-js">
+(function(){
+const F=[
+ ['Ace','ace','aceErro'],
+ ['Smash','smashAcerto','smashErro'],
+ ['Saque','primeiroSaque','erroSaque'],
+ ['Voleio Forehand','voleiForehandAcerto','voleiForehandErro'],
+ ['Voleio Backhand','voleiBackhandAcerto','voleiBackhandErro'],
+ ['Defesa Forehand','defesaForehandAcerto','defesaForehandErro'],
+ ['Defesa Backhand','defesaBackhandAcerto','defesaBackhandErro'],
+ ['Gancho','ganchoAcerto','ganchoErro'],
+ ['Acelerada','aceleradaAcerto','aceleradaErro'],
+ ['Curta','curtaAcerto','curtaErro'],
+ ['Devolução Forehand','devolucaoForehandAcerto','devolucaoForehandErro'],
+ ['Devolução Backhand','devolucaoBackhandAcerto','devolucaoBackhandErro'],
+ ['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],
+ ['Rainbow','rainbowAcerto','rainbowErro']
+];
+const $=x=>document.querySelector(x),esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function players(){let h=$('#v264players');if(!h)return;h.innerHTML=state.players.map((p,i)=>'<button type="button" data-i="'+i+'" class="'+(i===current?'on':'')+'">'+esc(p.name)+'</button>').join('');h.querySelectorAll('button').forEach(b=>b.onclick=()=>{selectPlayer(+b.dataset.i);players();selected()})}
+function selected(){let e=$('#v264selected');if(e)e.textContent='Marcando para: '+state.players[current].name}
+function board(){let h=$('#v264board');h.innerHTML=F.map((f,i)=>'<div class="v264row"><div class="v264name">'+f[0]+'</div><div class="v264pair"><button class="v264btn good" data-i="'+i+'" data-t="ok">✓ ACERTO<small>+1</small></button><button class="v264btn bad" data-i="'+i+'" data-t="er">✕ ERRO<small>+1</small></button></div></div>').join('');
+h.querySelectorAll('button').forEach(b=>b.onclick=()=>{let f=F[+b.dataset.i],ok=b.dataset.t==='ok',key=ok?f[1]:f[2],label=f[0]+' '+(ok?'acerto':'erro'),type=ok?'good':'bad',name=state.players[current].name;add(key,b,type,label);setTimeout(()=>{players();selected();$('#v264last').innerHTML='<b>'+esc(name)+'</b> • '+esc(label)+' registrado'},25)})}
+function install(){players();selected();board();$('#v264undo').onclick=()=>{if(typeof undoStat==='function')undoStat();else document.getElementById('v20Undo')?.click();setTimeout(()=>{players();selected()},20)}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+})();
+</script>
+
+<style id="jb-v265-reports-css">
+#v265Chooser,#v265Individual,#v265Evolution{display:none;position:fixed;inset:0;z-index:300000;background:#061015;color:#f4f8f9;overflow:auto;padding:16px}
+#v265Chooser.open,#v265Individual.open,#v265Evolution.open{display:block}
+.v265box{max-width:1050px;margin:auto}.v265head{display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:0;z-index:4;background:rgba(6,16,21,.95);padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.v265brand{display:flex;align-items:center;gap:10px}.v265brand img{width:82px;height:55px;object-fit:contain;background:#fff;border-radius:9px;padding:3px}.v265head h2{margin:0;font-size:18px}.v265head small{color:#81949d}
+.v265actions{display:flex;gap:7px;flex-wrap:wrap}.v265btn{border:1px solid #33464f;background:#10212a;color:#fff;border-radius:9px;padding:10px 12px;font-weight:900}.v265btn.hot{background:#cfff20;color:#071014;border-color:#cfff20}
+.v265students{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}.v265student{min-height:88px;border-radius:13px;border:1px solid rgba(255,255,255,.09);background:#0d1b23;color:#fff;font-weight:950;font-size:14px}
+.v265hero{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:8px;margin-top:12px}.v265card{background:linear-gradient(145deg,#0f2028,#09171d);border:1px solid rgba(255,255,255,.075);border-radius:14px;padding:11px}.v265card small{display:block;color:#81949d;font-size:8px;font-weight:900;letter-spacing:.08em}.v265card b{display:block;font-size:18px;margin-top:4px}
+.v265sec{margin-top:13px}.v265sec h3{font-size:10px;color:#cfff20;letter-spacing:.12em;margin:0 0 7px}.v265fund{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.v265row{background:#0d1b23;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:9px}.v265rowtop{display:flex;justify-content:space-between;gap:8px;align-items:center}.v265rowtop b{font-size:11px}.v265pct{font-size:10px;font-weight:950;color:#cfff20}.v265counts{display:flex;justify-content:space-between;color:#8fa1a9;font-size:8px;margin-top:5px}
+.v265bars{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px}.v265bar{height:7px;border-radius:999px;background:#1b2b32;overflow:hidden}.v265bar i{display:block;height:100%}.v265ok i{background:#2ee6a6}.v265er i{background:#ff7182}
+.v265priority{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.v265need{font-size:22px!important;color:#ff9aa7}
+.v265filters{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.v265filter{border:1px solid #33464f;background:#0d1b23;color:#fff;border-radius:999px;padding:8px 12px;font-weight:900}.v265filter.on{background:#cfff20;color:#071014}
+.v265trend.up{color:#2ee6a6}.v265trend.down{color:#ff7182}.v265trend.flat{color:#ffc75a}
+.v265table{overflow:auto}.v265tablein{min-width:900px}.v265thead,.v265tr{display:grid;grid-template-columns:100px repeat(14,1fr);gap:3px;align-items:center}.v265thead{color:#81949d;font-size:7px;font-weight:950}.v265tr{background:#0d1b23;border-radius:9px;margin-top:4px;padding:6px;font-size:8px}.v265tr b{text-align:center}
+@media(max-width:800px){.v265students{grid-template-columns:1fr 1fr}.v265hero,.v265fund{grid-template-columns:1fr}.v265priority{grid-template-columns:1fr}}
+@media print{body>*:not(#v265Individual):not(#v265Evolution){display:none!important}#v265Individual.open,#v265Evolution.open{display:block!important;position:static!important;background:#fff!important;color:#111!important;padding:0!important}.v265actions,.v265filters,.v265students{display:none!important}.v265card,.v265row,.v265tr{background:#fff!important;color:#111!important;border:1px solid #d8d8d8!important;break-inside:avoid}.v265sec h3{color:#3e4d00!important}}
+</style>
+
+<div id="v265Chooser"><div class="v265box"><div class="v265head"><div class="v265brand"><img src="jb-bertonha-logo.jpg"><div><h2>RELATÓRIO INDIVIDUAL</h2><small>Escolha o aluno</small></div></div><button class="v265btn" id="v265ChooserClose">Voltar</button></div><div class="v265students" id="v265Students"></div></div></div>
+
+<div id="v265Individual"><div class="v265box"><div class="v265head"><div class="v265brand"><img src="jb-bertonha-logo.jpg"><div><h2 id="v265ITitle">RELATÓRIO INDIVIDUAL</h2><small id="v265ISub"></small></div></div><div class="v265actions"><button class="v265btn" id="v265IBack">Trocar aluno</button><button class="v265btn" id="v265IClose">Scout</button><button class="v265btn hot" onclick="print()">PDF / Imprimir</button></div></div><div id="v265IContent"></div></div></div>
+
+<div id="v265Evolution"><div class="v265box"><div class="v265head"><div class="v265brand"><img src="jb-bertonha-logo.jpg"><div><h2>RELATÓRIO DE EVOLUÇÃO</h2><small id="v265ESub"></small></div></div><div class="v265actions"><button class="v265btn" id="v265EClose">Voltar</button><button class="v265btn hot" onclick="print()">PDF / Imprimir</button></div></div><div class="v265filters"><button class="v265filter on" data-n="5">Últimas 5</button><button class="v265filter" data-n="10">Últimas 10</button><button class="v265filter" data-n="0">Todas</button></div><div id="v265EContent"></div></div></div>
+
+<script id="jb-v265-reports-js">
+(function(){
+const HIST='jb_scout_student_history_v25';
+const F=[
+['ace','Ace','ace','aceErro'],['smash','Smash','smashAcerto','smashErro'],['saque','Saque','primeiroSaque','erroSaque'],
+['voleiFH','Voleio Forehand','voleiForehandAcerto','voleiForehandErro'],['voleiBH','Voleio Backhand','voleiBackhandAcerto','voleiBackhandErro'],
+['defesaFH','Defesa Forehand','defesaForehandAcerto','defesaForehandErro'],['defesaBH','Defesa Backhand','defesaBackhandAcerto','defesaBackhandErro'],
+['gancho','Gancho','ganchoAcerto','ganchoErro'],['acelerada','Acelerada','aceleradaAcerto','aceleradaErro'],['curta','Curta','curtaAcerto','curtaErro'],
+['devolFH','Devolução Forehand','devolucaoForehandAcerto','devolucaoForehandErro'],['devolBH','Devolução Backhand','devolucaoBackhandAcerto','devolucaoBackhandErro'],
+['terceira','Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],['rainbow','Rainbow','rainbowAcerto','rainbowErro']
+];
+const $=x=>document.querySelector(x),pc=(a,b)=>b?Math.round(a*100/b):0,esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+let evoPlayer=0,evoLimit=5;
+function read(){try{return JSON.parse(localStorage.getItem(HIST)||'{}')||{}}catch(e){return {}}}function write(x){localStorage.setItem(HIST,JSON.stringify(x))}
+function fundamentals(p){const x=p.stats||{};return F.map(([id,label,ok,er])=>{let a=+(x[ok]||0),e=+(x[er]||0),t=a+e;return{id,label,ok:a,er:e,total:t,pct:pc(a,t),need:pc(e,t)}})}
+function metricsObj(p){let o={};fundamentals(p).forEach(f=>o[f.id]=f.pct);return o}
+function totalLine(fs){let ok=fs.reduce((n,f)=>n+f.ok,0),er=fs.reduce((n,f)=>n+f.er,0);return{ok,er,pct:pc(ok,ok+er)}}
+function fundRows(fs){return fs.map(f=>`<div class="v265row"><div class="v265rowtop"><b>${f.label}</b><span class="v265pct">${f.pct}% acerto</span></div><div class="v265counts"><span>✓ ${f.ok} acertos</span><span>✕ ${f.er} erros • ${f.need}% erro</span></div><div class="v265bars"><div class="v265bar v265ok"><i style="width:${f.pct}%"></i></div><div class="v265bar v265er"><i style="width:${f.need}%"></i></div></div></div>`).join('')}
+function priority(fs){return [...fs].sort((a,b)=>b.need-a.need).slice(0,5)}
+function showChooser(){let h=$('#v265Students');h.innerHTML=state.players.map((p,i)=>`<button class="v265student" data-i="${i}">${esc(p.name)}</button>`).join('');h.querySelectorAll('button').forEach(b=>b.onclick=()=>showIndividual(+b.dataset.i));$('#v265Individual').classList.remove('open');$('#v265Chooser').classList.add('open')}
+function showIndividual(i){const p=state.players[i],fs=fundamentals(p),tot=totalLine(fs),pr=priority(fs),ti=i<2?0:1;$('#v265Chooser').classList.remove('open');$('#v265ITitle').textContent='RELATÓRIO INDIVIDUAL • '+p.name;$('#v265ISub').textContent=team(0)+' '+state.score.games[0]+' × '+state.score.games[1]+' '+team(1);
+$('#v265IContent').innerHTML=`<div class="v265hero"><div class="v265card"><small>ALUNO</small><b>${esc(p.name)}</b></div><div class="v265card"><small>PLACAR DA DUPLA</small><b>${state.score.games[ti]} × ${state.score.games[1-ti]}</b></div><div class="v265card"><small>ACERTO GERAL</small><b>${tot.pct}%</b></div><div class="v265card"><small>ACERTOS / ERROS</small><b>${tot.ok} / ${tot.er}</b></div></div><div class="v265sec"><h3>DESEMPENHO DOS 14 FUNDAMENTOS</h3><div class="v265fund">${fundRows(fs)}</div></div><div class="v265sec"><h3>PRIORIDADES DE TREINO • BASEADAS NOS ERROS</h3><div class="v265priority">${pr.map((f,j)=>`<div class="v265card"><small>${j+1}ª PRIORIDADE</small><b>${f.label}</b><b class="v265need">${f.need}%</b><small>${f.er} erros em ${f.total} registros</small></div>`).join('')}</div></div>`;$('#v265Individual').classList.add('open')}
+window.jbV236OpenIndividual=showChooser;
+
+const oldSave=window.jbV25SaveSession;
+window.jbV25SaveSession=function(){
+ const id=String(state.matchStartedAt||'')+'_'+state.score.games.join('-')+'_14f';
+ if(window.jbV265LastSaved===id)return;
+ const db=read();
+ state.players.forEach((p,i)=>{const pid=p.profileId||(p.profileId='jb25_'+i);(db[pid]||(db[pid]=[])).push({at:Date.now(),name:p.name,score:[...state.score.games],metrics:metricsObj(p),v265:true});if(db[pid].length>100)db[pid]=db[pid].slice(-100)});
+ write(db);window.jbV265LastSaved=id;window.jbV25LastSavedMatch=String(state.matchStartedAt||'')+'_'+state.score.games.join('-');
+};
+function avg(a,k){return a.length?Math.round(a.reduce((n,s)=>n+(+(s.metrics?.[k]||0)),0)/a.length):0}
+function trend(c,p){let d=c-p;return d>1?`<span class="v265trend up">↑ +${d} pp</span>`:d<-1?`<span class="v265trend down">↓ ${d} pp</span>`:`<span class="v265trend flat">→ ${d} pp</span>`}
+function showEvolution(i){evoPlayer=Number.isFinite(i)?i:0;renderEvolution();$('#v265Evolution').classList.add('open')}
+function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V26.5 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
+let vals=F.map(([id,label])=>({id,label,cur:+(cur.metrics?.[id]||0),first:+(first.metrics?.[id]||0),avg:avg(a,id)})),pri=[...vals].map(v=>({...v,need:100-v.cur})).sort((x,y)=>y.need-x.need).slice(0,5);
+h.innerHTML=`<div class="v265hero"><div class="v265card"><small>ALUNO</small><b>${esc(p.name)}</b></div><div class="v265card"><small>SESSÕES</small><b>${a.length}</b></div><div class="v265card"><small>PRIMEIRA</small><b>${new Date(first.at).toLocaleDateString('pt-BR')}</b></div><div class="v265card"><small>ATUAL</small><b>${new Date(cur.at).toLocaleDateString('pt-BR')}</b></div></div><div class="v265sec"><h3>EVOLUÇÃO DOS 14 FUNDAMENTOS</h3><div class="v265fund">${vals.map(v=>`<div class="v265row"><div class="v265rowtop"><b>${v.label}</b>${trend(v.cur,v.first)}</div><div class="v265counts"><span>Inicial ${v.first}%</span><span>Atual ${v.cur}% • média ${v.avg}%</span></div><div class="v265bar v265ok"><i style="width:${v.cur}%"></i></div></div>`).join('')}</div></div><div class="v265sec"><h3>PRIORIDADES ATUAIS</h3><div class="v265priority">${pri.map((v,j)=>`<div class="v265card"><small>${j+1}ª PRIORIDADE</small><b>${v.label}</b><b class="v265need">${v.need}%</b><small>necessidade de treino</small></div>`).join('')}</div></div><div class="v265sec"><h3>SESSÕES</h3><div class="v265table"><div class="v265tablein"><div class="v265thead"><span>Data</span>${F.map(x=>`<span>${x[1]}</span>`).join('')}</div>${a.slice().reverse().map(x=>`<div class="v265tr"><strong>${new Date(x.at).toLocaleDateString('pt-BR')}</strong>${F.map(f=>`<b>${+(x.metrics?.[f[0]]||0)}%</b>`).join('')}</div>`).join('')}</div></div></div>`}
+window.jbV26OpenReport=showEvolution;
+function install(){
+ $('#v265ChooserClose').onclick=()=>$('#v265Chooser').classList.remove('open');
+ $('#v265IBack').onclick=showChooser;$('#v265IClose').onclick=()=>$('#v265Individual').classList.remove('open');$('#v265EClose').onclick=()=>$('#v265Evolution').classList.remove('open');
+ document.querySelectorAll('.v265filter').forEach(b=>b.onclick=()=>{document.querySelectorAll('.v265filter').forEach(x=>x.classList.remove('on'));b.classList.add('on');evoLimit=+b.dataset.n;renderEvolution()});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 </script>
 
