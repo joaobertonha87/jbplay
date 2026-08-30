@@ -610,8 +610,20 @@ function jbV224SwitchServerAfterGame(){
  if(typeof window.jbV22Refresh==='function') window.jbV22Refresh();
 }
 
-function point(t){if(state.finished)return;const s=state.score;s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));s.points[t]++;const normal=document.getElementById('format').value==='normal';let won=normal?(s.points[t]>=4&&s.points[t]-s.points[1-t]>=2):(s.points[t]>=4);if(won){s.games[t]++;s.points=[0,0];autoFinish();render();jbV224SwitchServerAfterGame();return}render()}
-function game(t){if(state.finished)return;const s=state.score;s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));s.games[t]++;s.points=[0,0];autoFinish();render()}
+function point(t){
+ if(state.finished){
+   state.finished=false;
+   const r=document.getElementById('result');
+   if(r){r.classList.add('hidden');r.innerHTML='';}
+ }
+ const s=state.score;s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));s.points[t]++;const normal=document.getElementById('format').value==='normal';let won=normal?(s.points[t]>=4&&s.points[t]-s.points[1-t]>=2):(s.points[t]>=4);if(won){s.games[t]++;s.points=[0,0];autoFinish();render();jbV224SwitchServerAfterGame();return}render()}
+function game(t){
+ if(state.finished){
+   state.finished=false;
+   const r=document.getElementById('result');
+   if(r){r.classList.add('hidden');r.innerHTML='';}
+ }
+ const s=state.score;s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));s.games[t]++;s.points=[0,0];autoFinish();render()}
 function autoFinish(){const n=Number(document.getElementById('gamesToWin').value||6),[a,b]=state.score.games;if((a>=n||b>=n)&&Math.abs(a-b)>=2)state.finished=true}
 function undoScore(){const x=state.score.history.pop();if(x){state.score.games=x.games;state.score.points=x.points;state.finished=false;render()}}
 function finishMatch(){state.finished=true;render();jbV224SwitchServerAfterGame()}
@@ -960,7 +972,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V27.6</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V27.8</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1130,7 +1142,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V27.6</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V27.8</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -2267,7 +2279,7 @@ window.jbV25SaveSession=function(){
 function avg(a,k){return a.length?Math.round(a.reduce((n,s)=>n+(+(s.metrics?.[k]||0)),0)/a.length):0}
 function trend(c,p){let d=c-p;return d>1?`<span class="v265trend up">↑ +${d} pp</span>`:d<-1?`<span class="v265trend down">↓ ${d} pp</span>`:`<span class="v265trend flat">→ ${d} pp</span>`}
 function showEvolution(i){evoPlayer=Number.isFinite(i)?i:0;renderEvolution();$('#v265Evolution').classList.add('open')}
-function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V27.6 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
+function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V27.8 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
 let vals=F.map(([id,label])=>({id,label,cur:+(cur.metrics?.[id]||0),first:+(first.metrics?.[id]||0),avg:avg(a,id)})),pri=[...vals].map(v=>({...v,need:100-v.cur})).sort((x,y)=>y.need-x.need).slice(0,5);
 h.innerHTML=`<div class="v265hero"><div class="v265card"><small>ALUNO</small><b>${esc(p.name)}</b></div><div class="v265card"><small>SESSÕES</small><b>${a.length}</b></div><div class="v265card"><small>PRIMEIRA</small><b>${new Date(first.at).toLocaleDateString('pt-BR')}</b></div><div class="v265card"><small>ATUAL</small><b>${new Date(cur.at).toLocaleDateString('pt-BR')}</b></div></div><div class="v265sec"><h3>EVOLUÇÃO DOS 14 FUNDAMENTOS</h3><div class="v265fund">${vals.map(v=>`<div class="v265row"><div class="v265rowtop"><b>${v.label}</b>${trend(v.cur,v.first)}</div><div class="v265counts"><span>Inicial ${v.first}%</span><span>Atual ${v.cur}% • média ${v.avg}%</span></div><div class="v265bar v265ok"><i style="width:${v.cur}%"></i></div></div>`).join('')}</div></div><div class="v265sec"><h3>PRIORIDADES ATUAIS</h3><div class="v265priority">${pri.map((v,j)=>`<div class="v265card"><small>${j+1}ª PRIORIDADE</small><b>${v.label}</b><b class="v265need">${v.need}%</b><small>necessidade de treino</small></div>`).join('')}</div></div><div class="v265sec"><h3>SESSÕES</h3><div class="v265table"><div class="v265tablein"><div class="v265thead"><span>Data</span>${F.map(x=>`<span>${x[1]}</span>`).join('')}</div>${a.slice().reverse().map(x=>`<div class="v265tr"><strong>${new Date(x.at).toLocaleDateString('pt-BR')}</strong>${F.map(f=>`<b>${+(x.metrics?.[f[0]]||0)}%</b>`).join('')}</div>`).join('')}</div></div></div>`}
 window.jbV26OpenReport=showEvolution;
@@ -2282,7 +2294,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v266-force-css">
-/* V27.6 — força a interface nova e remove entradas antigas */
+/* V27.8 — força a interface nova e remove entradas antigas */
 body.v20-match #v263,
 body.v20-match #jbV262Fast,
 body.v20-match #jbV261Guide,
@@ -2304,7 +2316,7 @@ body.v20-match #v264{display:block!important}
 }
 @media print{#v266Version,#v266ReportBar{display:none!important}}
 </style>
-<div id="v266Version">V27.6 • 14 FUNDAMENTOS</div>
+<div id="v266Version">V27.8 • 14 FUNDAMENTOS</div>
 <script id="jb-v266-force-js">
 (function(){
  function install(){
@@ -2330,7 +2342,7 @@ body.v20-match #v264{display:block!important}
 
 
 <style id="jb-v267-clean-game-css">
-/* V27.6 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
+/* V27.8 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
 body.v20-match .main-grid{display:block!important}
 body.v20-match .tracker{max-width:1180px!important;width:100%!important;margin:0 auto!important}
 
@@ -2496,7 +2508,7 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
  <button type="button" id="v267Sound" class="sound">🔊 SOM ATIVADO</button>
  <button type="button" id="v267Finish" class="finish">⚑ FINALIZAR JOGO</button>
 </div>
-<div id="v267Version">V27.6 • JOGO 14F</div>
+<div id="v267Version">V27.8 • JOGO 14F</div>
 
 <script id="jb-v267-clean-game-js">
 (function(){
@@ -2554,7 +2566,7 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
 
 
 <style id="jb-v268-final-force-css">
-/* V27.6: estado inicial do Scout é SEMPRE Modo Jogo */
+/* V27.8: estado inicial do Scout é SEMPRE Modo Jogo */
 body.v20-match .category-tabs,
 body.v20-match .action-zone,
 body.v20-match #jbV262Fast,
@@ -2589,7 +2601,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 }
 @media print{#v268Version{display:none!important}}
 </style>
-<div id="v268Version">V27.6 • MODO JOGO</div>
+<div id="v268Version">V27.8 • MODO JOGO</div>
 <script id="jb-v268-final-force-js">
 (function(){
  const MODE_KEY='jb_scout_v20_mode';
@@ -2645,7 +2657,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v269-print-fix-css">
-/* V27.6 — camada final de impressão sem conflito com relatórios antigos */
+/* V27.8 — camada final de impressão sem conflito com relatórios antigos */
 @page{size:A4 portrait;margin:10mm}
 
 @media print{
@@ -2874,7 +2886,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v270-prioridades-css">
-/* V27.6 — prioridades completas com os 14 fundamentos */
+/* V27.8 — prioridades completas com os 14 fundamentos */
 .v270-priority-all{
  display:grid;
  grid-template-columns:repeat(2,minmax(0,1fr));
@@ -3077,7 +3089,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v271-footer-fix-css">
-/* V27.6 — corrige sobreposição dos controles no rodapé */
+/* V27.8 — corrige sobreposição dos controles no rodapé */
 
 /* Neutraliza barras/botões antigos fixos ou sticky que aparecem por cima */
 body.v20-match #jbV20Bar,
@@ -3212,7 +3224,7 @@ body.v20-match .bottom-fixed{
 
 
 <style id="jb-v272-analysis-fix-css">
-/* V27.6 — separação real entre Modo Jogo e Modo Análise */
+/* V27.8 — separação real entre Modo Jogo e Modo Análise */
 
 /* MODO JOGO */
 body.v20-match #v264{display:block!important}
@@ -3367,7 +3379,7 @@ body.v20-analysis .tracker{
 
 
 <style id="jb-v273-analysis-dashboard-css">
-/* V27.6 — Modo Análise dedicado, separado do Modo Jogo */
+/* V27.8 — Modo Análise dedicado, separado do Modo Jogo */
 #v273Analysis{display:none;max-width:1180px;margin:0 auto;padding:4px 0 24px}
 body.v20-analysis #v273Analysis{display:block!important}
 
@@ -3405,7 +3417,7 @@ body.v20-analysis #jbV20Recent{display:none!important}
 <div id="v273Analysis">
  <div class="v273title">
    <div><h2>ANÁLISE DO JOGO</h2><small>Estatísticas dos 14 fundamentos e prioridades de treino</small></div>
-   <span class="badge">V27.6 • ANÁLISE</span>
+   <span class="badge">V27.8 • ANÁLISE</span>
  </div>
  <div class="v273players" id="v273Players"></div>
  <div id="v273Content"></div>
@@ -3632,7 +3644,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v275-extra-stats-css">
-/* V27.6 — rodapé sem sobreposição + 40x40 e Winner */
+/* V27.8 — rodapé sem sobreposição + 40x40 e Winner */
 
 /* Remove completamente a barra legada fixa que causava a sobreposição */
 body.v20-match #jbV20Last,
@@ -3821,7 +3833,7 @@ body.v20-match #v275Extras{display:grid!important}
 
 
 <style id="jb-v276-reset-stats-css">
-/* V27.6 — botão para zerar todos os registros rápidos sem encerrar a partida */
+/* V27.8 — botão para zerar todos os registros rápidos sem encerrar a partida */
 body.v20-match #v276ResetStats{
   display:flex!important;
 }
@@ -3947,6 +3959,290 @@ body.v20-match #v276ResetStats{
   if(document.readyState==='loading'){
     document.addEventListener('DOMContentLoaded',install,{once:true});
   }else install();
+})();
+</script>
+
+
+<style id="jb-v277-score-fix-css">
+#v277ScoreToast{
+ display:none;
+ max-width:1180px;
+ margin:8px auto;
+ padding:9px 12px;
+ border-radius:10px;
+ border:1px solid rgba(207,255,32,.28);
+ background:rgba(207,255,32,.07);
+ color:#cfff20;
+ font-size:9px;
+ font-weight:900;
+}
+#v277ScoreToast.show{display:block}
+@media print{#v277ScoreToast{display:none!important}}
+</style>
+<div id="v277ScoreToast">Placar reativado.</div>
+<script id="jb-v277-score-fix-js">
+(function(){
+ function normalizeFinishedState(){
+   if(!window.state || !state.score)return;
+   const g=state.score.games||[0,0];
+   const p=state.score.points||[0,0];
+
+   /* Não existe jogo encerrado em 0 x 0. Corrige estados antigos salvos. */
+   if(state.finished && (+g[0]===0 && +g[1]===0 && +p[0]===0 && +p[1]===0)){
+     state.finished=false;
+     const r=document.getElementById('result');
+     if(r){r.classList.add('hidden');r.innerHTML='';}
+     try{localStorage.setItem('jb_scout_pro_v2',JSON.stringify(state))}catch(e){}
+     if(typeof render==='function')render();
+   }
+ }
+
+ function reactivate(){
+   if(!state.finished)return;
+   state.finished=false;
+   const r=document.getElementById('result');
+   if(r){r.classList.add('hidden');r.innerHTML='';}
+   try{localStorage.setItem('jb_scout_pro_v2',JSON.stringify(state))}catch(e){}
+   const t=document.getElementById('v277ScoreToast');
+   if(t){t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400)}
+ }
+
+ function install(){
+   normalizeFinishedState();
+
+   /* Segurança adicional para os botões manuais de placar. */
+   document.querySelectorAll('button[onclick^="point("],button[onclick^="game("]').forEach(btn=>{
+     btn.addEventListener('click',reactivate,true);
+   });
+ }
+
+ if(document.readyState==='loading'){
+   document.addEventListener('DOMContentLoaded',install,{once:true});
+ }else install();
+})();
+</script>
+
+
+<style id="jb-v278-config-tab-css">
+/* V27.8 — Configuração do jogo em aba separada */
+#v278ConfigOverlay{
+ display:none;
+ position:fixed;
+ inset:0;
+ z-index:999998;
+ background:#071116;
+ color:#f4f8f9;
+ overflow:auto;
+ padding:14px;
+}
+#v278ConfigOverlay.open{display:block!important}
+.v278wrap{max-width:1100px;margin:0 auto}
+.v278top{
+ display:flex;justify-content:space-between;align-items:center;gap:10px;
+ position:sticky;top:0;z-index:10;
+ background:rgba(7,17,22,.97);
+ border-bottom:1px solid rgba(255,255,255,.08);
+ padding:8px 0 10px;
+}
+.v278top h2{margin:0;font-size:18px}
+.v278top small{color:#83969f}
+.v278back{
+ border:1px solid rgba(255,255,255,.12);
+ background:#10212a;color:#fff;border-radius:10px;
+ padding:10px 14px;font-weight:950
+}
+#v278ConfigHost{
+ margin-top:12px;
+}
+#v278ConfigHost .setup,
+#v278ConfigHost .config,
+#v278ConfigHost .setup-card,
+#v278ConfigHost .match-setup,
+#v278ConfigHost .settings-card{
+ display:block!important;
+}
+
+/* Botão de configuração junto dos modos */
+#v278ConfigBtn{
+ min-height:42px;
+ border-radius:10px;
+ border:1px solid rgba(255,255,255,.12);
+ background:#10212a;
+ color:#fff;
+ padding:9px 13px;
+ font-weight:950;
+}
+#v278ConfigBtn.active{
+ background:#cfff20;
+ color:#071014;
+ border-color:#cfff20;
+}
+
+/* No Modo Jogo, ocultar a configuração completa */
+body.v20-match .setup,
+body.v20-match .config,
+body.v20-match .setup-card,
+body.v20-match .match-setup,
+body.v20-match .settings-card,
+body.v20-match [class*="configur"],
+body.v20-match [class*="setup-"]{
+ display:none!important;
+}
+
+/* Reforça Modo Jogo limpo */
+body.v20-match .side-stack,
+body.v20-match .comparison,
+body.v20-match .summary-card,
+body.v20-match .export-box,
+body.v20-match .category-tabs,
+body.v20-match .action-zone,
+body.v20-match .player-tabs,
+body.v20-match #jbV25HistoryBtn,
+body.v20-match #v266ReportBar{
+ display:none!important;
+}
+
+body.v20-match #v264{display:block!important}
+body.v20-match #v275Extras{display:grid!important}
+body.v20-match #v276ResetStats{display:flex!important}
+body.v20-match #v267Bottom{display:grid!important}
+
+/* Esconde controles manuais extras do placar fora do placar principal */
+body.v20-match .score-card .manual-score-extra,
+body.v20-match .score-card .game-controls-extra{
+ display:none!important;
+}
+
+@media print{#v278ConfigOverlay,#v278ConfigBtn{display:none!important}}
+</style>
+
+<div id="v278ConfigOverlay">
+ <div class="v278wrap">
+  <div class="v278top">
+   <div>
+    <h2>CONFIGURAÇÃO DO JOGO</h2>
+    <small>Jogadores • formato • games • lado inicial • dupla sacadora</small>
+   </div>
+   <button type="button" id="v278Back" class="v278back">← Voltar ao jogo</button>
+  </div>
+  <div id="v278ConfigHost"></div>
+ </div>
+</div>
+
+<script id="jb-v278-config-tab-js">
+(function(){
+ let originalParent=null;
+ let originalNext=null;
+ let configRoot=null;
+
+ function findConfigRoot(){
+   const candidates=[
+     '.setup-card','.match-setup','.settings-card','.setup','.config'
+   ];
+   for(const sel of candidates){
+     const el=document.querySelector(sel);
+     if(el && !el.closest('#v278ConfigOverlay')) return el;
+   }
+
+   /* fallback: encontra bloco pelo título "Configurações do jogo" */
+   const nodes=[...document.querySelectorAll('section,article,div')];
+   const match=nodes.find(el=>{
+     const t=(el.textContent||'').trim();
+     return /Configurações do jogo/i.test(t) && t.length<2500;
+   });
+   return match||null;
+ }
+
+ function ensureButton(){
+   if(document.getElementById('v278ConfigBtn'))return;
+   const ref=document.getElementById('v20Analysis')||document.getElementById('v20Match');
+   if(!ref || !ref.parentNode)return;
+
+   const b=document.createElement('button');
+   b.type='button';
+   b.id='v278ConfigBtn';
+   b.textContent='⚙ Configuração';
+   ref.parentNode.insertBefore(b,ref.nextSibling);
+   b.addEventListener('click',openConfig);
+ }
+
+ function openConfig(){
+   const overlay=document.getElementById('v278ConfigOverlay');
+   const host=document.getElementById('v278ConfigHost');
+   if(!overlay||!host)return;
+
+   if(!configRoot)configRoot=findConfigRoot();
+
+   if(configRoot){
+     if(!originalParent){
+       originalParent=configRoot.parentNode;
+       originalNext=configRoot.nextSibling;
+     }
+     host.appendChild(configRoot);
+     configRoot.style.removeProperty('display');
+   }else{
+     host.innerHTML='<div style="padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:#0d1b23">Configuração do jogo não encontrada nesta renderização.</div>';
+   }
+
+   overlay.classList.add('open');
+   document.documentElement.style.overflow='hidden';
+
+   const b=document.getElementById('v278ConfigBtn');
+   if(b)b.classList.add('active');
+ }
+
+ function closeConfig(){
+   const overlay=document.getElementById('v278ConfigOverlay');
+   if(overlay)overlay.classList.remove('open');
+   document.documentElement.style.removeProperty('overflow');
+
+   if(configRoot && originalParent){
+     if(originalNext && originalNext.parentNode===originalParent){
+       originalParent.insertBefore(configRoot,originalNext);
+     }else{
+       originalParent.appendChild(configRoot);
+     }
+   }
+
+   const b=document.getElementById('v278ConfigBtn');
+   if(b)b.classList.remove('active');
+
+   /* volta para modo jogo limpo */
+   document.body.classList.remove('v20-analysis');
+   document.body.classList.add('v20-match');
+ }
+
+ function cleanMatch(){
+   if(!document.body.classList.contains('v20-match'))return;
+   const c=findConfigRoot();
+   if(c && !c.closest('#v278ConfigOverlay')){
+     c.style.setProperty('display','none','important');
+   }
+ }
+
+ function install(){
+   ensureButton();
+
+   const back=document.getElementById('v278Back');
+   if(back)back.onclick=closeConfig;
+
+   const match=document.getElementById('v20Match');
+   if(match)match.addEventListener('click',()=>setTimeout(cleanMatch,20));
+
+   const obs=new MutationObserver(()=>{
+     ensureButton();
+     if(!document.getElementById('v278ConfigOverlay')?.classList.contains('open')){
+       cleanMatch();
+     }
+   });
+   obs.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style']});
+
+   cleanMatch();
+ }
+
+ if(document.readyState==='loading'){
+   document.addEventListener('DOMContentLoaded',install,{once:true});
+ }else install();
 })();
 </script>
 
