@@ -960,7 +960,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V26.8</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V26.9</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1130,7 +1130,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V26.8</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V26.9</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -2228,9 +2228,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 <div id="v265Chooser"><div class="v265box"><div class="v265head"><div class="v265brand"><img src="jb-bertonha-logo.jpg"><div><h2>RELATÓRIO INDIVIDUAL</h2><small>Escolha o aluno</small></div></div><button class="v265btn" id="v265ChooserClose">Voltar</button></div><div class="v265students" id="v265Students"></div></div></div>
 
-<div id="v265Individual"><div class="v265box"><div class="v265head"><div class="v265brand"><img src="jb-bertonha-logo.jpg"><div><h2 id="v265ITitle">RELATÓRIO INDIVIDUAL</h2><small id="v265ISub"></small></div></div><div class="v265actions"><button class="v265btn" id="v265IBack">Trocar aluno</button><button class="v265btn" id="v265IClose">Scout</button><button class="v265btn hot" onclick="print()">PDF / Imprimir</button></div></div><div id="v265IContent"></div></div></div>
+<div id="v265Individual"><div class="v265box"><div class="v265head"><div class="v265brand"><img src="jb-bertonha-logo.jpg"><div><h2 id="v265ITitle">RELATÓRIO INDIVIDUAL</h2><small id="v265ISub"></small></div></div><div class="v265actions"><button class="v265btn" id="v265IBack">Trocar aluno</button><button class="v265btn" id="v265IClose">Scout</button><button class="v265btn hot" onclick="jbPrintReport('individual')">PDF / Imprimir</button></div></div><div id="v265IContent"></div></div></div>
 
-<div id="v265Evolution"><div class="v265box"><div class="v265head"><div class="v265brand"><img src="jb-bertonha-logo.jpg"><div><h2>RELATÓRIO DE EVOLUÇÃO</h2><small id="v265ESub"></small></div></div><div class="v265actions"><button class="v265btn" id="v265EClose">Voltar</button><button class="v265btn hot" onclick="print()">PDF / Imprimir</button></div></div><div class="v265filters"><button class="v265filter on" data-n="5">Últimas 5</button><button class="v265filter" data-n="10">Últimas 10</button><button class="v265filter" data-n="0">Todas</button></div><div id="v265EContent"></div></div></div>
+<div id="v265Evolution"><div class="v265box"><div class="v265head"><div class="v265brand"><img src="jb-bertonha-logo.jpg"><div><h2>RELATÓRIO DE EVOLUÇÃO</h2><small id="v265ESub"></small></div></div><div class="v265actions"><button class="v265btn" id="v265EClose">Voltar</button><button class="v265btn hot" onclick="jbPrintReport('evolution')">PDF / Imprimir</button></div></div><div class="v265filters"><button class="v265filter on" data-n="5">Últimas 5</button><button class="v265filter" data-n="10">Últimas 10</button><button class="v265filter" data-n="0">Todas</button></div><div id="v265EContent"></div></div></div>
 
 <script id="jb-v265-reports-js">
 (function(){
@@ -2267,7 +2267,7 @@ window.jbV25SaveSession=function(){
 function avg(a,k){return a.length?Math.round(a.reduce((n,s)=>n+(+(s.metrics?.[k]||0)),0)/a.length):0}
 function trend(c,p){let d=c-p;return d>1?`<span class="v265trend up">↑ +${d} pp</span>`:d<-1?`<span class="v265trend down">↓ ${d} pp</span>`:`<span class="v265trend flat">→ ${d} pp</span>`}
 function showEvolution(i){evoPlayer=Number.isFinite(i)?i:0;renderEvolution();$('#v265Evolution').classList.add('open')}
-function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V26.8 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
+function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V26.9 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
 let vals=F.map(([id,label])=>({id,label,cur:+(cur.metrics?.[id]||0),first:+(first.metrics?.[id]||0),avg:avg(a,id)})),pri=[...vals].map(v=>({...v,need:100-v.cur})).sort((x,y)=>y.need-x.need).slice(0,5);
 h.innerHTML=`<div class="v265hero"><div class="v265card"><small>ALUNO</small><b>${esc(p.name)}</b></div><div class="v265card"><small>SESSÕES</small><b>${a.length}</b></div><div class="v265card"><small>PRIMEIRA</small><b>${new Date(first.at).toLocaleDateString('pt-BR')}</b></div><div class="v265card"><small>ATUAL</small><b>${new Date(cur.at).toLocaleDateString('pt-BR')}</b></div></div><div class="v265sec"><h3>EVOLUÇÃO DOS 14 FUNDAMENTOS</h3><div class="v265fund">${vals.map(v=>`<div class="v265row"><div class="v265rowtop"><b>${v.label}</b>${trend(v.cur,v.first)}</div><div class="v265counts"><span>Inicial ${v.first}%</span><span>Atual ${v.cur}% • média ${v.avg}%</span></div><div class="v265bar v265ok"><i style="width:${v.cur}%"></i></div></div>`).join('')}</div></div><div class="v265sec"><h3>PRIORIDADES ATUAIS</h3><div class="v265priority">${pri.map((v,j)=>`<div class="v265card"><small>${j+1}ª PRIORIDADE</small><b>${v.label}</b><b class="v265need">${v.need}%</b><small>necessidade de treino</small></div>`).join('')}</div></div><div class="v265sec"><h3>SESSÕES</h3><div class="v265table"><div class="v265tablein"><div class="v265thead"><span>Data</span>${F.map(x=>`<span>${x[1]}</span>`).join('')}</div>${a.slice().reverse().map(x=>`<div class="v265tr"><strong>${new Date(x.at).toLocaleDateString('pt-BR')}</strong>${F.map(f=>`<b>${+(x.metrics?.[f[0]]||0)}%</b>`).join('')}</div>`).join('')}</div></div></div>`}
 window.jbV26OpenReport=showEvolution;
@@ -2282,7 +2282,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v266-force-css">
-/* V26.8 — força a interface nova e remove entradas antigas */
+/* V26.9 — força a interface nova e remove entradas antigas */
 body.v20-match #v263,
 body.v20-match #jbV262Fast,
 body.v20-match #jbV261Guide,
@@ -2304,7 +2304,7 @@ body.v20-match #v264{display:block!important}
 }
 @media print{#v266Version,#v266ReportBar{display:none!important}}
 </style>
-<div id="v266Version">V26.8 • 14 FUNDAMENTOS</div>
+<div id="v266Version">V26.9 • 14 FUNDAMENTOS</div>
 <script id="jb-v266-force-js">
 (function(){
  function install(){
@@ -2330,7 +2330,7 @@ body.v20-match #v264{display:block!important}
 
 
 <style id="jb-v267-clean-game-css">
-/* V26.8 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
+/* V26.9 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
 body.v20-match .main-grid{display:block!important}
 body.v20-match .tracker{max-width:1180px!important;width:100%!important;margin:0 auto!important}
 
@@ -2496,7 +2496,7 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
  <button type="button" id="v267Sound" class="sound">🔊 SOM ATIVADO</button>
  <button type="button" id="v267Finish" class="finish">⚑ FINALIZAR JOGO</button>
 </div>
-<div id="v267Version">V26.8 • JOGO 14F</div>
+<div id="v267Version">V26.9 • JOGO 14F</div>
 
 <script id="jb-v267-clean-game-js">
 (function(){
@@ -2554,7 +2554,7 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
 
 
 <style id="jb-v268-final-force-css">
-/* V26.8: estado inicial do Scout é SEMPRE Modo Jogo */
+/* V26.9: estado inicial do Scout é SEMPRE Modo Jogo */
 body.v20-match .category-tabs,
 body.v20-match .action-zone,
 body.v20-match #jbV262Fast,
@@ -2589,7 +2589,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 }
 @media print{#v268Version{display:none!important}}
 </style>
-<div id="v268Version">V26.8 • MODO JOGO</div>
+<div id="v268Version">V26.9 • MODO JOGO</div>
 <script id="jb-v268-final-force-js">
 (function(){
  const MODE_KEY='jb_scout_v20_mode';
@@ -2640,6 +2640,235 @@ body.v20-match [class*="summary-card"]{display:none!important}
  if(document.readyState==='loading'){
    document.addEventListener('DOMContentLoaded',install,{once:true});
  }else install();
+})();
+</script>
+
+
+<style id="jb-v269-print-fix-css">
+/* V26.9 — camada final de impressão sem conflito com relatórios antigos */
+@page{size:A4 portrait;margin:10mm}
+
+@media print{
+ html,body{
+   width:100%!important;
+   height:auto!important;
+   min-height:0!important;
+   overflow:visible!important;
+   background:#fff!important;
+   color:#111!important;
+   -webkit-print-color-adjust:exact!important;
+   print-color-adjust:exact!important;
+ }
+
+ /* O relatório escolhido vence TODAS as regras de impressão legadas */
+ body.jb-print-individual > *:not(#v265Individual),
+ body.jb-print-evolution > *:not(#v265Evolution){
+   display:none!important;
+ }
+
+ body.jb-print-individual > #v265Individual{
+   display:block!important;
+   position:static!important;
+   inset:auto!important;
+   width:100%!important;
+   height:auto!important;
+   min-height:0!important;
+   overflow:visible!important;
+   padding:0!important;
+   margin:0!important;
+   background:#fff!important;
+   color:#111!important;
+   z-index:auto!important;
+ }
+ body.jb-print-evolution > #v265Evolution{
+   display:block!important;
+   position:static!important;
+   inset:auto!important;
+   width:100%!important;
+   height:auto!important;
+   min-height:0!important;
+   overflow:visible!important;
+   padding:0!important;
+   margin:0!important;
+   background:#fff!important;
+   color:#111!important;
+   z-index:auto!important;
+ }
+
+ body.jb-print-individual #v265Individual *,
+ body.jb-print-evolution #v265Evolution *{
+   box-sizing:border-box!important;
+ }
+
+ body.jb-print-individual .v265box,
+ body.jb-print-evolution .v265box{
+   max-width:none!important;
+   width:100%!important;
+   margin:0!important;
+   padding:0!important;
+ }
+
+ body.jb-print-individual .v265head,
+ body.jb-print-evolution .v265head{
+   position:static!important;
+   background:#fff!important;
+   color:#111!important;
+   border-bottom:2px solid #111!important;
+   padding:0 0 7mm!important;
+   margin-bottom:5mm!important;
+ }
+
+ body.jb-print-individual .v265brand img,
+ body.jb-print-evolution .v265brand img{
+   width:85px!important;
+   height:55px!important;
+   object-fit:contain!important;
+   border-radius:0!important;
+   padding:0!important;
+ }
+
+ body.jb-print-individual .v265head h2,
+ body.jb-print-evolution .v265head h2{
+   color:#111!important;
+   font-size:17px!important;
+ }
+
+ body.jb-print-individual .v265head small,
+ body.jb-print-evolution .v265head small{
+   color:#555!important;
+ }
+
+ body.jb-print-individual .v265actions,
+ body.jb-print-evolution .v265actions,
+ body.jb-print-evolution .v265filters{
+   display:none!important;
+ }
+
+ body.jb-print-individual .v265hero,
+ body.jb-print-evolution .v265hero{
+   display:grid!important;
+   grid-template-columns:repeat(4,1fr)!important;
+   gap:3mm!important;
+   margin-top:0!important;
+ }
+
+ body.jb-print-individual .v265fund,
+ body.jb-print-evolution .v265fund{
+   display:grid!important;
+   grid-template-columns:repeat(2,1fr)!important;
+   gap:3mm!important;
+ }
+
+ body.jb-print-individual .v265priority,
+ body.jb-print-evolution .v265priority{
+   display:grid!important;
+   grid-template-columns:repeat(3,1fr)!important;
+   gap:3mm!important;
+ }
+
+ body.jb-print-individual .v265card,
+ body.jb-print-individual .v265row,
+ body.jb-print-evolution .v265card,
+ body.jb-print-evolution .v265row,
+ body.jb-print-evolution .v265tr{
+   background:#fff!important;
+   color:#111!important;
+   border:1px solid #bfc4c7!important;
+   box-shadow:none!important;
+   break-inside:avoid!important;
+   page-break-inside:avoid!important;
+ }
+
+ body.jb-print-individual .v265card small,
+ body.jb-print-individual .v265counts,
+ body.jb-print-evolution .v265card small,
+ body.jb-print-evolution .v265counts{
+   color:#555!important;
+ }
+
+ body.jb-print-individual .v265sec h3,
+ body.jb-print-evolution .v265sec h3{
+   color:#334400!important;
+   border-bottom:1px solid #bbb!important;
+   padding-bottom:2mm!important;
+ }
+
+ body.jb-print-individual .v265pct,
+ body.jb-print-evolution .v265pct{
+   color:#334400!important;
+ }
+
+ body.jb-print-individual .v265need,
+ body.jb-print-evolution .v265need{
+   color:#b3263e!important;
+ }
+
+ body.jb-print-individual .v265bar,
+ body.jb-print-evolution .v265bar{
+   border:1px solid #ccc!important;
+   background:#eee!important;
+ }
+
+ body.jb-print-individual .v265ok i,
+ body.jb-print-evolution .v265ok i{
+   background:#7a9b17!important;
+ }
+ body.jb-print-individual .v265er i,
+ body.jb-print-evolution .v265er i{
+   background:#c84b60!important;
+ }
+
+ /* Evita tabela de evolução cortada fora do A4 */
+ body.jb-print-evolution .v265table{
+   overflow:visible!important;
+ }
+ body.jb-print-evolution .v265tablein{
+   min-width:0!important;
+   width:100%!important;
+ }
+ body.jb-print-evolution .v265thead,
+ body.jb-print-evolution .v265tr{
+   grid-template-columns:70px repeat(14,minmax(34px,1fr))!important;
+   font-size:6px!important;
+ }
+ body.jb-print-evolution .v265thead span,
+ body.jb-print-evolution .v265tr b,
+ body.jb-print-evolution .v265tr strong{
+   overflow:hidden!important;
+   word-break:break-word!important;
+ }
+}
+</style>
+
+<script id="jb-v269-print-fix-js">
+(function(){
+ window.jbPrintReport=function(kind){
+   const cls=kind==='evolution'?'jb-print-evolution':'jb-print-individual';
+   document.body.classList.remove('jb-print-individual','jb-print-evolution');
+   document.body.classList.add(cls);
+
+   // Garante que apenas o relatório novo escolhido esteja marcado como aberto.
+   const ind=document.getElementById('v265Individual');
+   const evo=document.getElementById('v265Evolution');
+   if(kind==='evolution'){
+     if(evo)evo.classList.add('open');
+   }else{
+     if(ind)ind.classList.add('open');
+   }
+
+   // Safari/iPad precisa de um pequeno frame para aplicar o layout A4.
+   requestAnimationFrame(()=>requestAnimationFrame(()=>window.print()));
+ };
+
+ function cleanup(){
+   document.body.classList.remove('jb-print-individual','jb-print-evolution');
+ }
+ window.addEventListener('afterprint',cleanup);
+
+ // Backup para Safari que às vezes não dispara afterprint imediatamente.
+ window.addEventListener('focus',()=>{
+   setTimeout(cleanup,300);
+ });
 })();
 </script>
 
