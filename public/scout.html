@@ -683,7 +683,7 @@ function point(t){
  }
  const s=state.score;
 
- /* V29.6: guarda o contexto ANTES do ponto manual */
+ /* V29.7: guarda o contexto ANTES do ponto manual */
  const before={
    games:[...s.games],
    points:[...s.points],
@@ -707,7 +707,7 @@ function point(t){
    autoFinish();
  }
 
- /* V29.6: registra também os pontos MANUAIS no motor inteligente.
+ /* V29.7: registra também os pontos MANUAIS no motor inteligente.
     Isso alimenta 40x40 e break points convertidos. */
  const after={
    games:[...s.games],
@@ -5427,7 +5427,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v287-print-hard-fix-css">
-/* V29.6 — nunca imprimir a interface operacional do Scout */
+/* V29.7 — nunca imprimir a interface operacional do Scout */
 @media print{
   header.app-only,
   main.app-only,
@@ -5871,7 +5871,7 @@ if('serviceWorker' in navigator){
 
 
 <style id="jb-v292-analysis-header-fix-css">
-/* V29.6 — corrige a faixa/cabeçalho da tela de Análise */
+/* V29.7 — corrige a faixa/cabeçalho da tela de Análise */
 body.jb-v29-app #v274AnalysisOverlay{
   position:fixed!important;
   inset:58px 0 70px 0!important;
@@ -6095,7 +6095,7 @@ body.jb-v29-app #v274AnalysisOverlay .v274actions{
 
 
 <style id="jb-v294-40x40-fund-css">
-/* V29.6 — 40x40 passa a fazer parte do painel principal de fundamentos */
+/* V29.7 — 40x40 passa a fazer parte do painel principal de fundamentos */
 body.v20-match #v275Extras .v275special:first-child{
   display:none!important;
 }
@@ -6150,7 +6150,7 @@ body.v20-match .v264row:has(.v264name){
 
 
 <style id="jb-v295-analysis-scroll-fix-css">
-/* V29.6 — a Análise rola sozinha; o Modo Jogo fica travado atrás */
+/* V29.7 — a Análise rola sozinha; o Modo Jogo fica travado atrás */
 html.jb-analysis-open,
 body.jb-analysis-open{
   overflow:hidden!important;
@@ -6400,6 +6400,167 @@ body.jb-analysis-open #v274AnalysisOverlay *{
    refreshTopCards();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+
+
+<style id="jb-v297-analysis-scroll-lock-css">
+/* V29.7 — bloqueio real da página por trás da Análise */
+html.jb-v297-analysis-lock{
+  overflow:hidden!important;
+  height:100%!important;
+}
+body.jb-v297-analysis-lock{
+  position:fixed!important;
+  left:0!important;
+  right:0!important;
+  width:100%!important;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+
+/* A análise vira o único container rolável */
+body.jb-v29-app #v274AnalysisOverlay.open{
+  position:fixed!important;
+  top:58px!important;
+  left:0!important;
+  right:0!important;
+  bottom:70px!important;
+  width:auto!important;
+  height:auto!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:12px 14px 28px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-y!important;
+  transform:none!important;
+  z-index:9997!important;
+}
+
+body.jb-v29-app #v274AnalysisOverlay.open .v274wrap{
+  width:100%!important;
+  max-width:1180px!important;
+  margin:0 auto!important;
+  min-height:max-content!important;
+}
+
+/* Cabeçalho preso apenas dentro da própria Análise */
+body.jb-v29-app #v274AnalysisOverlay.open .v274top{
+  position:sticky!important;
+  top:0!important;
+  z-index:50!important;
+}
+
+/* Evita que elementos do Modo Jogo capturem rolagem/toque */
+body.jb-v297-analysis-lock .page,
+body.jb-v297-analysis-lock main.app-only{
+  pointer-events:none!important;
+}
+
+body.jb-v297-analysis-lock #v274AnalysisOverlay,
+body.jb-v297-analysis-lock #v274AnalysisOverlay *{
+  pointer-events:auto!important;
+}
+
+@media(max-width:700px){
+  body.jb-v29-app #v274AnalysisOverlay.open{
+    top:58px!important;
+    bottom:70px!important;
+    padding:10px 8px 22px!important;
+  }
+}
+
+@media print{
+  html.jb-v297-analysis-lock,
+  body.jb-v297-analysis-lock{
+    position:static!important;
+    overflow:visible!important;
+    height:auto!important;
+    width:auto!important;
+    top:auto!important;
+  }
+  body.jb-v29-app #v274AnalysisOverlay.open{
+    position:static!important;
+    inset:auto!important;
+    overflow:visible!important;
+  }
+}
+</style>
+
+<script id="jb-v297-analysis-scroll-lock-js">
+(function(){
+ let savedScrollY=0;
+ let locked=false;
+
+ function overlay(){
+   return document.getElementById('v274AnalysisOverlay');
+ }
+
+ function lock(){
+   const ov=overlay();
+   if(!ov || !ov.classList.contains('open') || locked) return;
+
+   savedScrollY=window.scrollY||document.documentElement.scrollTop||0;
+   locked=true;
+
+   document.documentElement.classList.add('jb-v297-analysis-lock');
+   document.body.classList.add('jb-v297-analysis-lock');
+
+   document.body.style.setProperty('top',(-savedScrollY)+'px','important');
+
+   /* análise sempre abre do topo */
+   ov.scrollTop=0;
+ }
+
+ function unlock(){
+   if(!locked) return;
+   locked=false;
+
+   document.documentElement.classList.remove('jb-v297-analysis-lock');
+   document.body.classList.remove('jb-v297-analysis-lock');
+
+   document.body.style.removeProperty('top');
+
+   /* restaura exatamente a posição do Modo Jogo */
+   requestAnimationFrame(()=>{
+     window.scrollTo(0,savedScrollY);
+   });
+ }
+
+ function sync(){
+   const ov=overlay();
+   if(ov?.classList.contains('open')) lock();
+   else unlock();
+ }
+
+ function install(){
+   const ov=overlay();
+
+   if(ov){
+     const obs=new MutationObserver(sync);
+     obs.observe(ov,{attributes:true,attributeFilter:['class']});
+   }
+
+   document.addEventListener('click',e=>{
+     if(e.target.closest('#v20Analysis,[data-screen="analysis"]')){
+       setTimeout(lock,80);
+     }
+
+     if(e.target.closest('#v274Back,[data-screen="game"]')){
+       setTimeout(unlock,20);
+     }
+   },true);
+
+   window.addEventListener('pageshow',sync);
+   sync();
+ }
+
+ if(document.readyState==='loading'){
+   document.addEventListener('DOMContentLoaded',install,{once:true});
+ }else install();
 })();
 </script>
 
