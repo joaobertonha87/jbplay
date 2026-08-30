@@ -550,7 +550,7 @@ function add(k,btn,type,label){
  state.players[current].stats[k]++;
  const hist={type:'stat',player:current,key:k};
 
- const target=jbAutoScoreTarget(current,k);
+ const target=null; /* V28.2: registros rápidos NÃO alteram o placar automaticamente */
  if(target!==null && !state.finished){
    hist.autoScore=true;
    hist.scoreBefore=scoreBefore;
@@ -972,7 +972,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V28.0</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V28.2</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1142,7 +1142,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V28.0</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V28.2</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -2207,7 +2207,10 @@ const F=[
  ['Devolução Forehand','devolucaoForehandAcerto','devolucaoForehandErro'],
  ['Devolução Backhand','devolucaoBackhandAcerto','devolucaoBackhandErro'],
  ['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],
- ['Rainbow','rainbowAcerto','rainbowErro']
+ ['Rainbow','rainbowAcerto','rainbowErro'],
+ ['Lob','lobAcerto','lobErro'],
+ ['Anômalo','anomaloAcerto','anomaloErro'],
+ ['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro']
 ];
 const $=x=>document.querySelector(x),esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 function players(){let h=$('#v264players');if(!h)return;h.innerHTML=state.players.map((p,i)=>'<button type="button" data-i="'+i+'" class="'+(i===current?'on':'')+'">'+esc(p.name)+'</button>').join('');h.querySelectorAll('button').forEach(b=>b.onclick=()=>{selectPlayer(+b.dataset.i);players();selected()})}
@@ -2279,7 +2282,7 @@ window.jbV25SaveSession=function(){
 function avg(a,k){return a.length?Math.round(a.reduce((n,s)=>n+(+(s.metrics?.[k]||0)),0)/a.length):0}
 function trend(c,p){let d=c-p;return d>1?`<span class="v265trend up">↑ +${d} pp</span>`:d<-1?`<span class="v265trend down">↓ ${d} pp</span>`:`<span class="v265trend flat">→ ${d} pp</span>`}
 function showEvolution(i){evoPlayer=Number.isFinite(i)?i:0;renderEvolution();$('#v265Evolution').classList.add('open')}
-function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V28.0 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
+function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V28.2 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
 let vals=F.map(([id,label])=>({id,label,cur:+(cur.metrics?.[id]||0),first:+(first.metrics?.[id]||0),avg:avg(a,id)})),pri=[...vals].map(v=>({...v,need:100-v.cur})).sort((x,y)=>y.need-x.need).slice(0,5);
 h.innerHTML=`<div class="v265hero"><div class="v265card"><small>ALUNO</small><b>${esc(p.name)}</b></div><div class="v265card"><small>SESSÕES</small><b>${a.length}</b></div><div class="v265card"><small>PRIMEIRA</small><b>${new Date(first.at).toLocaleDateString('pt-BR')}</b></div><div class="v265card"><small>ATUAL</small><b>${new Date(cur.at).toLocaleDateString('pt-BR')}</b></div></div><div class="v265sec"><h3>EVOLUÇÃO DOS 14 FUNDAMENTOS</h3><div class="v265fund">${vals.map(v=>`<div class="v265row"><div class="v265rowtop"><b>${v.label}</b>${trend(v.cur,v.first)}</div><div class="v265counts"><span>Inicial ${v.first}%</span><span>Atual ${v.cur}% • média ${v.avg}%</span></div><div class="v265bar v265ok"><i style="width:${v.cur}%"></i></div></div>`).join('')}</div></div><div class="v265sec"><h3>PRIORIDADES ATUAIS</h3><div class="v265priority">${pri.map((v,j)=>`<div class="v265card"><small>${j+1}ª PRIORIDADE</small><b>${v.label}</b><b class="v265need">${v.need}%</b><small>necessidade de treino</small></div>`).join('')}</div></div><div class="v265sec"><h3>SESSÕES</h3><div class="v265table"><div class="v265tablein"><div class="v265thead"><span>Data</span>${F.map(x=>`<span>${x[1]}</span>`).join('')}</div>${a.slice().reverse().map(x=>`<div class="v265tr"><strong>${new Date(x.at).toLocaleDateString('pt-BR')}</strong>${F.map(f=>`<b>${+(x.metrics?.[f[0]]||0)}%</b>`).join('')}</div>`).join('')}</div></div></div>`}
 window.jbV26OpenReport=showEvolution;
@@ -2294,7 +2297,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v266-force-css">
-/* V28.0 — força a interface nova e remove entradas antigas */
+/* V28.2 — força a interface nova e remove entradas antigas */
 body.v20-match #v263,
 body.v20-match #jbV262Fast,
 body.v20-match #jbV261Guide,
@@ -2316,7 +2319,7 @@ body.v20-match #v264{display:block!important}
 }
 @media print{#v266Version,#v266ReportBar{display:none!important}}
 </style>
-<div id="v266Version">V28.0 • 14 FUNDAMENTOS</div>
+<div id="v266Version">V28.2 • 14 FUNDAMENTOS</div>
 <script id="jb-v266-force-js">
 (function(){
  function install(){
@@ -2342,7 +2345,7 @@ body.v20-match #v264{display:block!important}
 
 
 <style id="jb-v267-clean-game-css">
-/* V28.0 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
+/* V28.2 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
 body.v20-match .main-grid{display:block!important}
 body.v20-match .tracker{max-width:1180px!important;width:100%!important;margin:0 auto!important}
 
@@ -2508,7 +2511,7 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
  <button type="button" id="v267Sound" class="sound">🔊 SOM ATIVADO</button>
  <button type="button" id="v267Finish" class="finish">⚑ FINALIZAR JOGO</button>
 </div>
-<div id="v267Version">V28.0 • JOGO 14F</div>
+<div id="v267Version">V28.2 • JOGO 14F</div>
 
 <script id="jb-v267-clean-game-js">
 (function(){
@@ -2566,7 +2569,7 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
 
 
 <style id="jb-v268-final-force-css">
-/* V28.0: estado inicial do Scout é SEMPRE Modo Jogo */
+/* V28.2: estado inicial do Scout é SEMPRE Modo Jogo */
 body.v20-match .category-tabs,
 body.v20-match .action-zone,
 body.v20-match #jbV262Fast,
@@ -2601,7 +2604,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 }
 @media print{#v268Version{display:none!important}}
 </style>
-<div id="v268Version">V28.0 • MODO JOGO</div>
+<div id="v268Version">V28.2 • MODO JOGO</div>
 <script id="jb-v268-final-force-js">
 (function(){
  const MODE_KEY='jb_scout_v20_mode';
@@ -2657,7 +2660,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v269-print-fix-css">
-/* V28.0 — camada final de impressão sem conflito com relatórios antigos */
+/* V28.2 — camada final de impressão sem conflito com relatórios antigos */
 @page{size:A4 portrait;margin:10mm}
 
 @media print{
@@ -2886,7 +2889,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v270-prioridades-css">
-/* V28.0 — prioridades completas com os 14 fundamentos */
+/* V28.2 — prioridades completas com os 14 fundamentos */
 .v270-priority-all{
  display:grid;
  grid-template-columns:repeat(2,minmax(0,1fr));
@@ -2969,7 +2972,10 @@ body.v20-match [class*="summary-card"]{display:none!important}
    ['Devolução Forehand','devolucaoForehandAcerto','devolucaoForehandErro'],
    ['Devolução Backhand','devolucaoBackhandAcerto','devolucaoBackhandErro'],
    ['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],
-   ['Rainbow','rainbowAcerto','rainbowErro']
+   ['Rainbow','rainbowAcerto','rainbowErro'],
+ ['Lob','lobAcerto','lobErro'],
+ ['Anômalo','anomaloAcerto','anomaloErro'],
+ ['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro']
  ];
 
  const pc=(a,b)=>b?Math.round((a/b)*100):0;
@@ -3089,7 +3095,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v271-footer-fix-css">
-/* V28.0 — corrige sobreposição dos controles no rodapé */
+/* V28.2 — corrige sobreposição dos controles no rodapé */
 
 /* Neutraliza barras/botões antigos fixos ou sticky que aparecem por cima */
 body.v20-match #jbV20Bar,
@@ -3224,7 +3230,7 @@ body.v20-match .bottom-fixed{
 
 
 <style id="jb-v272-analysis-fix-css">
-/* V28.0 — separação real entre Modo Jogo e Modo Análise */
+/* V28.2 — separação real entre Modo Jogo e Modo Análise */
 
 /* MODO JOGO */
 body.v20-match #v264{display:block!important}
@@ -3379,7 +3385,7 @@ body.v20-analysis .tracker{
 
 
 <style id="jb-v273-analysis-dashboard-css">
-/* V28.0 — Modo Análise dedicado, separado do Modo Jogo */
+/* V28.2 — Modo Análise dedicado, separado do Modo Jogo */
 #v273Analysis{display:none;max-width:1180px;margin:0 auto;padding:4px 0 24px}
 body.v20-analysis #v273Analysis{display:block!important}
 
@@ -3417,7 +3423,7 @@ body.v20-analysis #jbV20Recent{display:none!important}
 <div id="v273Analysis">
  <div class="v273title">
    <div><h2>ANÁLISE DO JOGO</h2><small>Estatísticas dos 14 fundamentos e prioridades de treino</small></div>
-   <span class="badge">V28.0 • ANÁLISE</span>
+   <span class="badge">V28.2 • ANÁLISE</span>
  </div>
  <div class="v273players" id="v273Players"></div>
  <div id="v273Content"></div>
@@ -3431,7 +3437,10 @@ body.v20-analysis #jbV20Recent{display:none!important}
  ['Defesa Forehand','defesaForehandAcerto','defesaForehandErro'],['Defesa Backhand','defesaBackhandAcerto','defesaBackhandErro'],
  ['Gancho','ganchoAcerto','ganchoErro'],['Acelerada','aceleradaAcerto','aceleradaErro'],['Curta','curtaAcerto','curtaErro'],
  ['Devolução Forehand','devolucaoForehandAcerto','devolucaoForehandErro'],['Devolução Backhand','devolucaoBackhandAcerto','devolucaoBackhandErro'],
- ['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],['Rainbow','rainbowAcerto','rainbowErro']
+ ['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],['Rainbow','rainbowAcerto','rainbowErro'],
+ ['Lob','lobAcerto','lobErro'],
+ ['Anômalo','anomaloAcerto','anomaloErro'],
+ ['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro']
  ];
  let selected=0;
  const $=s=>document.querySelector(s), pc=(a,b)=>b?Math.round(a*100/b):0, esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -3605,7 +3614,10 @@ const F=[
 ['Defesa Forehand','defesaForehandAcerto','defesaForehandErro'],['Defesa Backhand','defesaBackhandAcerto','defesaBackhandErro'],
 ['Gancho','ganchoAcerto','ganchoErro'],['Acelerada','aceleradaAcerto','aceleradaErro'],['Curta','curtaAcerto','curtaErro'],
 ['Devolução Forehand','devolucaoForehandAcerto','devolucaoForehandErro'],['Devolução Backhand','devolucaoBackhandAcerto','devolucaoBackhandErro'],
-['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],['Rainbow','rainbowAcerto','rainbowErro']
+['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],['Rainbow','rainbowAcerto','rainbowErro'],
+ ['Lob','lobAcerto','lobErro'],
+ ['Anômalo','anomaloAcerto','anomaloErro'],
+ ['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro']
 ];
 let sel=0;
 const $=q=>document.querySelector(q),pc=(a,b)=>b?Math.round(a*100/b):0,esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -3644,7 +3656,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v275-extra-stats-css">
-/* V28.0 — rodapé sem sobreposição + 40x40 e Winner */
+/* V28.2 — rodapé sem sobreposição + 40x40 e Winner */
 
 /* Remove completamente a barra legada fixa que causava a sobreposição */
 body.v20-match #jbV20Last,
@@ -3833,7 +3845,7 @@ body.v20-match #v275Extras{display:grid!important}
 
 
 <style id="jb-v276-reset-stats-css">
-/* V28.0 — botão para zerar todos os registros rápidos sem encerrar a partida */
+/* V28.2 — botão para zerar todos os registros rápidos sem encerrar a partida */
 body.v20-match #v276ResetStats{
   display:flex!important;
 }
@@ -4024,7 +4036,7 @@ body.v20-match #v276ResetStats{
 
 
 <style id="jb-v278-config-tab-css">
-/* V28.0 — Configuração do jogo em aba separada */
+/* V28.2 — Configuração do jogo em aba separada */
 #v278ConfigOverlay{
  display:none;
  position:fixed;
@@ -4436,6 +4448,255 @@ body.v20-match .topbar>.card:not(.score-card){
      buildNamesBox();
      syncInputs();
    }
+ }
+
+ if(document.readyState==='loading'){
+   document.addEventListener('DOMContentLoaded',install,{once:true});
+ }else install();
+})();
+</script>
+
+
+<style id="jb-v281-manual-score-css">
+#v281ManualScoreNote{
+  display:none;
+  max-width:1180px;
+  margin:0 auto 8px;
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid rgba(207,255,32,.20);
+  background:rgba(207,255,32,.055);
+  color:#b9d47c;
+  font-size:8px;
+  font-weight:850;
+  text-align:center;
+}
+body.v20-match #v281ManualScoreNote{display:block}
+@media print{#v281ManualScoreNote{display:none!important}}
+</style>
+<div id="v281ManualScoreNote">REGISTROS RÁPIDOS NÃO ALTERAM O PLACAR • use + Ponto / + Game para o placar ao vivo</div>
+<script id="jb-v281-manual-score-js">
+(function(){
+  function install(){
+    /* Segurança extra: qualquer registro estatístico passa a ser apenas estatística. */
+    window.jbAutoScoreTarget=function(){ return null; };
+
+    const note=document.getElementById('v281ManualScoreNote');
+    const quick=document.getElementById('v264');
+    if(note && quick && quick.parentNode){
+      quick.parentNode.insertBefore(note,quick);
+    }
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',install,{once:true});
+  }else install();
+})();
+</script>
+
+
+<style id="jb-v282-zones-css">
+/* V28.2 — zonas de saque + novos fundamentos */
+#v282ServeZones{
+  margin-top:8px;
+  padding:10px;
+  border-radius:13px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(145deg,#0f2028,#09171d);
+}
+#v282ServeZones .v282title{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  align-items:center;
+  margin-bottom:7px;
+}
+#v282ServeZones .v282title b{
+  font-size:10px;
+  color:#f3f7f8;
+  letter-spacing:.05em;
+}
+#v282ServeZones .v282title small{
+  font-size:8px;
+  color:#84979f;
+}
+.v282zones{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:7px;
+}
+.v282zone{
+  min-height:48px;
+  border-radius:10px;
+  border:1px solid rgba(207,255,32,.30);
+  background:rgba(207,255,32,.06);
+  color:#d9f38e;
+  font-weight:950;
+  font-size:10px;
+}
+.v282zone:active{
+  transform:scale(.97);
+  background:rgba(207,255,32,.18);
+}
+.v282-zone-stats{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:7px;
+  margin-top:7px;
+}
+.v282-zone-card{
+  background:#0d1b23;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:11px;
+  padding:9px;
+  text-align:center;
+}
+.v282-zone-card b{
+  display:block;
+  font-size:12px;
+  color:#cfff20;
+}
+.v282-zone-card small{
+  display:block;
+  font-size:8px;
+  color:#879aa2;
+  margin-top:3px;
+}
+@media(max-width:700px){
+  .v282zones,.v282-zone-stats{grid-template-columns:repeat(3,1fr)}
+}
+@media print{
+  #v282ServeZones{display:none!important}
+  .v282-zone-card{
+    background:#fff!important;
+    color:#111!important;
+    border:1px solid #bbb!important
+  }
+  .v282-zone-card b{color:#334400!important}
+}
+</style>
+
+<div id="v282ServeZones">
+  <div class="v282title">
+    <b>ZONA DO SAQUE</b>
+    <small>Selecione onde o saque foi direcionado</small>
+  </div>
+  <div class="v282zones">
+    <button type="button" class="v282zone" data-zone="1">ZONA 1</button>
+    <button type="button" class="v282zone" data-zone="2">ZONA 2</button>
+    <button type="button" class="v282zone" data-zone="3">ZONA 3</button>
+    <button type="button" class="v282zone" data-zone="4">ZONA 4</button>
+    <button type="button" class="v282zone" data-zone="5">ZONA 5</button>
+  </div>
+</div>
+
+<script id="jb-v282-zones-js">
+(function(){
+ const pc=(a,b)=>b?Math.round(a*100/b):0;
+
+ function installZoneButtons(){
+   const panel=document.getElementById('v282ServeZones');
+   const board=document.getElementById('v264board');
+   if(panel && board && board.parentNode && panel.parentNode!==board.parentNode){
+     board.parentNode.insertBefore(panel,board.nextSibling);
+   }
+
+   document.querySelectorAll('.v282zone').forEach(btn=>{
+     btn.onclick=()=>{
+       const z=+btn.dataset.zone;
+       const key='saqueZona'+z;
+       const name=state.players[current]?.name||'Aluno';
+       add(key,btn,'info','Saque zona '+z);
+       setTimeout(()=>{
+         const last=document.getElementById('v264last');
+         if(last)last.innerHTML='<b>'+name+'</b> • saque zona '+z+' registrado';
+       },25);
+     };
+   });
+ }
+
+ function zonesFor(player){
+   const x=player?.stats||{};
+   const vals=[1,2,3,4,5].map(i=>+(x['saqueZona'+i]||0));
+   const total=vals.reduce((a,b)=>a+b,0);
+   return {vals,total};
+ }
+
+ function zoneStatsHTML(player){
+   const {vals,total}=zonesFor(player);
+   return '<div class="v282-zone-stats">'+vals.map((v,i)=>
+     '<div class="v282-zone-card">'+
+       '<b>Zona '+(i+1)+' • '+pc(v,total)+'%</b>'+
+       '<small>'+v+' saques de '+total+'</small>'+
+     '</div>'
+   ).join('')+'</div>';
+ }
+
+ function patchAnalysis(){
+   const content=document.getElementById('v274Content');
+   if(!content || content.querySelector('[data-v282-zones]'))return;
+   const selectedButtons=[...document.querySelectorAll('#v274Players button')];
+   let idx=selectedButtons.findIndex(b=>b.classList.contains('on'));
+   if(idx<0)idx=typeof current==='number'?current:0;
+   const p=state.players[idx]||state.players[0];
+
+   const firstSection=content.querySelector('.v274section');
+   if(firstSection){
+     const sec=document.createElement('div');
+     sec.className='v274section';
+     sec.dataset.v282Zones='1';
+     sec.innerHTML='<h3>DISTRIBUIÇÃO DO SAQUE • ZONAS 1 A 5</h3>'+zoneStatsHTML(p);
+     firstSection.insertAdjacentElement('afterend',sec);
+   }
+ }
+
+ function patchIndividual(){
+   const content=document.getElementById('v265IContent');
+   if(!content || content.querySelector('[data-v282-zones]'))return;
+   const title=document.getElementById('v265ITitle')?.textContent||'';
+   let idx=state.players.findIndex(p=>title.includes(p.name));
+   if(idx<0)idx=typeof current==='number'?current:0;
+   const p=state.players[idx]||state.players[0];
+
+   const sec=document.createElement('div');
+   sec.className='v265sec';
+   sec.dataset.v282Zones='1';
+   sec.innerHTML='<h3>DISTRIBUIÇÃO DO SAQUE • ZONAS 1 A 5</h3>'+zoneStatsHTML(p);
+
+   const fund=[...content.querySelectorAll('.v265sec')]
+     .find(x=>/DESEMPENHO|FUNDAMENTOS/i.test(x.textContent||''));
+   if(fund)fund.insertAdjacentElement('afterend',sec);
+   else content.appendChild(sec);
+ }
+
+ function installHooks(){
+   const analysisBtn=document.getElementById('v20Analysis');
+   if(analysisBtn){
+     analysisBtn.addEventListener('click',()=>setTimeout(patchAnalysis,100),true);
+   }
+
+   document.addEventListener('click',e=>{
+     if(e.target.closest('#v274Players button'))setTimeout(()=>{
+       document.querySelectorAll('#v274Content [data-v282-zones]').forEach(x=>x.remove());
+       patchAnalysis();
+     },80);
+
+     if(e.target.closest('#v266Individual,#v274Ind,.v265student'))setTimeout(patchIndividual,120);
+   },true);
+
+   const obs=new MutationObserver(()=>{
+     if(document.getElementById('v274AnalysisOverlay')?.classList.contains('open')){
+       setTimeout(patchAnalysis,20);
+     }
+     if(document.getElementById('v265Individual')?.classList.contains('open')){
+       setTimeout(patchIndividual,20);
+     }
+   });
+   obs.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
+ }
+
+ function install(){
+   installZoneButtons();
+   installHooks();
  }
 
  if(document.readyState==='loading'){
