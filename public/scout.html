@@ -3876,7 +3876,7 @@ function render(){
   $('#v274Ind').onclick=()=>window.jbV236OpenIndividual?.(sel);
   $('#v274Evo').onclick=()=>window.jbV26OpenReport?.(sel);
   $('#v274Hist').onclick=()=>document.getElementById('jbV25HistoryBtn')?.click();
-  $('#v283Print').onclick=()=>window.print();
+  $('#v283Print').onclick=()=>window.jbPrintAnalysisOnly();
   bindEvolution();
 }
 
@@ -5091,6 +5091,195 @@ function install(){
  if($('#v278ConfigOverlay')?.classList.contains('open'))build();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+
+
+<style id="jb-v286-print-only-analysis-css">
+@page{
+  size:A4 portrait;
+  margin:10mm;
+}
+
+/* impressão da análise principal */
+@media print{
+  html,body{
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+    background:#fff!important;
+    color:#111!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+
+  /* Quando a impressão parte da Análise, esconde TODO o Scout operacional */
+  body.jb-print-analysis > *:not(#v274AnalysisOverlay){
+    display:none!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay{
+    display:block!important;
+    position:static!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+    padding:0!important;
+    margin:0!important;
+    background:#fff!important;
+    color:#111!important;
+    z-index:auto!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v274wrap{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v274top{
+    position:static!important;
+    background:#fff!important;
+    color:#111!important;
+    border-bottom:2px solid #111!important;
+    padding:0 0 6mm!important;
+    margin-bottom:5mm!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay #v274Back,
+  body.jb-print-analysis #v274AnalysisOverlay .v283filters,
+  body.jb-print-analysis #v274AnalysisOverlay .v274actions,
+  body.jb-print-analysis #v274AnalysisOverlay .v283evobtns{
+    display:none!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v283premium,
+  body.jb-print-analysis #v274AnalysisOverlay .v283eff,
+  body.jb-print-analysis #v274AnalysisOverlay .v283priority,
+  body.jb-print-analysis #v274AnalysisOverlay .v283paircard,
+  body.jb-print-analysis #v274AnalysisOverlay .v283chart,
+  body.jb-print-analysis #v274AnalysisOverlay .v283statr,
+  body.jb-print-analysis #v274AnalysisOverlay .v283zone,
+  body.jb-print-analysis #v274AnalysisOverlay .v274tr{
+    background:#fff!important;
+    color:#111!important;
+    border:1px solid #bbb!important;
+    box-shadow:none!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v274section{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay h2,
+  body.jb-print-analysis #v274AnalysisOverlay h3,
+  body.jb-print-analysis #v274AnalysisOverlay b,
+  body.jb-print-analysis #v274AnalysisOverlay strong{
+    color:#111!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v283efftop .strong,
+  body.jb-print-analysis #v274AnalysisOverlay .v283statr .ok{
+    color:#176b4e!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v283efftop .mid{
+    color:#856300!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v283efftop .weak,
+  body.jb-print-analysis #v274AnalysisOverlay .v283statr .er,
+  body.jb-print-analysis #v274AnalysisOverlay .v283priority strong{
+    color:#a32846!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v283effsub,
+  body.jb-print-analysis #v274AnalysisOverlay .v283formula,
+  body.jb-print-analysis #v274AnalysisOverlay .v283courtlegend,
+  body.jb-print-analysis #v274AnalysisOverlay .v283pairfoot,
+  body.jb-print-analysis #v274AnalysisOverlay small{
+    color:#555!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v283statwrap,
+  body.jb-print-analysis #v274AnalysisOverlay .v274compare{
+    overflow:visible!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v283stattable,
+  body.jb-print-analysis #v274AnalysisOverlay .v274table{
+    min-width:0!important;
+    width:100%!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v283court{
+    background:#fff!important;
+    border:1px solid #bbb!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v283meter,
+  body.jb-print-analysis #v274AnalysisOverlay .v274bar{
+    background:#e8e8e8!important;
+    border:1px solid #ccc!important;
+  }
+
+  body.jb-print-analysis #v274AnalysisOverlay .v283chart svg text{
+    fill:#111!important;
+  }
+}
+
+/* Evita que a tela do Registro Rápido entre em impressões de relatório individual/evolução */
+@media print{
+  body.jb-print-individual #v264,
+  body.jb-print-individual #v275Extras,
+  body.jb-print-individual #v282ServeZones,
+  body.jb-print-individual #v267Bottom,
+  body.jb-print-individual #v276ResetStats,
+  body.jb-print-evolution #v264,
+  body.jb-print-evolution #v275Extras,
+  body.jb-print-evolution #v282ServeZones,
+  body.jb-print-evolution #v267Bottom,
+  body.jb-print-evolution #v276ResetStats{
+    display:none!important;
+  }
+}
+</style>
+
+<script id="jb-v286-print-only-analysis-js">
+(function(){
+  window.jbPrintAnalysisOnly=function(){
+    document.body.classList.remove(
+      'jb-print-individual',
+      'jb-print-evolution',
+      'jb-print-analysis'
+    );
+    document.body.classList.add('jb-print-analysis');
+
+    const overlay=document.getElementById('v274AnalysisOverlay');
+    if(overlay)overlay.classList.add('open');
+
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>window.print());
+    });
+  };
+
+  function cleanupPrintMode(){
+    document.body.classList.remove('jb-print-analysis');
+  }
+
+  window.addEventListener('afterprint',cleanupPrintMode);
+
+  /* Safari/iPad às vezes não dispara afterprint imediatamente */
+  window.addEventListener('focus',()=>{
+    setTimeout(cleanupPrintMode,300);
+  });
 })();
 </script>
 
