@@ -555,7 +555,18 @@ function add(k,btn,type,label){
  const playerBefore=current;
 
  state.players[current].stats[k]++;
- const hist={type:'stat',player:current,key:k,at:Date.now()};
+ const hist={
+ type:'stat',
+ player:current,
+ key:k,
+ label:label||k,
+ feedbackType:type||'',
+ at:Date.now(),
+ scoreSnapshot:{
+   games:[...(state.score?.games||[0,0])],
+   points:[...(state.score?.points||[0,0])]
+ }
+};
 
  const target=null; /* V28.4: registros rápidos NÃO alteram o placar automaticamente */
  if(target!==null && !state.finished){
@@ -682,7 +693,7 @@ function point(t){
  }
  const s=state.score;
 
- /* V29.11: guarda o contexto ANTES do ponto manual */
+ /* V30.0: guarda o contexto ANTES do ponto manual */
  const before={
    games:[...s.games],
    points:[...s.points],
@@ -706,7 +717,7 @@ function point(t){
    autoFinish();
  }
 
- /* V29.11: registra também os pontos MANUAIS no motor inteligente.
+ /* V30.0: registra também os pontos MANUAIS no motor inteligente.
     Isso alimenta 40x40 e break points convertidos. */
  const after={
    games:[...s.games],
@@ -714,6 +725,16 @@ function point(t){
    servingTeam:Number(state.servingTeam||0),
    format:before.format
  };
+ if(!Array.isArray(state.matchTimeline))state.matchTimeline=[];
+ state.matchTimeline.push({
+   type:'point',
+   at:Date.now(),
+   scoringTeam:Number(t),
+   player:typeof current==='number'?current:null,
+   before:JSON.parse(JSON.stringify(before)),
+   after:JSON.parse(JSON.stringify(after))
+ });
+ if(state.matchTimeline.length>500)state.matchTimeline=state.matchTimeline.slice(-500);
  if(typeof window.jbV22RecordPoint==='function'){
    window.jbV22RecordPoint({
      athleteIndex:null,
@@ -5426,7 +5447,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v287-print-hard-fix-css">
-/* V29.11 — nunca imprimir a interface operacional do Scout */
+/* V30.0 — nunca imprimir a interface operacional do Scout */
 @media print{
   header.app-only,
   main.app-only,
@@ -5870,7 +5891,7 @@ if('serviceWorker' in navigator){
 
 
 <style id="jb-v292-analysis-header-fix-css">
-/* V29.11 — corrige a faixa/cabeçalho da tela de Análise */
+/* V30.0 — corrige a faixa/cabeçalho da tela de Análise */
 body.jb-v29-app #v274AnalysisOverlay{
   position:fixed!important;
   inset:58px 0 70px 0!important;
@@ -6094,7 +6115,7 @@ body.jb-v29-app #v274AnalysisOverlay .v274actions{
 
 
 <style id="jb-v294-40x40-fund-css">
-/* V29.11 — 40x40 passa a fazer parte do painel principal de fundamentos */
+/* V30.0 — 40x40 passa a fazer parte do painel principal de fundamentos */
 body.v20-match #v275Extras .v275special:first-child{
   display:none!important;
 }
@@ -6149,7 +6170,7 @@ body.v20-match .v264row:has(.v264name){
 
 
 <style id="jb-v295-analysis-scroll-fix-css">
-/* V29.11 — a Análise rola sozinha; o Modo Jogo fica travado atrás */
+/* V30.0 — a Análise rola sozinha; o Modo Jogo fica travado atrás */
 html.jb-analysis-open,
 body.jb-analysis-open{
   overflow:hidden!important;
@@ -6404,7 +6425,7 @@ body.jb-analysis-open #v274AnalysisOverlay *{
 
 
 <style id="jb-v297-analysis-scroll-lock-css">
-/* V29.11 — bloqueio real da página por trás da Análise */
+/* V30.0 — bloqueio real da página por trás da Análise */
 html.jb-v297-analysis-lock{
   overflow:hidden!important;
   height:100%!important;
@@ -6565,7 +6586,7 @@ body.jb-v297-analysis-lock #v274AnalysisOverlay *{
 
 
 <style id="jb-v298-analysis-header-static-css">
-/* V29.11 — remove de vez o comportamento sticky do cabeçalho da Análise */
+/* V30.0 — remove de vez o comportamento sticky do cabeçalho da Análise */
 body.jb-v29-app #v274AnalysisOverlay.open .v274top,
 body.jb-v29-app #v274AnalysisOverlay .v274top,
 #v274AnalysisOverlay.open .v274top,
@@ -6691,7 +6712,7 @@ body.jb-v29-app #v274AnalysisOverlay #v274Players{
 </script>
 
 
-<!-- JB V29.11 — ícones do rodapé transferidos para navegação superior -->
+<!-- JB V30.0 — ícones do rodapé transferidos para navegação superior -->
 <style id="jb-v2911-nav-icons">
 /* Rodapé antigo removido: evita cobrir os botões do Registro Rápido */
 #jbV29Bottom{display:none!important}
@@ -6745,10 +6766,33 @@ body.v20-analysis #v20Analysis{
      const h=document.createElement('button');
      h.type='button';h.id='jbV2911History';
      h.title='Histórico / Evolução';h.setAttribute('aria-label','Histórico / Evolução');
-     h.onclick=function(){
-       const b=document.getElementById('jbV25HistoryBtn');
-       if(b)b.click();
-       else if(typeof window.jbV26OpenReport==='function')window.jbV26OpenReport(typeof current==='number'?current:0);
+     h.onclick=function(e){
+       e.preventDefault();
+       e.stopPropagation();
+
+       /* O histórico pertence à área de análise; ativa-a internamente
+          e abre o painel no MESMO toque. */
+       const analysisBtn=document.getElementById('v20Analysis');
+       if(analysisBtn && !document.body.classList.contains('v20-analysis')){
+         analysisBtn.click();
+       }
+
+       requestAnimationFrame(function(){
+         requestAnimationFrame(function(){
+           const b=document.getElementById('jbV25HistoryBtn');
+           if(b){
+             b.click();
+             return;
+           }
+           if(typeof window.jbV25OpenHistory==='function'){
+             window.jbV25OpenHistory(typeof current==='number'?current:0);
+             return;
+           }
+           if(typeof window.jbV26OpenReport==='function'){
+             window.jbV26OpenReport(typeof current==='number'?current:0);
+           }
+         });
+       });
      };
      const anchor=config||analysis;
      anchor.parentNode.insertBefore(h,anchor.nextSibling);
@@ -6757,6 +6801,223 @@ body.v20-analysis #v20Analysis{
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(install,80),{once:true});
  else setTimeout(install,80);
  new MutationObserver(()=>install()).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+
+
+<style id="jb-v30-smart-css">
+#jbV30Coach{
+ display:none;position:fixed;inset:58px 0 0;z-index:9996;
+ background:#071116;color:#f4f8f9;overflow:auto;padding:14px 14px 30px
+}
+#jbV30Coach.open{display:block!important}
+.v30wrap{max-width:1220px;margin:0 auto}
+.v30top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.v30top h2{margin:0;font-size:19px}.v30top small{color:#84979f}
+.v30close{min-height:42px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#10212a;color:#fff;padding:8px 12px;font-weight:900}
+.v30tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.v30tabs button{min-height:38px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:#0d1b23;color:#dce5e8;padding:7px 11px;font-size:9px;font-weight:900}
+.v30tabs button.on{background:#cfff20;color:#071014;border-color:#cfff20}
+.v30grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.v30grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.v30card{background:linear-gradient(145deg,#0f2028,#09171d);border:1px solid rgba(255,255,255,.075);border-radius:14px;padding:11px}
+.v30card small{display:block;color:#82959d;font-size:8px;font-weight:900}.v30card b{display:block;font-size:18px;margin-top:4px}
+.v30score{font-size:30px!important;color:#cfff20}
+.v30sec{margin-top:13px}.v30sec h3{font-size:10px;color:#cfff20;letter-spacing:.09em;margin:0 0 7px}
+.v30heat{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.v30heatitem{border-radius:12px;padding:9px;border:1px solid rgba(255,255,255,.07);background:#0d1b23}
+.v30heatitem strong{display:block;font-size:11px}.v30heatitem span{display:block;font-size:17px;font-weight:950;margin-top:4px}
+.v30heatitem.good span{color:#2ee6a6}.v30heatitem.mid span{color:#ffc75a}.v30heatitem.bad span{color:#ff7182}
+.v30heatitem small{display:block;color:#82959d;font-size:8px;margin-top:3px}
+.v30situ{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.v30timeline{display:flex;flex-direction:column;gap:6px}
+.v30event{display:grid;grid-template-columns:84px 1fr auto;gap:8px;align-items:center;background:#0d1b23;border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:8px}
+.v30event time{font-size:8px;color:#82959d}.v30event b{font-size:10px}.v30event small{display:block;color:#879aa2;font-size:8px;margin-top:2px}
+.v30delete{border:1px solid rgba(255,113,130,.35);background:rgba(255,113,130,.08);color:#ff9daf;border-radius:8px;padding:6px 8px;font-size:8px;font-weight:900}
+.v30compare{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.v30delta.up{color:#2ee6a6}.v30delta.down{color:#ff7182}.v30delta.flat{color:#ffc75a}
+.v30summary{border:1px solid rgba(207,255,32,.22);background:rgba(207,255,32,.06);border-radius:14px;padding:12px}
+.v30summary p{margin:5px 0;font-size:10px;color:#d8e1e4}
+.v30players{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.v30playerbtn{min-height:54px;border-radius:12px;border:1px solid rgba(255,255,255,.09);background:#0d1b23;color:#fff;font-weight:950}
+.v30playerbtn.on{background:#cfff20;color:#071014;border-color:#cfff20}
+#jbV30CoachBtn{width:64px!important;min-width:64px!important;height:54px!important;padding:0!important;border-radius:14px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:0!important}
+#jbV30CoachBtn::before{content:"🧑‍🏫";font-size:24px}
+@media(max-width:850px){
+ .v30grid4,.v30players{grid-template-columns:repeat(2,1fr)}
+ .v30grid2,.v30heat,.v30situ,.v30compare{grid-template-columns:1fr}
+}
+@media print{#jbV30Coach,#jbV30CoachBtn{display:none!important}}
+</style>
+
+<div id="jbV30Coach">
+ <div class="v30wrap">
+  <div class="v30top">
+   <div><h2>JB TRACKER • SCOUT INTELIGENTE</h2><small>Timeline • mapa técnico • comparação • índice JB • dashboard do treinador</small></div>
+   <button class="v30close" id="jbV30Close">← Voltar</button>
+  </div>
+  <div class="v30players" id="jbV30Players"></div>
+  <div class="v30tabs">
+   <button data-tab="overview" class="on">Visão geral</button>
+   <button data-tab="timeline">Timeline</button>
+   <button data-tab="situations">Situações</button>
+   <button data-tab="compare">Comparação</button>
+   <button data-tab="coach">Treinador</button>
+  </div>
+  <div id="jbV30Content"></div>
+ </div>
+</div>
+
+<script id="jb-v30-smart-js">
+(function(){
+const HIST='jb_scout_history_v283';
+const F=[
+ ['Ace','ace','aceErro'],['Smash','smashAcerto','smashErro'],['Saque','primeiroSaque','erroSaque'],
+ ['Voleio Forehand','voleiForehandAcerto','voleiForehandErro'],['Voleio Backhand','voleiBackhandAcerto','voleiBackhandErro'],
+ ['Defesa Forehand','defesaForehandAcerto','defesaForehandErro'],['Defesa Backhand','defesaBackhandAcerto','defesaBackhandErro'],
+ ['Gancho','ganchoAcerto','ganchoErro'],['Acelerada','aceleradaAcerto','aceleradaErro'],['Curta','curtaAcerto','curtaErro'],
+ ['Devolução Forehand','devolucaoForehandAcerto','devolucaoForehandErro'],['Devolução Backhand','devolucaoBackhandAcerto','devolucaoBackhandErro'],
+ ['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],['Rainbow','rainbowAcerto','rainbowErro'],
+ ['Lob','lobAcerto','lobErro'],['Anômalo','anomaloAcerto','anomaloErro'],['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro'],
+ ['40x40','quarentaGanho','quarentaPerdido']
+];
+let player=0,tab='overview';
+const $=q=>document.querySelector(q),pc=(a,b)=>b?Math.round(a*100/b):0,esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+function stats(i){return state.players[i]?.stats||{}}
+function fundamentals(i){
+ const x=stats(i);
+ return F.map(([label,okK,erK])=>{
+   const ok=+(x[okK]||0),er=+(x[erK]||0),t=ok+er;
+   return{label,ok,er,total:t,pct:pc(ok,t),err:pc(er,t)}
+ });
+}
+function totals(fs){const ok=fs.reduce((n,f)=>n+f.ok,0),er=fs.reduce((n,f)=>n+f.er,0),t=ok+er;return{ok,er,total:t,pct:pc(ok,t),err:pc(er,t)}}
+function jbIndex(i){
+ const fs=fundamentals(i),t=totals(fs),x=stats(i);
+ const winners=+(x.winner||0),forty=pc(+(x.quarentaGanho||0),+(x.quarentaGanho||0)+ +(x.quarentaPerdido||0));
+ const bp=pc(+(x.breakPointConverted||0),+(x.breakPointOpportunities||0));
+ const volume=Math.min(100,t.total*2);
+ return Math.max(0,Math.min(100,Math.round(t.pct*.55+forty*.15+bp*.15+Math.min(100,winners*10)*.10+volume*.05)));
+}
+function bestWorst(i){
+ const used=fundamentals(i).filter(f=>f.total>0);
+ const best=used.length?[...used].sort((a,b)=>b.pct-a.pct||b.total-a.total)[0]:null;
+ const worst=used.length?[...used].sort((a,b)=>b.err-a.err||b.total-a.total)[0]:null;
+ return{best,worst};
+}
+function history(i){
+ try{
+  const db=JSON.parse(localStorage.getItem(HIST)||'{}')||{};
+  return db[state.players[i].profileId||('p'+i)]||[];
+ }catch(e){return[]}
+}
+function metricFromSession(sess,label){return +(sess.metrics?.[label]||0)}
+function avgLast5(i,label){
+ const a=history(i).slice(-5); if(!a.length)return null;
+ return Math.round(a.reduce((n,s)=>n+metricFromSession(s,label),0)/a.length);
+}
+function classify(v){return v>=70?'good':v>=50?'mid':'bad'}
+function playerButtons(){
+ const h=$('#jbV30Players');if(!h)return;
+ h.innerHTML=state.players.map((p,i)=>'<button class="v30playerbtn '+(i===player?'on':'')+'" data-i="'+i+'">'+esc(p.name)+'</button>').join('');
+ h.querySelectorAll('button').forEach(b=>b.onclick=()=>{player=+b.dataset.i;playerButtons();render()});
+}
+function overview(){
+ const fs=fundamentals(player),t=totals(fs),bw=bestWorst(player),idx=jbIndex(player),x=stats(player);
+ const fortyW=+(x.quarentaGanho||0),fortyL=+(x.quarentaPerdido||0),bp=+(x.breakPointConverted||0),opp=+(x.breakPointOpportunities||0);
+ return '<div class="v30grid4">'+
+   '<div class="v30card"><small>ÍNDICE JB</small><b class="v30score">'+idx+'</b></div>'+
+   '<div class="v30card"><small>EFICIÊNCIA GERAL</small><b>'+t.pct+'%</b></div>'+
+   '<div class="v30card"><small>40x40</small><b>'+fortyW+' / '+fortyL+'</b></div>'+
+   '<div class="v30card"><small>BREAK POINTS</small><b>'+bp+' / '+opp+'</b></div>'+
+ '</div>'+
+ '<div class="v30sec"><h3>MAPA DE DESEMPENHO</h3><div class="v30heat">'+fs.map(f=>'<div class="v30heatitem '+classify(f.pct)+'"><strong>'+f.label+'</strong><span>'+f.pct+'%</span><small>'+f.ok+' acertos • '+f.er+' erros</small></div>').join('')+'</div></div>'+
+ '<div class="v30sec"><h3>RESUMO TÉCNICO AUTOMÁTICO</h3><div class="v30summary">'+summaryHTML(i=player)+'</div></div>';
+}
+function summaryHTML(i){
+ const fs=fundamentals(i),bw=bestWorst(i),idx=jbIndex(i),t=totals(fs),x=stats(i);
+ const p=[...fs].filter(f=>f.total>0).sort((a,b)=>b.err-a.err||b.total-a.total).slice(0,3);
+ return '<p><b>Índice JB:</b> '+idx+'/100 • eficiência geral '+t.pct+'%.</p>'+
+ '<p><b>Ponto forte:</b> '+(bw.best?bw.best.label+' '+bw.best.pct+'%':'sem dados suficientes')+'.</p>'+
+ '<p><b>Atenção:</b> '+(bw.worst?bw.worst.label+' '+bw.worst.err+'% de erro':'sem dados suficientes')+'.</p>'+
+ '<p><b>Decisivos:</b> 40x40 '+(x.quarentaGanho||0)+' ganhos / '+(x.quarentaPerdido||0)+' perdidos • Break '+(x.breakPointConverted||0)+'/'+(x.breakPointOpportunities||0)+'.</p>'+
+ '<p><b>Próximo treino:</b> '+(p.length?p.map(x=>x.label).join(', '):'registre mais ações para gerar prioridade')+'.</p>';
+}
+function situationStats(){
+ const x=stats(player);
+ const groups=[
+  ['Saque',['primeiroSaque','ace'],['erroSaque','aceErro']],
+  ['Devolução',['devolucaoForehandAcerto','devolucaoBackhandAcerto'],['devolucaoForehandErro','devolucaoBackhandErro']],
+  ['Ataque',['smashAcerto','voleiForehandAcerto','voleiBackhandAcerto','ganchoAcerto','aceleradaAcerto'],['smashErro','voleiForehandErro','voleiBackhandErro','ganchoErro','aceleradaErro']],
+  ['Defesa',['defesaForehandAcerto','defesaBackhandAcerto','lobAcerto','rainbowAcerto'],['defesaForehandErro','defesaBackhandErro','lobErro','rainbowErro']],
+  ['40x40',['quarentaGanho'],['quarentaPerdido']],
+  ['Break Points',['breakPointConverted'],[]]
+ ];
+ return '<div class="v30situ">'+groups.map(([n,oks,ers])=>{const ok=oks.reduce((a,k)=>a+(+x[k]||0),0),er=ers.reduce((a,k)=>a+(+x[k]||0),0),t=ok+er;return '<div class="v30card"><small>'+n.toUpperCase()+'</small><b>'+pc(ok,t)+'%</b><small>'+ok+' positivos • '+er+' negativos</small></div>'}).join('')+'</div>';
+}
+function timeline(){
+ const entries=[];
+ (state.matchTimeline||[]).forEach((e,idx)=>entries.push({kind:'point',at:e.at,idx,e}));
+ (state.statHistory||[]).forEach((e,idx)=>{if(e.type==='stat')entries.push({kind:'stat',at:e.at||0,idx,e})});
+ entries.sort((a,b)=>b.at-a.at);
+ if(!entries.length)return '<div class="v30card">Ainda não há eventos registrados nesta partida.</div>';
+ return '<div class="v30timeline">'+entries.slice(0,250).map(it=>{
+  if(it.kind==='point'){
+   const e=it.e,team=e.scoringTeam===0?'Dupla A':'Dupla B';
+   const sc=(e.after?.games||[0,0]).join(' × ');
+   return '<div class="v30event"><time>'+new Date(it.at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+'</time><div><b>Ponto • '+team+'</b><small>Games '+sc+' • aluno selecionado '+(e.player!=null?esc(state.players[e.player]?.name):'—')+'</small></div><span></span></div>';
+  }
+  const e=it.e,pname=state.players[e.player]?.name||'Aluno';
+  return '<div class="v30event"><time>'+new Date(it.at||Date.now()).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+'</time><div><b>'+esc(pname)+' • '+esc(e.label||e.key)+'</b><small>Registro rápido</small></div><button class="v30delete" data-stat="'+it.idx+'">Excluir</button></div>';
+ }).join('')+'</div>';
+}
+function compare(){
+ const fs=fundamentals(player);
+ const rows=fs.filter(f=>f.total>0).map(f=>{
+   const prev=avgLast5(player,f.label),d=prev==null?null:f.pct-prev;
+   const cls=d==null?'flat':d>0?'up':d<0?'down':'flat';
+   return '<div class="v30card"><small>'+f.label.toUpperCase()+'</small><b>'+f.pct+'%</b><small>Últimos 5: '+(prev==null?'sem histórico':prev+'%')+'</small><b class="v30delta '+cls+'">'+(d==null?'—':(d>0?'+':'')+d+' pp')+'</b></div>';
+ });
+ return '<div class="v30compare">'+(rows.length?rows.join(''):'<div class="v30card">Registre fundamentos para comparar.</div>')+'</div>';
+}
+function coach(){
+ return '<div class="v30grid4">'+state.players.map((p,i)=>{
+  const bw=bestWorst(i),h=history(i);
+  return '<div class="v30card"><small>'+esc(p.name).toUpperCase()+'</small><b class="v30score">'+jbIndex(i)+'</b><small>Índice JB</small><small>'+h.length+' partidas salvas</small><small>Forte: '+(bw.best?bw.best.label:'—')+'</small><small>Prioridade: '+(bw.worst?bw.worst.label:'—')+'</small></div>';
+ }).join('')+'</div>'+
+ '<div class="v30sec"><h3>RESUMO DO TREINADOR</h3><div class="v30grid2">'+state.players.map((p,i)=>'<div class="v30summary"><b>'+esc(p.name)+'</b>'+summaryHTML(i)+'</div>').join('')+'</div></div>';
+}
+function render(){
+ const h=$('#jbV30Content'); if(!h)return;
+ h.innerHTML=tab==='timeline'?timeline():tab==='situations'?situationStats():tab==='compare'?compare():tab==='coach'?coach():overview();
+ h.querySelectorAll('.v30delete').forEach(b=>b.onclick=()=>{
+   const idx=+b.dataset.stat,e=state.statHistory[idx];
+   if(!e||e.type!=='stat')return;
+   const v=+(state.players[e.player].stats[e.key]||0);
+   if(v>0)state.players[e.player].stats[e.key]=v-1;
+   state.statHistory.splice(idx,1);
+   try{localStorage.setItem('jb_scout_pro_v2',JSON.stringify(state))}catch(e){}
+   if(typeof render==='function')try{window.render()}catch(e){}
+   render();
+ });
+}
+function open(){player=typeof current==='number'?current:0;playerButtons();render();$('#jbV30Coach').classList.add('open')}
+function close(){$('#jbV30Coach').classList.remove('open')}
+function ensureButton(){
+ if($('#jbV30CoachBtn'))return;
+ const ref=$('#jbV2911History')||$('#v278ConfigBtn')||$('#v20Analysis');
+ if(!ref||!ref.parentNode)return;
+ const b=document.createElement('button');b.id='jbV30CoachBtn';b.type='button';b.title='Scout Inteligente';b.setAttribute('aria-label','Scout Inteligente');b.onclick=open;
+ ref.parentNode.insertBefore(b,ref.nextSibling);
+}
+function install(){
+ ensureButton();
+ $('#jbV30Close').onclick=close;
+ document.querySelectorAll('.v30tabs button').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;document.querySelectorAll('.v30tabs button').forEach(x=>x.classList.toggle('on',x===b));render()});
+ const obs=new MutationObserver(ensureButton);obs.observe(document.body,{subtree:true,childList:true});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 </script>
 
