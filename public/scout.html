@@ -960,7 +960,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V27.4</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V27.5</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1130,7 +1130,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V27.4</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V27.5</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -2267,7 +2267,7 @@ window.jbV25SaveSession=function(){
 function avg(a,k){return a.length?Math.round(a.reduce((n,s)=>n+(+(s.metrics?.[k]||0)),0)/a.length):0}
 function trend(c,p){let d=c-p;return d>1?`<span class="v265trend up">↑ +${d} pp</span>`:d<-1?`<span class="v265trend down">↓ ${d} pp</span>`:`<span class="v265trend flat">→ ${d} pp</span>`}
 function showEvolution(i){evoPlayer=Number.isFinite(i)?i:0;renderEvolution();$('#v265Evolution').classList.add('open')}
-function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V27.4 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
+function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V27.5 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
 let vals=F.map(([id,label])=>({id,label,cur:+(cur.metrics?.[id]||0),first:+(first.metrics?.[id]||0),avg:avg(a,id)})),pri=[...vals].map(v=>({...v,need:100-v.cur})).sort((x,y)=>y.need-x.need).slice(0,5);
 h.innerHTML=`<div class="v265hero"><div class="v265card"><small>ALUNO</small><b>${esc(p.name)}</b></div><div class="v265card"><small>SESSÕES</small><b>${a.length}</b></div><div class="v265card"><small>PRIMEIRA</small><b>${new Date(first.at).toLocaleDateString('pt-BR')}</b></div><div class="v265card"><small>ATUAL</small><b>${new Date(cur.at).toLocaleDateString('pt-BR')}</b></div></div><div class="v265sec"><h3>EVOLUÇÃO DOS 14 FUNDAMENTOS</h3><div class="v265fund">${vals.map(v=>`<div class="v265row"><div class="v265rowtop"><b>${v.label}</b>${trend(v.cur,v.first)}</div><div class="v265counts"><span>Inicial ${v.first}%</span><span>Atual ${v.cur}% • média ${v.avg}%</span></div><div class="v265bar v265ok"><i style="width:${v.cur}%"></i></div></div>`).join('')}</div></div><div class="v265sec"><h3>PRIORIDADES ATUAIS</h3><div class="v265priority">${pri.map((v,j)=>`<div class="v265card"><small>${j+1}ª PRIORIDADE</small><b>${v.label}</b><b class="v265need">${v.need}%</b><small>necessidade de treino</small></div>`).join('')}</div></div><div class="v265sec"><h3>SESSÕES</h3><div class="v265table"><div class="v265tablein"><div class="v265thead"><span>Data</span>${F.map(x=>`<span>${x[1]}</span>`).join('')}</div>${a.slice().reverse().map(x=>`<div class="v265tr"><strong>${new Date(x.at).toLocaleDateString('pt-BR')}</strong>${F.map(f=>`<b>${+(x.metrics?.[f[0]]||0)}%</b>`).join('')}</div>`).join('')}</div></div></div>`}
 window.jbV26OpenReport=showEvolution;
@@ -2282,7 +2282,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v266-force-css">
-/* V27.4 — força a interface nova e remove entradas antigas */
+/* V27.5 — força a interface nova e remove entradas antigas */
 body.v20-match #v263,
 body.v20-match #jbV262Fast,
 body.v20-match #jbV261Guide,
@@ -2304,7 +2304,7 @@ body.v20-match #v264{display:block!important}
 }
 @media print{#v266Version,#v266ReportBar{display:none!important}}
 </style>
-<div id="v266Version">V27.4 • 14 FUNDAMENTOS</div>
+<div id="v266Version">V27.5 • 14 FUNDAMENTOS</div>
 <script id="jb-v266-force-js">
 (function(){
  function install(){
@@ -2330,7 +2330,7 @@ body.v20-match #v264{display:block!important}
 
 
 <style id="jb-v267-clean-game-css">
-/* V27.4 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
+/* V27.5 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
 body.v20-match .main-grid{display:block!important}
 body.v20-match .tracker{max-width:1180px!important;width:100%!important;margin:0 auto!important}
 
@@ -2496,7 +2496,7 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
  <button type="button" id="v267Sound" class="sound">🔊 SOM ATIVADO</button>
  <button type="button" id="v267Finish" class="finish">⚑ FINALIZAR JOGO</button>
 </div>
-<div id="v267Version">V27.4 • JOGO 14F</div>
+<div id="v267Version">V27.5 • JOGO 14F</div>
 
 <script id="jb-v267-clean-game-js">
 (function(){
@@ -2554,7 +2554,7 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
 
 
 <style id="jb-v268-final-force-css">
-/* V27.4: estado inicial do Scout é SEMPRE Modo Jogo */
+/* V27.5: estado inicial do Scout é SEMPRE Modo Jogo */
 body.v20-match .category-tabs,
 body.v20-match .action-zone,
 body.v20-match #jbV262Fast,
@@ -2589,7 +2589,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 }
 @media print{#v268Version{display:none!important}}
 </style>
-<div id="v268Version">V27.4 • MODO JOGO</div>
+<div id="v268Version">V27.5 • MODO JOGO</div>
 <script id="jb-v268-final-force-js">
 (function(){
  const MODE_KEY='jb_scout_v20_mode';
@@ -2645,7 +2645,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v269-print-fix-css">
-/* V27.4 — camada final de impressão sem conflito com relatórios antigos */
+/* V27.5 — camada final de impressão sem conflito com relatórios antigos */
 @page{size:A4 portrait;margin:10mm}
 
 @media print{
@@ -2874,7 +2874,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v270-prioridades-css">
-/* V27.4 — prioridades completas com os 14 fundamentos */
+/* V27.5 — prioridades completas com os 14 fundamentos */
 .v270-priority-all{
  display:grid;
  grid-template-columns:repeat(2,minmax(0,1fr));
@@ -3077,7 +3077,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v271-footer-fix-css">
-/* V27.4 — corrige sobreposição dos controles no rodapé */
+/* V27.5 — corrige sobreposição dos controles no rodapé */
 
 /* Neutraliza barras/botões antigos fixos ou sticky que aparecem por cima */
 body.v20-match #jbV20Bar,
@@ -3212,7 +3212,7 @@ body.v20-match .bottom-fixed{
 
 
 <style id="jb-v272-analysis-fix-css">
-/* V27.4 — separação real entre Modo Jogo e Modo Análise */
+/* V27.5 — separação real entre Modo Jogo e Modo Análise */
 
 /* MODO JOGO */
 body.v20-match #v264{display:block!important}
@@ -3367,7 +3367,7 @@ body.v20-analysis .tracker{
 
 
 <style id="jb-v273-analysis-dashboard-css">
-/* V27.4 — Modo Análise dedicado, separado do Modo Jogo */
+/* V27.5 — Modo Análise dedicado, separado do Modo Jogo */
 #v273Analysis{display:none;max-width:1180px;margin:0 auto;padding:4px 0 24px}
 body.v20-analysis #v273Analysis{display:block!important}
 
@@ -3405,7 +3405,7 @@ body.v20-analysis #jbV20Recent{display:none!important}
 <div id="v273Analysis">
  <div class="v273title">
    <div><h2>ANÁLISE DO JOGO</h2><small>Estatísticas dos 14 fundamentos e prioridades de treino</small></div>
-   <span class="badge">V27.4 • ANÁLISE</span>
+   <span class="badge">V27.5 • ANÁLISE</span>
  </div>
  <div class="v273players" id="v273Players"></div>
  <div id="v273Content"></div>
@@ -3627,6 +3627,195 @@ function install(){
  },true);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+
+
+<style id="jb-v275-extra-stats-css">
+/* V27.5 — rodapé sem sobreposição + 40x40 e Winner */
+
+/* Remove completamente a barra legada fixa que causava a sobreposição */
+body.v20-match #jbV20Last,
+body.v20-match #jbV20Recent{
+  display:none!important;
+}
+
+/* Rodapé oficial do modo jogo */
+body.v20-match #v267Bottom{
+  display:grid!important;
+  position:static!important;
+  width:100%!important;
+  max-width:1180px!important;
+  margin:14px auto 24px!important;
+  padding:0!important;
+  inset:auto!important;
+  transform:none!important;
+  z-index:1!important;
+}
+body.v20-match #v264{
+  padding-bottom:0!important;
+}
+body.v20-match .tracker{
+  padding-bottom:24px!important;
+}
+
+/* Cards extras */
+#v275Extras{
+  display:none;
+  max-width:1180px;
+  margin:8px auto 0;
+}
+body.v20-match #v275Extras{display:grid!important}
+.v275extras{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.v275special{
+  background:linear-gradient(145deg,#111f27,#0b171d);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:14px;
+  padding:9px;
+}
+.v275special .title{
+  font-size:10px;
+  font-weight:950;
+  color:#f1f5f6;
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+.v275pair{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+}
+.v275btn{
+  min-height:55px;
+  border-radius:10px;
+  font-size:9px;
+  font-weight:950;
+  padding:7px 4px;
+}
+.v275btn.good{
+  background:linear-gradient(145deg,rgba(78,221,183,.20),rgba(36,150,125,.10));
+  border:1px solid rgba(65,222,183,.38);
+  color:#81f3d2;
+}
+.v275btn.bad{
+  background:linear-gradient(145deg,rgba(229,95,128,.22),rgba(151,56,83,.12));
+  border:1px solid rgba(235,104,136,.38);
+  color:#ff9eb5;
+}
+.v275btn.winner{
+  width:100%;
+  background:linear-gradient(145deg,#cfff20,#aee813);
+  border:1px solid #cfff20;
+  color:#071014;
+}
+.v275btn:active{transform:scale(.97)}
+
+.v274row.v275specialstat .v274pct{color:#cfff20}
+
+@media(max-width:650px){
+  .v275extras{grid-template-columns:1fr}
+}
+</style>
+
+<div id="v275Extras" class="v275extras">
+  <div class="v275special">
+    <div class="title">15. 40x40</div>
+    <div class="v275pair">
+      <button type="button" class="v275btn good" id="v27540Win">✓ GANHO<small> +1</small></button>
+      <button type="button" class="v275btn bad" id="v27540Lost">✕ PERDIDO<small> +1</small></button>
+    </div>
+  </div>
+  <div class="v275special">
+    <div class="title">16. WINNER</div>
+    <button type="button" class="v275btn winner" id="v275Winner">★ REGISTRAR WINNER +1</button>
+  </div>
+</div>
+
+<script id="jb-v275-extra-stats-js">
+(function(){
+  const $=q=>document.querySelector(q);
+  function flashLast(label){
+    const el=document.getElementById('v264last');
+    if(el)el.innerHTML='<b>'+state.players[current].name+'</b> • '+label+' registrado';
+  }
+  function installExtras(){
+    const w=$('#v27540Win'), l=$('#v27540Lost'), win=$('#v275Winner');
+
+    if(w)w.onclick=()=>{
+      add('quarentaGanho',w,'good','40x40 ganho');
+      setTimeout(()=>flashLast('40x40 ganho'),25);
+    };
+    if(l)l.onclick=()=>{
+      add('quarentaPerdido',l,'bad','40x40 perdido');
+      setTimeout(()=>flashLast('40x40 perdido'),25);
+    };
+    if(win)win.onclick=()=>{
+      add('winner',win,'good','Winner');
+      setTimeout(()=>flashLast('Winner'),25);
+    };
+
+    /* Insere os cards extras logo após os 14 fundamentos,
+       para o rodapé sempre ficar abaixo e nunca sobrepor. */
+    const board=document.getElementById('v264board');
+    const extras=document.getElementById('v275Extras');
+    if(board && extras && board.parentNode){
+      board.parentNode.insertBefore(extras, board.nextSibling);
+    }
+
+    const footer=document.getElementById('v267Bottom');
+    if(footer && extras && extras.parentNode){
+      extras.parentNode.insertBefore(footer, extras.nextSibling);
+    }
+  }
+
+  /* Acrescenta 40x40 e Winner na tela de análise overlay */
+  function patchAnalysis(){
+    const oldOpenBtn=document.getElementById('v20Analysis');
+    if(!oldOpenBtn)return;
+
+    oldOpenBtn.addEventListener('click',()=>{
+      setTimeout(()=>{
+        const content=document.getElementById('v274Content');
+        if(!content)return;
+        const p=state.players[typeof sel==='number'?sel:(typeof current==='number'?current:0)] || state.players[0];
+        const x=p.stats||{};
+        const ganho=+(x.quarentaGanho||0);
+        const perdido=+(x.quarentaPerdido||0);
+        const total40=ganho+perdido;
+        const pct40=total40?Math.round(ganho*100/total40):0;
+        const winner=+(x.winner||0);
+
+        const fund=document.querySelector('#v274Content .v274fund');
+        if(fund && !fund.querySelector('[data-v275="40x40"]')){
+          fund.insertAdjacentHTML('beforeend',
+            '<div class="v274row v275specialstat" data-v275="40x40">'+
+              '<div class="v274rt"><b>40x40</b><span class="v274pct">'+pct40+'% ganhos</span></div>'+
+              '<div class="v274counts"><span>✓ '+ganho+' ganhos</span><span>✕ '+perdido+' perdidos</span></div>'+
+              '<div class="v274bar"><i style="width:'+pct40+'%"></i></div>'+
+            '</div>'+
+            '<div class="v274row v275specialstat" data-v275="winner">'+
+              '<div class="v274rt"><b>Winner</b><span class="v274pct">'+winner+' total</span></div>'+
+              '<div class="v274counts"><span>★ '+winner+' winners registrados</span><span>Evento positivo</span></div>'+
+              '<div class="v274bar"><i style="width:'+(winner?100:0)+'%"></i></div>'+
+            '</div>'
+          );
+        }
+      },60);
+    },true);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',()=>{
+      installExtras();
+      patchAnalysis();
+    },{once:true});
+  }else{
+    installExtras();
+    patchAnalysis();
+  }
 })();
 </script>
 
