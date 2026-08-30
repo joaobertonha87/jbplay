@@ -618,6 +618,63 @@ function jbV224SwitchServerAfterGame(){
  if(typeof window.jbV22Refresh==='function') window.jbV22Refresh();
 }
 
+
+function jbV296EnsureSpecialStats(){
+ if(!Array.isArray(state.specialTeamStats)){
+   state.specialTeamStats=[{},{}];
+ }
+ state.specialTeamStats=[0,1].map((_,i)=>{
+   const x=state.specialTeamStats[i]||{};
+   return {
+     decisive40Won:Number(x.decisive40Won||0),
+     decisive40Lost:Number(x.decisive40Lost||0),
+     breakPointOpportunities:Number(x.breakPointOpportunities||0),
+     breakPointConverted:Number(x.breakPointConverted||0)
+   };
+ });
+ state.players.forEach(p=>{
+   if(!p.stats)p.stats={};
+   ['decisive40Won','decisive40Lost','breakPointOpportunities','breakPointConverted'].forEach(k=>{
+     const n=Number(p.stats[k]);
+     p.stats[k]=Number.isFinite(n)?n:0;
+   });
+ });
+}
+function jbV296TeamOfPlayer(i){return i<2?0:1}
+function jbV296WouldWinGame(points,team,normal){
+ const p=[Number(points?.[0]||0),Number(points?.[1]||0)];
+ p[team]++;
+ return normal ? (p[team]>=4 && p[team]-p[1-team]>=2) : (p[team]>=4);
+}
+function jbV296RegisterSpecialBeforePoint(scoringTeam,before){
+ jbV296EnsureSpecialStats();
+ const normal=before.format==='normal';
+ const server=Number(before.servingTeam||0);
+ const receiver=1-server;
+ const selectedTeam=jbV296TeamOfPlayer(typeof current==='number'?current:0);
+ const selectedPlayer=state.players[typeof current==='number'?current:0];
+
+ // 40x40 decisivo: No-Ad, placar 3x3 antes do ponto.
+ if(!normal && Number(before.points[0])===3 && Number(before.points[1])===3){
+   state.specialTeamStats[scoringTeam].decisive40Won++;
+   state.specialTeamStats[1-scoringTeam].decisive40Lost++;
+   if(selectedPlayer && selectedTeam===scoringTeam) selectedPlayer.stats.decisive40Won++;
+   if(selectedPlayer && selectedTeam===1-scoringTeam) selectedPlayer.stats.decisive40Lost++;
+ }
+
+ // Break point: a dupla recebedora poderia fechar o game neste ponto.
+ const isBreakOpportunity=jbV296WouldWinGame(before.points,receiver,normal);
+ if(isBreakOpportunity){
+   state.specialTeamStats[receiver].breakPointOpportunities++;
+   if(selectedPlayer && selectedTeam===receiver) selectedPlayer.stats.breakPointOpportunities++;
+
+   if(scoringTeam===receiver){
+     state.specialTeamStats[receiver].breakPointConverted++;
+     if(selectedPlayer && selectedTeam===receiver) selectedPlayer.stats.breakPointConverted++;
+   }
+ }
+}
+
 function point(t){
  if(state.finished){
    state.finished=false;
@@ -626,13 +683,15 @@ function point(t){
  }
  const s=state.score;
 
- /* V29.4: guarda o contexto ANTES do ponto manual */
+ /* V29.6: guarda o contexto ANTES do ponto manual */
  const before={
    games:[...s.games],
    points:[...s.points],
    servingTeam:Number(state.servingTeam||0),
    format:document.getElementById('format')?.value||'noad'
  };
+
+ jbV296RegisterSpecialBeforePoint(Number(t),before);
 
  s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));
  s.points[t]++;
@@ -648,7 +707,7 @@ function point(t){
    autoFinish();
  }
 
- /* V29.4: registra também os pontos MANUAIS no motor inteligente.
+ /* V29.6: registra também os pontos MANUAIS no motor inteligente.
     Isso alimenta 40x40 e break points convertidos. */
  const after={
    games:[...s.games],
@@ -5368,7 +5427,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v287-print-hard-fix-css">
-/* V29.4 — nunca imprimir a interface operacional do Scout */
+/* V29.6 — nunca imprimir a interface operacional do Scout */
 @media print{
   header.app-only,
   main.app-only,
@@ -5812,7 +5871,7 @@ if('serviceWorker' in navigator){
 
 
 <style id="jb-v292-analysis-header-fix-css">
-/* V29.4 — corrige a faixa/cabeçalho da tela de Análise */
+/* V29.6 — corrige a faixa/cabeçalho da tela de Análise */
 body.jb-v29-app #v274AnalysisOverlay{
   position:fixed!important;
   inset:58px 0 70px 0!important;
@@ -6036,7 +6095,7 @@ body.jb-v29-app #v274AnalysisOverlay .v274actions{
 
 
 <style id="jb-v294-40x40-fund-css">
-/* V29.4 — 40x40 passa a fazer parte do painel principal de fundamentos */
+/* V29.6 — 40x40 passa a fazer parte do painel principal de fundamentos */
 body.v20-match #v275Extras .v275special:first-child{
   display:none!important;
 }
@@ -6086,6 +6145,261 @@ body.v20-match .v264row:has(.v264name){
   if(document.readyState==='loading'){
     document.addEventListener('DOMContentLoaded',install,{once:true});
   }else install();
+})();
+</script>
+
+
+<style id="jb-v295-analysis-scroll-fix-css">
+/* V29.6 — a Análise rola sozinha; o Modo Jogo fica travado atrás */
+html.jb-analysis-open,
+body.jb-analysis-open{
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+  touch-action:none!important;
+}
+
+body.jb-v29-app #v274AnalysisOverlay.open{
+  position:fixed!important;
+  top:58px!important;
+  right:0!important;
+  bottom:70px!important;
+  left:0!important;
+  width:auto!important;
+  height:auto!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:12px 14px 28px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-y!important;
+  z-index:9997!important;
+  transform:none!important;
+}
+
+body.jb-v29-app #v274AnalysisOverlay.open .v274wrap{
+  position:relative!important;
+  width:100%!important;
+  max-width:1180px!important;
+  margin:0 auto!important;
+  transform:none!important;
+}
+
+/* Só o cabeçalho da análise fica preso dentro da própria tela */
+body.jb-v29-app #v274AnalysisOverlay.open .v274top{
+  position:sticky!important;
+  top:0!important;
+  z-index:45!important;
+}
+
+/* Impede elementos do Modo Jogo de receber toque durante a análise */
+body.jb-analysis-open #jbV29Bottom{
+  pointer-events:auto!important;
+}
+body.jb-analysis-open .page,
+body.jb-analysis-open main.app-only{
+  pointer-events:none!important;
+}
+
+/* A própria análise continua interativa */
+body.jb-analysis-open #v274AnalysisOverlay,
+body.jb-analysis-open #v274AnalysisOverlay *{
+  pointer-events:auto!important;
+}
+
+@media(max-width:700px){
+  body.jb-v29-app #v274AnalysisOverlay.open{
+    top:58px!important;
+    bottom:70px!important;
+    padding:10px 8px 24px!important;
+  }
+}
+
+@media print{
+  html.jb-analysis-open,
+  body.jb-analysis-open{
+    overflow:visible!important;
+    touch-action:auto!important;
+  }
+  body.jb-v29-app #v274AnalysisOverlay.open{
+    position:static!important;
+    inset:auto!important;
+    overflow:visible!important;
+  }
+}
+</style>
+
+<script id="jb-v295-analysis-scroll-fix-js">
+(function(){
+  const overlay=()=>document.getElementById('v274AnalysisOverlay');
+
+  function lockBackground(){
+    const ov=overlay();
+    if(!ov || !ov.classList.contains('open')) return;
+
+    document.documentElement.classList.add('jb-analysis-open');
+    document.body.classList.add('jb-analysis-open');
+
+    /* neutraliza qualquer scroll antigo aplicado ao documento */
+    document.documentElement.style.setProperty('overflow','hidden','important');
+    document.body.style.setProperty('overflow','hidden','important');
+
+    /* garante que a análise comece no topo quando abrir */
+    if(!ov.dataset.v295Opened){
+      ov.scrollTop=0;
+      ov.dataset.v295Opened='1';
+    }
+  }
+
+  function unlockBackground(){
+    document.documentElement.classList.remove('jb-analysis-open');
+    document.body.classList.remove('jb-analysis-open');
+    document.documentElement.style.removeProperty('overflow');
+    document.body.style.removeProperty('overflow');
+
+    const ov=overlay();
+    if(ov) delete ov.dataset.v295Opened;
+  }
+
+  function syncState(){
+    const ov=overlay();
+    if(ov?.classList.contains('open')) lockBackground();
+    else unlockBackground();
+  }
+
+  function install(){
+    /* Botões que abrem a análise */
+    document.addEventListener('click',e=>{
+      if(e.target.closest('#v20Analysis,[data-screen="analysis"]')){
+        setTimeout(()=>{
+          const ov=overlay();
+          if(ov) ov.scrollTop=0;
+          lockBackground();
+        },60);
+      }
+
+      /* Voltar para jogo */
+      if(e.target.closest('#v274Back,[data-screen="game"]')){
+        setTimeout(unlockBackground,30);
+      }
+    },true);
+
+    /* Detecta abertura/fechamento sem observar a página inteira */
+    const ov=overlay();
+    if(ov){
+      const obs=new MutationObserver(syncState);
+      obs.observe(ov,{attributes:true,attributeFilter:['class']});
+    }
+
+    syncState();
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',install,{once:true});
+  }else install();
+})();
+</script>
+
+
+<style id="jb-v296-special-stats-css">
+.v296specialgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.v296teamcard{background:#0d1b23;border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:10px}
+.v296teamhead{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}
+.v296teamhead b{font-size:11px;color:#cfff20}.v296teamhead span{font-size:8px;color:#879aa2}
+.v296metrics{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.v296metric{background:#09171d;border-radius:10px;padding:8px}
+.v296metric small{display:block;font-size:7px;color:#84979f;font-weight:900}
+.v296metric b{display:block;font-size:17px;margin-top:3px}
+.v296players{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.v296player{border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:7px;font-size:8px;color:#9eafb5}
+.v296player strong{display:block;color:#fff;font-size:9px;margin-bottom:3px}
+.v296note{font-size:8px;color:#84979f;margin-top:7px}
+@media(max-width:760px){.v296specialgrid{grid-template-columns:1fr}.v296players{grid-template-columns:1fr}}
+@media print{.v296teamcard,.v296metric,.v296player{background:#fff!important;color:#111!important;border:1px solid #bbb!important}.v296teamhead b,.v296player strong{color:#111!important}}
+</style>
+<script id="jb-v296-special-stats-js">
+(function(){
+ const pc=(a,b)=>b?Math.round(a*100/b):0;
+ function teamName(t){
+   try{return typeof team==='function'?team(t):(t===0?'Dupla A':'Dupla B')}catch(e){return t===0?'Dupla A':'Dupla B'}
+ }
+ function playerLine(i){
+   const p=state.players[i],x=p.stats||{};
+   const w=Number(x.decisive40Won||0),l=Number(x.decisive40Lost||0);
+   const bp=Number(x.breakPointConverted||0),opp=Number(x.breakPointOpportunities||0);
+   return '<div class="v296player"><strong>'+p.name+'</strong>'+
+     '40x40: '+w+' ganho / '+l+' perdido • '+pc(w,w+l)+'%<br>'+
+     'Break: '+bp+'/'+opp+' • '+pc(bp,opp)+'%</div>';
+ }
+ function html(){
+   if(typeof jbV296EnsureSpecialStats==='function')jbV296EnsureSpecialStats();
+   return '<div class="v296specialgrid">'+[0,1].map(t=>{
+     const x=state.specialTeamStats[t]||{};
+     const w=Number(x.decisive40Won||0),l=Number(x.decisive40Lost||0);
+     const bp=Number(x.breakPointConverted||0),opp=Number(x.breakPointOpportunities||0);
+     const players=t===0?[0,1]:[2,3];
+     return '<div class="v296teamcard">'+
+       '<div class="v296teamhead"><b>'+teamName(t)+'</b><span>'+players.map(i=>state.players[i].name).join(' / ')+'</span></div>'+
+       '<div class="v296metrics">'+
+         '<div class="v296metric"><small>40x40 GANHOS / PERDIDOS</small><b>'+w+' / '+l+'</b><small>'+pc(w,w+l)+'% ganhos</small></div>'+
+         '<div class="v296metric"><small>BREAK POINTS CONVERTIDOS</small><b>'+bp+' / '+opp+'</b><small>'+pc(bp,opp)+'% conversão</small></div>'+
+       '</div>'+
+       '<div class="v296players">'+players.map(playerLine).join('')+'</div>'+
+     '</div>';
+   }).join('')+'</div><div class="v296note">Atribuição individual: o ponto decisivo é creditado ao aluno selecionado quando ele pertence à dupla envolvida.</div>';
+ }
+ function inject(){
+   const content=document.getElementById('v274Content');
+   if(!content)return;
+   let sec=content.querySelector('[data-v296-special]');
+   if(!sec){
+     sec=document.createElement('div');
+     sec.className='v274section';
+     sec.dataset.v296Special='1';
+     sec.innerHTML='<h3>40x40 E BREAK POINTS • POR DUPLA E ALUNO</h3><div class="v296host"></div>';
+     const premium=content.querySelector('.v283premium');
+     if(premium)premium.insertAdjacentElement('afterend',sec);
+     else content.prepend(sec);
+   }
+   const host=sec.querySelector('.v296host');
+   if(host)host.innerHTML=html();
+ }
+ function refreshTopCards(){
+   if(typeof jbV296EnsureSpecialStats==='function')jbV296EnsureSpecialStats();
+   const total40=(state.specialTeamStats||[]).reduce((n,x)=>n+Number(x.decisive40Won||0),0);
+   const totalBp=(state.specialTeamStats||[]).reduce((n,x)=>n+Number(x.breakPointConverted||0),0);
+   document.querySelectorAll('*').forEach(el=>{
+     const t=(el.textContent||'').trim().toUpperCase();
+     if(t==='PONTOS DECISIVOS 40X40'){
+       const card=el.closest('.smart-card,.card,div');
+       const val=card?.querySelector('.big, b, strong');
+       if(val && val!==el)val.textContent=total40;
+     }
+     if(t==='BREAK POINTS CONVERTIDOS'){
+       const card=el.closest('.smart-card,.card,div');
+       const val=card?.querySelector('.big, b, strong');
+       if(val && val!==el)val.textContent=totalBp;
+     }
+   });
+ }
+ function install(){
+   if(typeof jbV296EnsureSpecialStats==='function')jbV296EnsureSpecialStats();
+   try{localStorage.setItem('jb_scout_pro_v2',JSON.stringify(state))}catch(e){}
+   document.addEventListener('click',e=>{
+     if(e.target.closest('#v20Analysis,[data-screen="analysis"],button[onclick^="point("]')){
+       setTimeout(()=>{inject();refreshTopCards()},100);
+     }
+     if(e.target.closest('#v274Players button'))setTimeout(inject,80);
+   },true);
+   const ov=document.getElementById('v274AnalysisOverlay');
+   if(ov){
+     const obs=new MutationObserver(()=>{if(ov.classList.contains('open'))setTimeout(inject,30)});
+     obs.observe(ov,{attributes:true,attributeFilter:['class']});
+   }
+   refreshTopCards();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 </script>
 
