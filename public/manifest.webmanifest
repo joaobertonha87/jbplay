@@ -1,16 +1,18 @@
 {
-  "name": "JB Play V16.2",
+  "name": "JB Play Scout",
   "short_name": "JB Play",
-  "start_url": "./index.html",
+  "start_url": "scout.html",
   "display": "standalone",
-  "background_color": "#071016",
-  "theme_color": "#cfff20",
+  "background_color": "#071116",
+  "theme_color": "#071116",
+  "orientation": "landscape",
+  "description": "Scout profissional de Beach Tennis",
   "icons": [
     {
-      "src": "jb-logo-lime.png",
+      "src": "jb-bertonha-logo.jpg",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/jpeg",
+      "purpose": "any maskable"
     }
   ]
 }

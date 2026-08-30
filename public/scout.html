@@ -313,6 +313,14 @@ body.ipad-setup-collapsed .topbar>div:first-child .section-title h2{font-size:12
 }
 </style>
 
+<meta name="theme-color" content="#071116">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JB Play">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="jb-bertonha-logo.jpg">
+
 </head>
 <body>
 <header class="app-only">
@@ -5285,7 +5293,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v287-print-hard-fix-css">
-/* V28.8 — nunca imprimir a interface operacional do Scout */
+/* V29.0 — nunca imprimir a interface operacional do Scout */
 @media print{
   header.app-only,
   main.app-only,
@@ -5461,6 +5469,225 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
  else install();
+})();
+</script>
+
+
+<style id="jb-v29-app-css">
+:root{
+ --jb-bg:#071116;
+ --jb-panel:#0d1b23;
+ --jb-panel2:#101f27;
+ --jb-border:rgba(255,255,255,.08);
+ --jb-text:#f4f8f9;
+ --jb-muted:#84979f;
+ --jb-lime:#cfff20;
+ --jb-good:#2ee6a6;
+ --jb-bad:#ff7182;
+}
+html,body{
+ background:var(--jb-bg)!important;
+ overscroll-behavior:none;
+}
+body{
+ padding-bottom:76px!important;
+ -webkit-tap-highlight-color:transparent;
+}
+button{touch-action:manipulation}
+button:active{transform:scale(.985)}
+#jbV29Shell{
+ position:sticky;top:0;z-index:9000;
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ min-height:58px;padding:7px 12px;
+ background:rgba(7,17,22,.96);
+ border-bottom:1px solid var(--jb-border);
+ backdrop-filter:blur(14px);
+}
+#jbV29Brand{display:flex;align-items:center;gap:9px;min-width:0}
+#jbV29Brand img{width:45px;height:45px;object-fit:contain;border-radius:10px;background:#fff;padding:2px}
+#jbV29Brand b{display:block;font-size:13px;letter-spacing:.04em}
+#jbV29Brand small{display:block;font-size:8px;color:var(--jb-muted);margin-top:2px}
+#jbV29Status{
+ display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end;
+ font-size:8px;color:var(--jb-muted)
+}
+#jbV29Status span{
+ padding:6px 8px;border:1px solid var(--jb-border);border-radius:999px;background:var(--jb-panel)
+}
+#jbV29Status .live{color:var(--jb-lime);border-color:rgba(207,255,32,.25)}
+#jbV29Bottom{
+ position:fixed;left:0;right:0;bottom:0;z-index:9998;
+ display:grid;grid-template-columns:repeat(4,1fr);
+ gap:4px;padding:7px max(8px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
+ background:rgba(7,17,22,.98);border-top:1px solid var(--jb-border);
+ backdrop-filter:blur(16px)
+}
+.jbV29Nav{
+ min-height:54px;border:0;border-radius:12px;background:transparent;color:#8fa1a9;
+ font-weight:900;font-size:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px
+}
+.jbV29Nav .ico{font-size:17px;line-height:1}
+.jbV29Nav.on{background:rgba(207,255,32,.10);color:var(--jb-lime)}
+#jbV29Toast{
+ position:fixed;left:50%;bottom:82px;z-index:99999;transform:translateX(-50%) translateY(12px);
+ opacity:0;pointer-events:none;transition:.18s;
+ padding:9px 12px;border-radius:999px;background:#10212a;border:1px solid var(--jb-border);
+ color:#fff;font-size:9px;font-weight:900
+}
+#jbV29Toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+body.jb-v29-app .app-header,
+body.jb-v29-app header.app-only{display:none!important}
+body.jb-v29-app .page{max-width:1220px!important;margin:0 auto!important}
+body.jb-v29-app .card,
+body.jb-v29-app .v264row,
+body.jb-v29-app .v275special,
+body.jb-v29-app .v283eff,
+body.jb-v29-app .v283priority,
+body.jb-v29-app .v283paircard{
+ border-radius:15px!important;
+}
+body.jb-v29-app .score-card{
+ border-radius:16px!important;
+ box-shadow:none!important;
+}
+body.jb-v29-app .v264players button{
+ min-height:62px!important;border-radius:14px!important
+}
+body.jb-v29-app .v264btn,
+body.jb-v29-app .v275btn,
+body.jb-v29-app .v282zone{
+ min-height:52px!important
+}
+body.jb-v29-app #v278ConfigOverlay,
+body.jb-v29-app #v274AnalysisOverlay,
+body.jb-v29-app #v265Individual,
+body.jb-v29-app #v265Evolution,
+body.jb-v29-app #jbV25History{
+ padding-top:72px!important;
+ padding-bottom:90px!important
+}
+body.jb-v29-app .v274top,
+body.jb-v29-app .v278top,
+body.jb-v29-app .v265head{
+ top:62px!important;
+}
+body.jb-v29-app #v267Bottom{
+ position:static!important;
+ margin-bottom:8px!important;
+}
+body.jb-v29-app #v276ResetStats{
+ margin-bottom:8px!important;
+}
+body.jb-v29-app .main-grid{gap:10px!important}
+@media(min-width:900px) and (orientation:landscape){
+ body.jb-v29-app{overflow-x:hidden}
+ #jbV29Shell{padding-left:16px;padding-right:16px}
+ #jbV29Bottom{
+  left:50%;right:auto;width:min(620px,calc(100% - 32px));
+  transform:translateX(-50%);
+  border:1px solid var(--jb-border);border-bottom:0;border-radius:18px 18px 0 0;
+ }
+ body.jb-v29-app .v264board{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+ #jbV29Brand small{display:none}
+ #jbV29Status span:not(.live){display:none}
+}
+@media print{
+ #jbV29Shell,#jbV29Bottom,#jbV29Toast{display:none!important}
+ body{padding-bottom:0!important}
+}
+</style>
+
+<div id="jbV29Shell">
+ <div id="jbV29Brand">
+  <img src="jb-bertonha-logo.jpg" alt="JB Beach Tennis">
+  <div><b>JB PLAY</b><small>SCOUT • APP EXPERIENCE</small></div>
+ </div>
+ <div id="jbV29Status">
+  <span class="live" id="jbV29Live">● JOGO</span>
+  <span id="jbV29Player">Aluno 1</span>
+  <span id="jbV29Score">0 × 0</span>
+ </div>
+</div>
+
+<nav id="jbV29Bottom" aria-label="Navegação principal">
+ <button type="button" class="jbV29Nav on" data-screen="game"><span class="ico">🎾</span><span>Jogo</span></button>
+ <button type="button" class="jbV29Nav" data-screen="analysis"><span class="ico">📊</span><span>Análise</span></button>
+ <button type="button" class="jbV29Nav" data-screen="history"><span class="ico">📈</span><span>Histórico</span></button>
+ <button type="button" class="jbV29Nav" data-screen="config"><span class="ico">⚙️</span><span>Config.</span></button>
+</nav>
+<div id="jbV29Toast">Atualizado</div>
+
+<script id="jb-v29-app-js">
+(function(){
+ const $=q=>document.querySelector(q);
+
+ function toast(t){
+   const e=$('#jbV29Toast');if(!e)return;
+   e.textContent=t;e.classList.add('show');
+   clearTimeout(window.__jbv29toast);
+   window.__jbv29toast=setTimeout(()=>e.classList.remove('show'),1100);
+ }
+
+ function setNav(name){
+   document.querySelectorAll('.jbV29Nav').forEach(b=>b.classList.toggle('on',b.dataset.screen===name));
+   const live=$('#jbV29Live');
+   if(live)live.textContent=name==='game'?'● JOGO':name==='analysis'?'● ANÁLISE':name==='history'?'● HISTÓRICO':'● CONFIG.';
+ }
+
+ function openScreen(name){
+   setNav(name);
+   if(name==='game'){
+     document.getElementById('v274AnalysisOverlay')?.classList.remove('open');
+     document.getElementById('v278ConfigOverlay')?.classList.remove('open');
+     document.getElementById('v265Evolution')?.classList.remove('open');
+     document.getElementById('v265Individual')?.classList.remove('open');
+     document.getElementById('jbV25History')?.classList.remove('open');
+     document.documentElement.style.removeProperty('overflow');
+     document.body.classList.remove('v20-analysis');
+     document.body.classList.add('v20-match');
+     toast('Modo Jogo');
+     return;
+   }
+   if(name==='analysis'){document.getElementById('v20Analysis')?.click();toast('Análise aberta');return}
+   if(name==='history'){
+     const b=document.getElementById('jbV25HistoryBtn');
+     if(b)b.click(); else if(typeof window.jbV26OpenReport==='function')window.jbV26OpenReport(typeof current==='number'?current:0);
+     toast('Histórico aberto');return;
+   }
+   if(name==='config'){document.getElementById('v278ConfigBtn')?.click();toast('Configuração aberta')}
+ }
+
+ function updateStatus(){
+   try{
+     const p=state?.players?.[typeof current==='number'?current:0];
+     if(p)$('#jbV29Player').textContent=p.name;
+     const g=state?.score?.games||[0,0];
+     $('#jbV29Score').textContent=g[0]+' × '+g[1];
+   }catch(e){}
+ }
+
+ function install(){
+   document.body.classList.add('jb-v29-app');
+   document.querySelectorAll('.jbV29Nav').forEach(b=>b.onclick=()=>openScreen(b.dataset.screen));
+   updateStatus();
+
+   document.addEventListener('click',e=>{
+     if(e.target.closest('.v264players button,.v264btn,.v275btn,.v282zone,button[onclick^="point("],button[onclick^="game("]')){
+       setTimeout(updateStatus,25);
+     }
+     if(e.target.closest('#v274Back,#v278Back'))setTimeout(()=>setNav('game'),20);
+   },true);
+
+   const obs=new MutationObserver(updateStatus);
+   obs.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
+
+   if('serviceWorker' in navigator){
+     navigator.serviceWorker.register('sw.js').catch(()=>{});
+   }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 </script>
 
