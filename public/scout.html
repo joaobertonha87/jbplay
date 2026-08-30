@@ -5283,5 +5283,104 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
+
+<style id="jb-v287-print-hard-fix-css">
+/* V28.7 — nunca imprimir a interface operacional do Scout */
+@media print{
+  header.app-only,
+  main.app-only,
+  .app-only,
+  #v264,
+  #v275Extras,
+  #v276ResetStats,
+  #v276ResetToast,
+  #v277ScoreToast,
+  #v281ManualScoreNote,
+  #v282ServeZones,
+  #v267Bottom,
+  #v268Version,
+  #v267Version,
+  #v266Version,
+  #jbV20Bar,
+  #jbV20Last,
+  #jbV20Recent,
+  #v278ConfigBtn,
+  #v278ConfigOverlay,
+  #v280NamesBox,
+  #v284NamesPermanent{
+    display:none!important;
+  }
+
+  /* Relatório individual */
+  body.jb-print-individual #v265Individual{
+    display:block!important;
+    position:static!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    overflow:visible!important;
+    background:#fff!important;
+    color:#111!important;
+  }
+
+  /* Relatório de evolução */
+  body.jb-print-evolution #v265Evolution{
+    display:block!important;
+    position:static!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    overflow:visible!important;
+    background:#fff!important;
+    color:#111!important;
+  }
+
+  /* Análise completa */
+  body.jb-print-analysis #v274AnalysisOverlay{
+    display:block!important;
+    position:static!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    overflow:visible!important;
+    background:#fff!important;
+    color:#111!important;
+  }
+}
+</style>
+
+<script id="jb-v287-print-hard-fix-js">
+(function(){
+  /*
+   * Proteção extra para Safari/Chrome:
+   * no instante anterior à impressão, marca a interface operacional
+   * como não imprimível, independentemente do botão usado.
+   */
+  function beforePrint(){
+    document.querySelectorAll(
+      'header.app-only,main.app-only,.app-only,#v264,#v275Extras,#v276ResetStats,#v276ResetToast,#v277ScoreToast,#v281ManualScoreNote,#v282ServeZones,#v267Bottom,#v278ConfigOverlay'
+    ).forEach(el=>{
+      el.dataset.v287PrevDisplay=el.style.display||'';
+      el.style.setProperty('display','none','important');
+    });
+  }
+
+  function afterPrint(){
+    document.querySelectorAll('[data-v287-prev-display]').forEach(el=>{
+      const prev=el.dataset.v287PrevDisplay;
+      el.style.removeProperty('display');
+      if(prev)el.style.display=prev;
+      delete el.dataset.v287PrevDisplay;
+    });
+  }
+
+  window.addEventListener('beforeprint',beforePrint);
+  window.addEventListener('afterprint',afterPrint);
+
+  /* Safari/iPad pode não disparar afterprint imediatamente */
+  window.addEventListener('focus',()=>setTimeout(afterPrint,400));
+})();
+</script>
+
 </body>
 </html>
