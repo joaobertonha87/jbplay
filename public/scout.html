@@ -960,7 +960,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V27.2</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V27.4</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1130,7 +1130,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V27.2</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V27.4</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -2267,7 +2267,7 @@ window.jbV25SaveSession=function(){
 function avg(a,k){return a.length?Math.round(a.reduce((n,s)=>n+(+(s.metrics?.[k]||0)),0)/a.length):0}
 function trend(c,p){let d=c-p;return d>1?`<span class="v265trend up">↑ +${d} pp</span>`:d<-1?`<span class="v265trend down">↓ ${d} pp</span>`:`<span class="v265trend flat">→ ${d} pp</span>`}
 function showEvolution(i){evoPlayer=Number.isFinite(i)?i:0;renderEvolution();$('#v265Evolution').classList.add('open')}
-function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V27.2 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
+function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V27.4 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
 let vals=F.map(([id,label])=>({id,label,cur:+(cur.metrics?.[id]||0),first:+(first.metrics?.[id]||0),avg:avg(a,id)})),pri=[...vals].map(v=>({...v,need:100-v.cur})).sort((x,y)=>y.need-x.need).slice(0,5);
 h.innerHTML=`<div class="v265hero"><div class="v265card"><small>ALUNO</small><b>${esc(p.name)}</b></div><div class="v265card"><small>SESSÕES</small><b>${a.length}</b></div><div class="v265card"><small>PRIMEIRA</small><b>${new Date(first.at).toLocaleDateString('pt-BR')}</b></div><div class="v265card"><small>ATUAL</small><b>${new Date(cur.at).toLocaleDateString('pt-BR')}</b></div></div><div class="v265sec"><h3>EVOLUÇÃO DOS 14 FUNDAMENTOS</h3><div class="v265fund">${vals.map(v=>`<div class="v265row"><div class="v265rowtop"><b>${v.label}</b>${trend(v.cur,v.first)}</div><div class="v265counts"><span>Inicial ${v.first}%</span><span>Atual ${v.cur}% • média ${v.avg}%</span></div><div class="v265bar v265ok"><i style="width:${v.cur}%"></i></div></div>`).join('')}</div></div><div class="v265sec"><h3>PRIORIDADES ATUAIS</h3><div class="v265priority">${pri.map((v,j)=>`<div class="v265card"><small>${j+1}ª PRIORIDADE</small><b>${v.label}</b><b class="v265need">${v.need}%</b><small>necessidade de treino</small></div>`).join('')}</div></div><div class="v265sec"><h3>SESSÕES</h3><div class="v265table"><div class="v265tablein"><div class="v265thead"><span>Data</span>${F.map(x=>`<span>${x[1]}</span>`).join('')}</div>${a.slice().reverse().map(x=>`<div class="v265tr"><strong>${new Date(x.at).toLocaleDateString('pt-BR')}</strong>${F.map(f=>`<b>${+(x.metrics?.[f[0]]||0)}%</b>`).join('')}</div>`).join('')}</div></div></div>`}
 window.jbV26OpenReport=showEvolution;
@@ -2282,7 +2282,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v266-force-css">
-/* V27.2 — força a interface nova e remove entradas antigas */
+/* V27.4 — força a interface nova e remove entradas antigas */
 body.v20-match #v263,
 body.v20-match #jbV262Fast,
 body.v20-match #jbV261Guide,
@@ -2304,7 +2304,7 @@ body.v20-match #v264{display:block!important}
 }
 @media print{#v266Version,#v266ReportBar{display:none!important}}
 </style>
-<div id="v266Version">V27.2 • 14 FUNDAMENTOS</div>
+<div id="v266Version">V27.4 • 14 FUNDAMENTOS</div>
 <script id="jb-v266-force-js">
 (function(){
  function install(){
@@ -2330,7 +2330,7 @@ body.v20-match #v264{display:block!important}
 
 
 <style id="jb-v267-clean-game-css">
-/* V27.2 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
+/* V27.4 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
 body.v20-match .main-grid{display:block!important}
 body.v20-match .tracker{max-width:1180px!important;width:100%!important;margin:0 auto!important}
 
@@ -2496,7 +2496,7 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
  <button type="button" id="v267Sound" class="sound">🔊 SOM ATIVADO</button>
  <button type="button" id="v267Finish" class="finish">⚑ FINALIZAR JOGO</button>
 </div>
-<div id="v267Version">V27.2 • JOGO 14F</div>
+<div id="v267Version">V27.4 • JOGO 14F</div>
 
 <script id="jb-v267-clean-game-js">
 (function(){
@@ -2554,7 +2554,7 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
 
 
 <style id="jb-v268-final-force-css">
-/* V27.2: estado inicial do Scout é SEMPRE Modo Jogo */
+/* V27.4: estado inicial do Scout é SEMPRE Modo Jogo */
 body.v20-match .category-tabs,
 body.v20-match .action-zone,
 body.v20-match #jbV262Fast,
@@ -2589,7 +2589,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 }
 @media print{#v268Version{display:none!important}}
 </style>
-<div id="v268Version">V27.2 • MODO JOGO</div>
+<div id="v268Version">V27.4 • MODO JOGO</div>
 <script id="jb-v268-final-force-js">
 (function(){
  const MODE_KEY='jb_scout_v20_mode';
@@ -2645,7 +2645,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v269-print-fix-css">
-/* V27.2 — camada final de impressão sem conflito com relatórios antigos */
+/* V27.4 — camada final de impressão sem conflito com relatórios antigos */
 @page{size:A4 portrait;margin:10mm}
 
 @media print{
@@ -2874,7 +2874,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v270-prioridades-css">
-/* V27.2 — prioridades completas com os 14 fundamentos */
+/* V27.4 — prioridades completas com os 14 fundamentos */
 .v270-priority-all{
  display:grid;
  grid-template-columns:repeat(2,minmax(0,1fr));
@@ -3077,7 +3077,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v271-footer-fix-css">
-/* V27.2 — corrige sobreposição dos controles no rodapé */
+/* V27.4 — corrige sobreposição dos controles no rodapé */
 
 /* Neutraliza barras/botões antigos fixos ou sticky que aparecem por cima */
 body.v20-match #jbV20Bar,
@@ -3212,7 +3212,7 @@ body.v20-match .bottom-fixed{
 
 
 <style id="jb-v272-analysis-fix-css">
-/* V27.2 — separação real entre Modo Jogo e Modo Análise */
+/* V27.4 — separação real entre Modo Jogo e Modo Análise */
 
 /* MODO JOGO */
 body.v20-match #v264{display:block!important}
@@ -3362,6 +3362,271 @@ body.v20-analysis .tracker{
  if(document.readyState==='loading'){
    document.addEventListener('DOMContentLoaded',install,{once:true});
  }else install();
+})();
+</script>
+
+
+<style id="jb-v273-analysis-dashboard-css">
+/* V27.4 — Modo Análise dedicado, separado do Modo Jogo */
+#v273Analysis{display:none;max-width:1180px;margin:0 auto;padding:4px 0 24px}
+body.v20-analysis #v273Analysis{display:block!important}
+
+/* No modo análise, não mostrar a tela operacional do jogo */
+body.v20-analysis .topbar,
+body.v20-analysis .main-grid,
+body.v20-analysis #v264,
+body.v20-analysis #v267Bottom,
+body.v20-analysis #jbV20Last,
+body.v20-analysis #jbV20Recent{display:none!important}
+
+.v273title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;background:linear-gradient(145deg,#0e1d24,#09161c);border:1px solid rgba(255,255,255,.08);border-radius:14px;margin-bottom:10px}
+.v273title h2{margin:0;font-size:18px}.v273title small{color:#8598a0}.v273title .badge{background:#cfff20;color:#071014;border-radius:999px;padding:7px 10px;font-size:8px;font-weight:950}
+.v273players{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.v273players button{min-height:58px;border-radius:13px;border:1px solid rgba(255,255,255,.09);background:#0d1b23;color:#dce5e8;font-weight:950;font-size:12px}
+.v273players button.on{background:linear-gradient(145deg,#d8ff35,#bdeb16);color:#071014;border-color:#cfff20}
+.v273hero{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.v273card{background:linear-gradient(145deg,#0f2028,#09171d);border:1px solid rgba(255,255,255,.075);border-radius:13px;padding:11px}
+.v273card small{display:block;color:#81949d;font-size:8px;font-weight:900;letter-spacing:.07em}.v273card b{display:block;font-size:20px;margin-top:4px}
+.v273section{margin-top:12px}.v273section h3{font-size:10px;color:#cfff20;letter-spacing:.1em;margin:0 0 7px}
+.v273fund{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.v273row{background:#0d1b23;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:9px}
+.v273rt{display:flex;justify-content:space-between;gap:8px;align-items:center}.v273rt b{font-size:11px}.v273pct{font-size:14px;font-weight:950;color:#cfff20}
+.v273counts{display:flex;justify-content:space-between;gap:7px;color:#8fa1a9;font-size:8px;margin-top:4px}
+.v273bar{height:7px;border-radius:999px;background:#1b2b32;overflow:hidden;margin-top:6px}.v273bar i{display:block;height:100%;background:linear-gradient(90deg,#2ee6a6,#cfff20)}
+.v273priority{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.v273need{font-size:20px!important;color:#ff9daf!important}
+.v273actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.v273actions button{min-height:44px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#10212a;color:#fff;padding:9px 12px;font-weight:950}
+.v273actions button.hot{background:#cfff20;color:#071014;border-color:#cfff20}
+.v273compare{overflow:auto}.v273table{min-width:800px}.v273th,.v273tr{display:grid;grid-template-columns:170px 90px 90px 90px 90px 90px;gap:5px;align-items:center;padding:7px 9px}
+.v273th{color:#81949d;font-size:8px;font-weight:950}.v273tr{background:#0d1b23;border-radius:9px;margin-top:4px;font-size:9px}.v273tr strong{font-size:10px}.v273tr span{text-align:center}
+@media(max-width:850px){.v273players,.v273hero{grid-template-columns:repeat(2,1fr)}.v273fund{grid-template-columns:1fr}.v273priority{grid-template-columns:1fr}}
+@media print{#v273Analysis{display:none!important}}
+</style>
+
+<div id="v273Analysis">
+ <div class="v273title">
+   <div><h2>ANÁLISE DO JOGO</h2><small>Estatísticas dos 14 fundamentos e prioridades de treino</small></div>
+   <span class="badge">V27.4 • ANÁLISE</span>
+ </div>
+ <div class="v273players" id="v273Players"></div>
+ <div id="v273Content"></div>
+</div>
+
+<script id="jb-v273-analysis-dashboard-js">
+(function(){
+ const F=[
+ ['Ace','ace','aceErro'],['Smash','smashAcerto','smashErro'],['Saque','primeiroSaque','erroSaque'],
+ ['Voleio Forehand','voleiForehandAcerto','voleiForehandErro'],['Voleio Backhand','voleiBackhandAcerto','voleiBackhandErro'],
+ ['Defesa Forehand','defesaForehandAcerto','defesaForehandErro'],['Defesa Backhand','defesaBackhandAcerto','defesaBackhandErro'],
+ ['Gancho','ganchoAcerto','ganchoErro'],['Acelerada','aceleradaAcerto','aceleradaErro'],['Curta','curtaAcerto','curtaErro'],
+ ['Devolução Forehand','devolucaoForehandAcerto','devolucaoForehandErro'],['Devolução Backhand','devolucaoBackhandAcerto','devolucaoBackhandErro'],
+ ['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],['Rainbow','rainbowAcerto','rainbowErro']
+ ];
+ let selected=0;
+ const $=s=>document.querySelector(s), pc=(a,b)=>b?Math.round(a*100/b):0, esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+ function calc(p){
+   const x=p?.stats||{};
+   return F.map(([label,okK,erK])=>{
+     const ok=+(x[okK]||0),er=+(x[erK]||0),total=ok+er;
+     return {label,ok,er,total,pct:pc(ok,total),need:pc(er,total)};
+   });
+ }
+ function total(fs){
+   const ok=fs.reduce((n,f)=>n+f.ok,0),er=fs.reduce((n,f)=>n+f.er,0);
+   return {ok,er,pct:pc(ok,ok+er),total:ok+er};
+ }
+ function playerButtons(){
+   const h=$('#v273Players'); if(!h)return;
+   h.innerHTML=state.players.map((p,i)=>'<button type="button" data-i="'+i+'" class="'+(i===selected?'on':'')+'">'+esc(p.name)+'</button>').join('');
+   h.querySelectorAll('button').forEach(b=>b.onclick=()=>{selected=+b.dataset.i;playerButtons();renderAnalysis()});
+ }
+ function rows(fs){
+   return fs.map(f=>'<div class="v273row"><div class="v273rt"><b>'+f.label+'</b><span class="v273pct">'+f.pct+'%</span></div><div class="v273counts"><span>✓ '+f.ok+' acertos</span><span>✕ '+f.er+' erros • '+f.need+'% erro</span></div><div class="v273bar"><i style="width:'+f.pct+'%"></i></div></div>').join('');
+ }
+ function compareTable(){
+   return '<div class="v273compare"><div class="v273table"><div class="v273th"><span>ALUNO</span><span>ACERTO</span><span>ERRO</span><span>REGISTROS</span><span>MELHOR</span><span>PRIORIDADE</span></div>'+
+   state.players.map(p=>{
+     const fs=calc(p),t=total(fs),used=fs.filter(f=>f.total>0);
+     const best=used.length?[...used].sort((a,b)=>b.pct-a.pct)[0].label:'—';
+     const pr=used.length?[...used].sort((a,b)=>b.need-a.need)[0].label:'—';
+     return '<div class="v273tr"><strong>'+esc(p.name)+'</strong><span>'+t.pct+'%</span><span>'+pc(t.er,t.total)+'%</span><span>'+t.total+'</span><span>'+best+'</span><span>'+pr+'</span></div>';
+   }).join('')+'</div></div>';
+ }
+ function renderAnalysis(){
+   const p=state.players[selected],fs=calc(p),t=total(fs),used=fs.filter(f=>f.total>0);
+   const pri=[...fs].sort((a,b)=>b.need-a.need).slice(0,14);
+   const best=used.length?[...used].sort((a,b)=>b.pct-a.pct)[0]:null;
+   const worst=used.length?[...used].sort((a,b)=>b.need-a.need)[0]:null;
+   const teamIdx=selected<2?0:1;
+   const score=(state.score?.games||[0,0]);
+
+   $('#v273Content').innerHTML=
+   '<div class="v273hero">'+
+    '<div class="v273card"><small>ALUNO ANALISADO</small><b>'+esc(p.name)+'</b></div>'+
+    '<div class="v273card"><small>ACERTO GERAL</small><b>'+t.pct+'%</b></div>'+
+    '<div class="v273card"><small>ACERTOS / ERROS</small><b>'+t.ok+' / '+t.er+'</b></div>'+
+    '<div class="v273card"><small>PLACAR DA DUPLA</small><b>'+score[teamIdx]+' × '+score[1-teamIdx]+'</b></div>'+
+   '</div>'+
+   '<div class="v273hero">'+
+    '<div class="v273card"><small>MELHOR FUNDAMENTO</small><b>'+(best?best.label:'Sem dados')+'</b></div>'+
+    '<div class="v273card"><small>MELHOR %</small><b>'+(best?best.pct:0)+'%</b></div>'+
+    '<div class="v273card"><small>MAIOR PRIORIDADE</small><b>'+(worst?worst.label:'Sem dados')+'</b></div>'+
+    '<div class="v273card"><small>% DE ERRO</small><b>'+(worst?worst.need:0)+'%</b></div>'+
+   '</div>'+
+   '<div class="v273section"><h3>ESTATÍSTICAS DOS 14 FUNDAMENTOS</h3><div class="v273fund">'+rows(fs)+'</div></div>'+
+   '<div class="v273section"><h3>PRIORIDADES DE TREINO • TODOS OS 14 FUNDAMENTOS</h3><div class="v273priority">'+
+     pri.map((f,i)=>'<div class="v273card"><small>'+(i+1)+'ª PRIORIDADE</small><b>'+f.label+'</b><b class="v273need">'+f.need+'%</b><small>'+f.er+' erros em '+f.total+' registros</small></div>').join('')+
+   '</div></div>'+
+   '<div class="v273section"><h3>COMPARATIVO DOS 4 JOGADORES</h3>'+compareTable()+'</div>'+
+   '<div class="v273actions"><button class="hot" id="v273Individual">Relatório individual</button><button id="v273Evolution">Relatório de evolução</button><button id="v273History">Histórico / Evolução</button></div>';
+
+   $('#v273Individual').onclick=()=>window.jbV236OpenIndividual?.(selected);
+   $('#v273Evolution').onclick=()=>window.jbV26OpenReport?.(selected);
+   $('#v273History').onclick=()=>{
+     const old=document.getElementById('jbV25HistoryBtn');
+     if(old)old.click();
+   };
+ }
+
+ function enterAnalysis(){
+   document.body.classList.remove('v20-match');
+   document.body.classList.add('v20-analysis');
+   try{localStorage.setItem('jb_scout_v20_mode','analysis')}catch(e){}
+   playerButtons();renderAnalysis();
+ }
+ function enterMatch(){
+   document.body.classList.remove('v20-analysis');
+   document.body.classList.add('v20-match');
+   try{localStorage.setItem('jb_scout_v20_mode','match')}catch(e){}
+ }
+
+ function install(){
+   const a=document.getElementById('v20Analysis'),m=document.getElementById('v20Match');
+   if(a){
+     a.onclick=null;
+     a.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();enterAnalysis()},true);
+   }
+   if(m){
+     m.onclick=null;
+     m.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();enterMatch()},true);
+   }
+
+   /* Se houver scripts antigos tentando reabrir jogo, esta camada final prevalece depois do clique */
+   document.addEventListener('click',e=>{
+     if(e.target.closest('#v20Analysis'))setTimeout(enterAnalysis,20);
+     if(e.target.closest('#v20Match'))setTimeout(enterMatch,20);
+   });
+
+   if(document.body.classList.contains('v20-analysis'))enterAnalysis();
+ }
+
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+
+
+<style id="jb-v274-analysis-overlay-css">
+#v274AnalysisOverlay{
+ display:none;
+ position:fixed;
+ inset:0;
+ z-index:999999;
+ background:#071116;
+ color:#f4f8f9;
+ overflow:auto;
+ padding:14px;
+}
+#v274AnalysisOverlay.open{display:block!important}
+.v274wrap{max-width:1180px;margin:0 auto}
+.v274top{
+ display:flex;justify-content:space-between;align-items:center;gap:10px;
+ position:sticky;top:0;z-index:20;
+ background:rgba(7,17,22,.97);
+ border-bottom:1px solid rgba(255,255,255,.08);
+ padding:8px 0 10px;
+}
+.v274top h2{margin:0;font-size:18px}
+.v274top small{color:#83969f}
+.v274back{
+ border:1px solid rgba(255,255,255,.12);
+ background:#10212a;color:#fff;border-radius:10px;
+ padding:10px 14px;font-weight:950
+}
+.v274players{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.v274players button{
+ min-height:58px;border-radius:13px;border:1px solid rgba(255,255,255,.09);
+ background:#0d1b23;color:#dce5e8;font-weight:950;font-size:12px
+}
+.v274players button.on{background:#cfff20;color:#071014;border-color:#cfff20}
+.v274hero{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.v274card{background:linear-gradient(145deg,#0f2028,#09171d);border:1px solid rgba(255,255,255,.075);border-radius:13px;padding:11px}
+.v274card small{display:block;color:#81949d;font-size:8px;font-weight:900}.v274card b{display:block;font-size:19px;margin-top:4px}
+.v274section{margin-top:12px}.v274section h3{font-size:10px;color:#cfff20;letter-spacing:.1em;margin:0 0 7px}
+.v274fund{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.v274row{background:#0d1b23;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:9px}
+.v274rt{display:flex;justify-content:space-between;gap:8px}.v274rt b{font-size:11px}.v274pct{font-size:14px;font-weight:950;color:#cfff20}
+.v274counts{display:flex;justify-content:space-between;color:#8fa1a9;font-size:8px;margin-top:4px}
+.v274bar{height:7px;border-radius:999px;background:#1b2b32;overflow:hidden;margin-top:6px}.v274bar i{display:block;height:100%;background:linear-gradient(90deg,#2ee6a6,#cfff20)}
+.v274priority{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.v274need{font-size:20px!important;color:#ff9daf!important}
+.v274compare{overflow:auto}.v274table{min-width:800px}.v274th,.v274tr{display:grid;grid-template-columns:170px 90px 90px 90px 130px 130px;gap:5px;align-items:center;padding:7px 9px}.v274th{color:#81949d;font-size:8px;font-weight:950}.v274tr{background:#0d1b23;border-radius:9px;margin-top:4px;font-size:9px}.v274tr span{text-align:center}
+.v274actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 24px}.v274actions button{min-height:44px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#10212a;color:#fff;padding:9px 12px;font-weight:950}.v274actions .hot{background:#cfff20;color:#071014;border-color:#cfff20}
+@media(max-width:850px){.v274players,.v274hero{grid-template-columns:repeat(2,1fr)}.v274fund{grid-template-columns:1fr}.v274priority{grid-template-columns:1fr}}
+@media print{#v274AnalysisOverlay{display:none!important}}
+</style>
+
+<div id="v274AnalysisOverlay">
+ <div class="v274wrap">
+  <div class="v274top">
+   <div><h2>ANÁLISE DO JOGO</h2><small>Estatísticas • 14 fundamentos • prioridades</small></div>
+   <button id="v274Back" class="v274back">← Voltar ao jogo</button>
+  </div>
+  <div class="v274players" id="v274Players"></div>
+  <div id="v274Content"></div>
+ </div>
+</div>
+
+<script id="jb-v274-analysis-overlay-js">
+(function(){
+const F=[
+['Ace','ace','aceErro'],['Smash','smashAcerto','smashErro'],['Saque','primeiroSaque','erroSaque'],
+['Voleio Forehand','voleiForehandAcerto','voleiForehandErro'],['Voleio Backhand','voleiBackhandAcerto','voleiBackhandErro'],
+['Defesa Forehand','defesaForehandAcerto','defesaForehandErro'],['Defesa Backhand','defesaBackhandAcerto','defesaBackhandErro'],
+['Gancho','ganchoAcerto','ganchoErro'],['Acelerada','aceleradaAcerto','aceleradaErro'],['Curta','curtaAcerto','curtaErro'],
+['Devolução Forehand','devolucaoForehandAcerto','devolucaoForehandErro'],['Devolução Backhand','devolucaoBackhandAcerto','devolucaoBackhandErro'],
+['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],['Rainbow','rainbowAcerto','rainbowErro']
+];
+let sel=0;
+const $=q=>document.querySelector(q),pc=(a,b)=>b?Math.round(a*100/b):0,esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function calc(p){const x=p?.stats||{};return F.map(([label,okK,erK])=>{const ok=+(x[okK]||0),er=+(x[erK]||0),total=ok+er;return{label,ok,er,total,pct:pc(ok,total),need:pc(er,total)}})}
+function total(fs){const ok=fs.reduce((n,f)=>n+f.ok,0),er=fs.reduce((n,f)=>n+f.er,0),t=ok+er;return{ok,er,total:t,pct:pc(ok,t),errPct:pc(er,t)}}
+function players(){const h=$('#v274Players');h.innerHTML=state.players.map((p,i)=>'<button data-i="'+i+'" class="'+(i===sel?'on':'')+'">'+esc(p.name)+'</button>').join('');h.querySelectorAll('button').forEach(b=>b.onclick=()=>{sel=+b.dataset.i;players();render()})}
+function compare(){return '<div class="v274compare"><div class="v274table"><div class="v274th"><span>ALUNO</span><span>ACERTO</span><span>ERRO</span><span>REGISTROS</span><span>MELHOR</span><span>PRIORIDADE</span></div>'+state.players.map(p=>{const fs=calc(p),t=total(fs),u=fs.filter(f=>f.total>0),best=u.length?[...u].sort((a,b)=>b.pct-a.pct)[0].label:'—',pr=u.length?[...u].sort((a,b)=>b.need-a.need)[0].label:'—';return '<div class="v274tr"><strong>'+esc(p.name)+'</strong><span>'+t.pct+'%</span><span>'+t.errPct+'%</span><span>'+t.total+'</span><span>'+best+'</span><span>'+pr+'</span></div>'}).join('')+'</div></div>'}
+function render(){
+ const p=state.players[sel],fs=calc(p),t=total(fs),u=fs.filter(f=>f.total>0),best=u.length?[...u].sort((a,b)=>b.pct-a.pct)[0]:null,worst=u.length?[...u].sort((a,b)=>b.need-a.need)[0]:null,pri=[...fs].sort((a,b)=>b.need-a.need),ti=sel<2?0:1,sc=state.score?.games||[0,0];
+ $('#v274Content').innerHTML=
+ '<div class="v274hero"><div class="v274card"><small>ALUNO</small><b>'+esc(p.name)+'</b></div><div class="v274card"><small>ACERTO GERAL</small><b>'+t.pct+'%</b></div><div class="v274card"><small>ERRO GERAL</small><b>'+t.errPct+'%</b></div><div class="v274card"><small>PLACAR DA DUPLA</small><b>'+sc[ti]+' × '+sc[1-ti]+'</b></div></div>'+
+ '<div class="v274hero"><div class="v274card"><small>MELHOR FUNDAMENTO</small><b>'+(best?best.label:'Sem dados')+'</b></div><div class="v274card"><small>MELHOR %</small><b>'+(best?best.pct:0)+'%</b></div><div class="v274card"><small>MAIOR PRIORIDADE</small><b>'+(worst?worst.label:'Sem dados')+'</b></div><div class="v274card"><small>% ERRO PRIORIDADE</small><b>'+(worst?worst.need:0)+'%</b></div></div>'+
+ '<div class="v274section"><h3>ESTATÍSTICAS DOS 14 FUNDAMENTOS</h3><div class="v274fund">'+fs.map(f=>'<div class="v274row"><div class="v274rt"><b>'+f.label+'</b><span class="v274pct">'+f.pct+'%</span></div><div class="v274counts"><span>✓ '+f.ok+' acertos</span><span>✕ '+f.er+' erros • '+f.need+'%</span></div><div class="v274bar"><i style="width:'+f.pct+'%"></i></div></div>').join('')+'</div></div>'+
+ '<div class="v274section"><h3>PRIORIDADES DE TREINO • 14 FUNDAMENTOS</h3><div class="v274priority">'+pri.map((f,i)=>'<div class="v274card"><small>'+(i+1)+'ª PRIORIDADE</small><b>'+f.label+'</b><b class="v274need">'+f.need+'%</b><small>'+f.er+' erros em '+f.total+' registros</small></div>').join('')+'</div></div>'+
+ '<div class="v274section"><h3>COMPARATIVO DOS 4 JOGADORES</h3>'+compare()+'</div>'+
+ '<div class="v274actions"><button class="hot" id="v274Ind">Relatório individual</button><button id="v274Evo">Relatório de evolução</button><button id="v274Hist">Histórico / Evolução</button></div>';
+ $('#v274Ind').onclick=()=>window.jbV236OpenIndividual?.(sel);
+ $('#v274Evo').onclick=()=>window.jbV26OpenReport?.(sel);
+ $('#v274Hist').onclick=()=>document.getElementById('jbV25HistoryBtn')?.click();
+}
+function open(){players();render();$('#v274AnalysisOverlay').classList.add('open');document.documentElement.style.overflow='hidden'}
+function close(){ $('#v274AnalysisOverlay').classList.remove('open');document.documentElement.style.removeProperty('overflow')}
+function install(){
+ $('#v274Back').onclick=close;
+ const btn=document.getElementById('v20Analysis');
+ if(btn){
+   btn.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();open()},true);
+ }
+ document.addEventListener('click',e=>{
+   if(e.target.closest('#v20Analysis')){e.preventDefault();setTimeout(open,0)}
+ },true);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 </script>
 
