@@ -3,8 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0b1220">
 <title>JB Play Scout • iPad</title>
 <style>
 :root{
@@ -317,11 +315,11 @@ body.ipad-setup-collapsed .topbar>div:first-child .section-title h2{font-size:12
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="JB Play">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="jb-tracker-apple-touch.png">
+<meta name="apple-mobile-web-app-title" content="JB Tracker">
+<link rel="manifest" href="manifest.webmanifest?v=2910">
+<link rel="apple-touch-icon" sizes="180x180" href="jb-tracker-v2-180.png?v=2910">
+<link rel="icon" type="image/png" sizes="192x192" href="jb-tracker-v2-192.png?v=2910">
 
-<link rel="icon" type="image/png" href="jb-tracker-icon-192.png">
 </head>
 <body>
 <header class="app-only">
@@ -684,7 +682,7 @@ function point(t){
  }
  const s=state.score;
 
- /* V29.9: guarda o contexto ANTES do ponto manual */
+ /* V29.10: guarda o contexto ANTES do ponto manual */
  const before={
    games:[...s.games],
    points:[...s.points],
@@ -708,7 +706,7 @@ function point(t){
    autoFinish();
  }
 
- /* V29.9: registra também os pontos MANUAIS no motor inteligente.
+ /* V29.10: registra também os pontos MANUAIS no motor inteligente.
     Isso alimenta 40x40 e break points convertidos. */
  const after={
    games:[...s.games],
@@ -5428,7 +5426,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v287-print-hard-fix-css">
-/* V29.9 — nunca imprimir a interface operacional do Scout */
+/* V29.10 — nunca imprimir a interface operacional do Scout */
 @media print{
   header.app-only,
   main.app-only,
@@ -5872,7 +5870,7 @@ if('serviceWorker' in navigator){
 
 
 <style id="jb-v292-analysis-header-fix-css">
-/* V29.9 — corrige a faixa/cabeçalho da tela de Análise */
+/* V29.10 — corrige a faixa/cabeçalho da tela de Análise */
 body.jb-v29-app #v274AnalysisOverlay{
   position:fixed!important;
   inset:58px 0 70px 0!important;
@@ -6096,7 +6094,7 @@ body.jb-v29-app #v274AnalysisOverlay .v274actions{
 
 
 <style id="jb-v294-40x40-fund-css">
-/* V29.9 — 40x40 passa a fazer parte do painel principal de fundamentos */
+/* V29.10 — 40x40 passa a fazer parte do painel principal de fundamentos */
 body.v20-match #v275Extras .v275special:first-child{
   display:none!important;
 }
@@ -6151,7 +6149,7 @@ body.v20-match .v264row:has(.v264name){
 
 
 <style id="jb-v295-analysis-scroll-fix-css">
-/* V29.9 — a Análise rola sozinha; o Modo Jogo fica travado atrás */
+/* V29.10 — a Análise rola sozinha; o Modo Jogo fica travado atrás */
 html.jb-analysis-open,
 body.jb-analysis-open{
   overflow:hidden!important;
@@ -6406,7 +6404,7 @@ body.jb-analysis-open #v274AnalysisOverlay *{
 
 
 <style id="jb-v297-analysis-scroll-lock-css">
-/* V29.9 — bloqueio real da página por trás da Análise */
+/* V29.10 — bloqueio real da página por trás da Análise */
 html.jb-v297-analysis-lock{
   overflow:hidden!important;
   height:100%!important;
@@ -6567,7 +6565,7 @@ body.jb-v297-analysis-lock #v274AnalysisOverlay *{
 
 
 <style id="jb-v298-analysis-header-static-css">
-/* V29.9 — remove de vez o comportamento sticky do cabeçalho da Análise */
+/* V29.10 — remove de vez o comportamento sticky do cabeçalho da Análise */
 body.jb-v29-app #v274AnalysisOverlay.open .v274top,
 body.jb-v29-app #v274AnalysisOverlay .v274top,
 #v274AnalysisOverlay.open .v274top,
