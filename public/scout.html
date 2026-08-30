@@ -624,7 +624,60 @@ function point(t){
    const r=document.getElementById('result');
    if(r){r.classList.add('hidden');r.innerHTML='';}
  }
- const s=state.score;s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));s.points[t]++;const normal=document.getElementById('format').value==='normal';let won=normal?(s.points[t]>=4&&s.points[t]-s.points[1-t]>=2):(s.points[t]>=4);if(won){s.games[t]++;s.points=[0,0];autoFinish();render();jbV224SwitchServerAfterGame();return}render()}
+ const s=state.score;
+
+ /* V29.4: guarda o contexto ANTES do ponto manual */
+ const before={
+   games:[...s.games],
+   points:[...s.points],
+   servingTeam:Number(state.servingTeam||0),
+   format:document.getElementById('format')?.value||'noad'
+ };
+
+ s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));
+ s.points[t]++;
+
+ const normal=document.getElementById('format').value==='normal';
+ let won=normal
+   ? (s.points[t]>=4&&s.points[t]-s.points[1-t]>=2)
+   : (s.points[t]>=4);
+
+ if(won){
+   s.games[t]++;
+   s.points=[0,0];
+   autoFinish();
+ }
+
+ /* V29.4: registra também os pontos MANUAIS no motor inteligente.
+    Isso alimenta 40x40 e break points convertidos. */
+ const after={
+   games:[...s.games],
+   points:[...s.points],
+   servingTeam:Number(state.servingTeam||0),
+   format:before.format
+ };
+ if(typeof window.jbV22RecordPoint==='function'){
+   window.jbV22RecordPoint({
+     athleteIndex:null,
+     athlete:'Placar manual',
+     key:'manualPoint',
+     label:'Ponto manual',
+     type:'score',
+     scoringTeam:Number(t),
+     before,
+     after,
+     manualScore:true
+   });
+ }
+
+ render();
+
+ if(won){
+   jbV224SwitchServerAfterGame();
+   return;
+ }
+ if(typeof window.jbV22Refresh==='function')window.jbV22Refresh();
+}
 function game(t){
  if(state.finished){
    state.finished=false;
@@ -633,7 +686,25 @@ function game(t){
  }
  const s=state.score;s.history.push(JSON.parse(JSON.stringify({games:s.games,points:s.points})));s.games[t]++;s.points=[0,0];autoFinish();render()}
 function autoFinish(){const n=Number(document.getElementById('gamesToWin').value||6),[a,b]=state.score.games;if((a>=n||b>=n)&&Math.abs(a-b)>=2)state.finished=true}
-function undoScore(){const x=state.score.history.pop();if(x){state.score.games=x.games;state.score.points=x.points;state.finished=false;render()}}
+function undoScore(){
+ const x=state.score.history.pop();
+ if(x){
+   state.score.games=x.games;
+   state.score.points=x.points;
+   state.finished=false;
+   if(Array.isArray(state.smartPoints)){
+     for(let i=state.smartPoints.length-1;i>=0;i--){
+       if(state.smartPoints[i]?.key==='manualPoint'){
+         state.smartPoints.splice(i,1);
+         break;
+       }
+     }
+   }
+   save();
+   render();
+   if(typeof window.jbV22Refresh==='function')window.jbV22Refresh();
+ }
+}
 function finishMatch(){state.finished=true;render();jbV224SwitchServerAfterGame()}
 function metrics(p){
  const s=p.stats;
@@ -2218,7 +2289,8 @@ const F=[
  ['Rainbow','rainbowAcerto','rainbowErro'],
  ['Lob','lobAcerto','lobErro'],
  ['Anômalo','anomaloAcerto','anomaloErro'],
- ['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro']
+ ['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro'],
+ ['40x40','quarentaGanho','quarentaPerdido']
 ];
 const $=x=>document.querySelector(x),esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 function players(){let h=$('#v264players');if(!h)return;h.innerHTML=state.players.map((p,i)=>'<button type="button" data-i="'+i+'" class="'+(i===current?'on':'')+'">'+esc(p.name)+'</button>').join('');h.querySelectorAll('button').forEach(b=>b.onclick=()=>{selectPlayer(+b.dataset.i);players();selected()})}
@@ -2983,7 +3055,8 @@ body.v20-match [class*="summary-card"]{display:none!important}
    ['Rainbow','rainbowAcerto','rainbowErro'],
  ['Lob','lobAcerto','lobErro'],
  ['Anômalo','anomaloAcerto','anomaloErro'],
- ['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro']
+ ['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro'],
+ ['40x40','quarentaGanho','quarentaPerdido']
  ];
 
  const pc=(a,b)=>b?Math.round((a/b)*100):0;
@@ -3448,7 +3521,8 @@ body.v20-analysis #jbV20Recent{display:none!important}
  ['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],['Rainbow','rainbowAcerto','rainbowErro'],
  ['Lob','lobAcerto','lobErro'],
  ['Anômalo','anomaloAcerto','anomaloErro'],
- ['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro']
+ ['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro'],
+ ['40x40','quarentaGanho','quarentaPerdido']
  ];
  let selected=0;
  const $=s=>document.querySelector(s), pc=(a,b)=>b?Math.round(a*100/b):0, esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -3635,7 +3709,8 @@ const F=[
  ['Rainbow','rainbowAcerto','rainbowErro'],
  ['Lob','lobAcerto','lobErro'],
  ['Anômalo','anomaloAcerto','anomaloErro'],
- ['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro']
+ ['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro'],
+ ['40x40','quarentaGanho','quarentaPerdido']
 ];
 
 let sel=0;
@@ -5293,7 +5368,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v287-print-hard-fix-css">
-/* V29.1 — nunca imprimir a interface operacional do Scout */
+/* V29.4 — nunca imprimir a interface operacional do Scout */
 @media print{
   header.app-only,
   main.app-only,
@@ -5727,6 +5802,285 @@ if('serviceWorker' in navigator){
     },2500);
 
     safeUpdate();
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',install,{once:true});
+  }else install();
+})();
+</script>
+
+
+<style id="jb-v292-analysis-header-fix-css">
+/* V29.4 — corrige a faixa/cabeçalho da tela de Análise */
+body.jb-v29-app #v274AnalysisOverlay{
+  position:fixed!important;
+  inset:58px 0 70px 0!important;
+  width:auto!important;
+  height:auto!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:12px 14px 28px!important;
+  overflow:auto!important;
+  background:#071116!important;
+  z-index:9997!important;
+  transform:none!important;
+}
+
+body.jb-v29-app #v274AnalysisOverlay .v274wrap{
+  width:100%!important;
+  max-width:1180px!important;
+  margin:0 auto!important;
+  padding:0!important;
+}
+
+/* Cabeçalho da análise vira um card compacto, sem faixa verde atravessando a tela */
+body.jb-v29-app #v274AnalysisOverlay .v274top{
+  position:sticky!important;
+  top:0!important;
+  z-index:40!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  min-height:64px!important;
+  margin:0 0 10px!important;
+  padding:10px 12px!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  border-radius:14px!important;
+  background:rgba(13,27,35,.97)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(12px)!important;
+}
+
+body.jb-v29-app #v274AnalysisOverlay .v274top h2{
+  margin:0!important;
+  font-size:18px!important;
+  line-height:1.05!important;
+  color:#f4f8f9!important;
+  background:none!important;
+}
+
+body.jb-v29-app #v274AnalysisOverlay .v274top small{
+  display:block!important;
+  margin-top:4px!important;
+  color:#84979f!important;
+  font-size:8px!important;
+  background:none!important;
+}
+
+body.jb-v29-app #v274AnalysisOverlay #v274Back{
+  flex:0 0 auto!important;
+  min-height:42px!important;
+  padding:8px 12px!important;
+  border-radius:10px!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:#10212a!important;
+  color:#fff!important;
+  font-weight:900!important;
+}
+
+/* Remove qualquer faixa/status antigo que possa atravessar a análise */
+body.jb-v29-app #v274AnalysisOverlay .v20-status,
+body.jb-v29-app #v274AnalysisOverlay .analysis-strip,
+body.jb-v29-app #v274AnalysisOverlay .status-strip,
+body.jb-v29-app #v274AnalysisOverlay .lime-strip,
+body.jb-v29-app #v274AnalysisOverlay [style*="position: sticky"][style*="background"]{
+  box-shadow:none!important;
+}
+
+/* Seleção dos alunos fica logo abaixo do cabeçalho */
+body.jb-v29-app #v274AnalysisOverlay #v274Players{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:8px!important;
+  margin:0 0 10px!important;
+}
+
+body.jb-v29-app #v274AnalysisOverlay #v274Players button{
+  min-height:52px!important;
+  border-radius:12px!important;
+  border:1px solid rgba(255,255,255,.09)!important;
+  background:#0d1b23!important;
+  color:#dce5e8!important;
+  font-weight:900!important;
+}
+
+body.jb-v29-app #v274AnalysisOverlay #v274Players button.on{
+  background:#cfff20!important;
+  color:#071014!important;
+  border-color:#cfff20!important;
+}
+
+/* Evita conteúdo da análise escapar para os lados */
+body.jb-v29-app #v274AnalysisOverlay *,
+body.jb-v29-app #v274AnalysisOverlay *::before,
+body.jb-v29-app #v274AnalysisOverlay *::after{
+  box-sizing:border-box!important;
+}
+
+body.jb-v29-app #v274AnalysisOverlay .v283premium,
+body.jb-v29-app #v274AnalysisOverlay .v274section{
+  max-width:100%!important;
+  overflow:visible!important;
+}
+
+/* A barra inferior do app continua abaixo, sem cobrir conteúdo */
+body.jb-v29-app #v274AnalysisOverlay .v274actions{
+  padding-bottom:8px!important;
+}
+
+@media(max-width:700px){
+  body.jb-v29-app #v274AnalysisOverlay{
+    inset:58px 0 70px 0!important;
+    padding:10px 8px 22px!important;
+  }
+  body.jb-v29-app #v274AnalysisOverlay #v274Players{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  body.jb-v29-app #v274AnalysisOverlay .v274top{
+    align-items:flex-start!important;
+  }
+  body.jb-v29-app #v274AnalysisOverlay .v274top h2{
+    font-size:16px!important;
+  }
+}
+@media print{
+  body.jb-v29-app #v274AnalysisOverlay{
+    position:static!important;
+    inset:auto!important;
+    padding:0!important;
+  }
+}
+</style>
+
+<script id="jb-v292-analysis-header-fix-js">
+(function(){
+  function normalizeAnalysis(){
+    const ov=document.getElementById('v274AnalysisOverlay');
+    if(!ov || !ov.classList.contains('open')) return;
+
+    // Remove estilos inline antigos que deformavam a faixa da análise.
+    ov.style.removeProperty('top');
+    ov.style.removeProperty('left');
+    ov.style.removeProperty('right');
+    ov.style.removeProperty('bottom');
+    ov.style.removeProperty('width');
+    ov.style.removeProperty('height');
+    ov.style.removeProperty('transform');
+
+    const top=ov.querySelector('.v274top');
+    if(top){
+      top.style.removeProperty('background');
+      top.style.removeProperty('position');
+      top.style.removeProperty('top');
+      top.style.removeProperty('width');
+      top.style.removeProperty('transform');
+    }
+  }
+
+  function install(){
+    const analysis=document.querySelector('[data-screen="analysis"]');
+    if(analysis){
+      analysis.addEventListener('click',()=>setTimeout(normalizeAnalysis,50));
+    }
+
+    const old=document.getElementById('v20Analysis');
+    if(old){
+      old.addEventListener('click',()=>setTimeout(normalizeAnalysis,50));
+    }
+
+    document.addEventListener('click',e=>{
+      if(e.target.closest('#v20Analysis,[data-screen="analysis"]')){
+        setTimeout(normalizeAnalysis,80);
+      }
+    },true);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',install,{once:true});
+  }else install();
+})();
+</script>
+
+
+<style id="jb-v293-smart-score-css">
+#jbV293SmartNote{
+  margin-top:6px;
+  padding:7px 9px;
+  border:1px solid rgba(207,255,32,.18);
+  border-radius:9px;
+  color:#aabd75;
+  font-size:8px;
+  font-weight:850;
+  background:rgba(207,255,32,.045);
+}
+@media print{#jbV293SmartNote{display:none!important}}
+</style>
+<script id="jb-v293-smart-score-js">
+(function(){
+ function install(){
+   const box=document.getElementById('jbV22Momentum');
+   if(box && !document.getElementById('jbV293SmartNote')){
+     const n=document.createElement('div');
+     n.id='jbV293SmartNote';
+     n.textContent='40×40 e Break Points agora são calculados pelos pontos do placar ao vivo.';
+     box.insertAdjacentElement('afterend',n);
+   }
+   if(typeof window.jbV22Refresh==='function')window.jbV22Refresh();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
+ else install();
+})();
+</script>
+
+
+<style id="jb-v294-40x40-fund-css">
+/* V29.4 — 40x40 passa a fazer parte do painel principal de fundamentos */
+body.v20-match #v275Extras .v275special:first-child{
+  display:none!important;
+}
+/* Se só restar Winner, ele ocupa a largura inteira */
+body.v20-match #v275Extras{
+  grid-template-columns:1fr!important;
+}
+body.v20-match #v275Extras .v275special:last-child{
+  max-width:none!important;
+}
+
+/* Destaque visual do 40x40 no painel principal */
+body.v20-match .v264row:has(.v264name){
+  min-width:0;
+}
+</style>
+
+<script id="jb-v294-40x40-fund-js">
+(function(){
+  /*
+   * Ajusta os textos do fundamento 40x40 no painel principal:
+   * em vez de ACERTO / ERRO, exibe GANHO / PERDIDO.
+   */
+  function relabel40(){
+    document.querySelectorAll('.v264row').forEach(row=>{
+      const name=row.querySelector('.v264name');
+      if(!name || name.textContent.trim()!=='40x40') return;
+      const btns=row.querySelectorAll('.v264btn');
+      if(btns[0]){
+        btns[0].innerHTML='✓ GANHO<small>+1</small>';
+        btns[0].setAttribute('aria-label','40x40 ganho');
+      }
+      if(btns[1]){
+        btns[1].innerHTML='✕ PERDIDO<small>+1</small>';
+        btns[1].setAttribute('aria-label','40x40 perdido');
+      }
+    });
+  }
+
+  function install(){
+    relabel40();
+    const obs=new MutationObserver(()=>requestAnimationFrame(relabel40));
+    const board=document.getElementById('v264board');
+    if(board)obs.observe(board,{subtree:true,childList:true});
   }
 
   if(document.readyState==='loading'){
