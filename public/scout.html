@@ -5285,7 +5285,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v287-print-hard-fix-css">
-/* V28.7 — nunca imprimir a interface operacional do Scout */
+/* V28.8 — nunca imprimir a interface operacional do Scout */
 @media print{
   header.app-only,
   main.app-only,
@@ -5379,6 +5379,88 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
   /* Safari/iPad pode não disparar afterprint imediatamente */
   window.addEventListener('focus',()=>setTimeout(afterPrint,400));
+})();
+</script>
+
+
+<style id="jb-v288-reset-reports-css">
+#jbV288ResetReports{
+  min-height:44px;padding:10px 16px;border-radius:12px;
+  border:1px solid rgba(255,93,125,.75);
+  background:rgba(255,63,105,.12);color:#ff7895;
+  font-weight:950;cursor:pointer;margin:8px 0 12px;
+}
+#jbV288ResetReports:hover{background:rgba(255,63,105,.20)}
+#jbV288ResetMsg{display:none;color:#8df2d0;font-size:10px;font-weight:900;margin:4px 0 10px}
+#jbV288ResetMsg.show{display:block}
+@media print{#jbV288ResetReports,#jbV288ResetMsg{display:none!important}}
+</style>
+
+<script id="jb-v288-reset-reports-js">
+(function(){
+ const HISTORY_KEYS=[
+   'jb_scout_student_history_v25',
+   'jb_scout_match_history_v283'
+ ];
+
+ function mount(){
+   const overlay=document.querySelector('#v265Evolution, #v26, [id*="Evolution"]');
+   if(!overlay || document.getElementById('jbV288ResetReports')) return;
+
+   const btn=document.createElement('button');
+   btn.id='jbV288ResetReports';
+   btn.type='button';
+   btn.textContent='🗑 RESETAR RELATÓRIOS / EVOLUÇÃO';
+
+   const msg=document.createElement('div');
+   msg.id='jbV288ResetMsg';
+   msg.textContent='Histórico e relatórios de evolução resetados.';
+
+   const target=overlay.querySelector('.v26top,.v265top,.v26filters') || overlay.firstElementChild || overlay;
+   if(target && target.parentNode){
+     target.parentNode.insertBefore(btn,target.nextSibling);
+     target.parentNode.insertBefore(msg,btn.nextSibling);
+   }else{
+     overlay.prepend(msg); overlay.prepend(btn);
+   }
+
+   btn.onclick=function(){
+     const ok=window.confirm(
+       'RESETAR RELATÓRIOS DE TESTE?\n\nIsso apagará o histórico/evolução salvo de todos os alunos. Os registros da partida atual não serão apagados.'
+     );
+     if(!ok)return;
+
+     HISTORY_KEYS.forEach(k=>localStorage.removeItem(k));
+
+     // Limpa caches de histórico mantidos por versões beta, sem tocar no estado atual da partida.
+     Object.keys(localStorage).forEach(k=>{
+       const low=k.toLowerCase();
+       if(k!=='jb_scout_pro_v2' &&
+          (low.includes('student_history') || low.includes('match_history') ||
+           low.includes('evolution_history') || low.includes('report_history'))){
+         localStorage.removeItem(k);
+       }
+     });
+
+     msg.classList.add('show');
+     setTimeout(()=>msg.classList.remove('show'),2500);
+
+     // Atualiza a tela de evolução imediatamente.
+     try{
+       if(typeof window.jbV26Render==='function') window.jbV26Render();
+       if(typeof window.jbV25RenderHistory==='function') window.jbV25RenderHistory();
+     }catch(e){}
+     setTimeout(()=>location.reload(),450);
+   };
+ }
+
+ function install(){
+   mount();
+   const obs=new MutationObserver(mount);
+   obs.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
+ else install();
 })();
 </script>
 
