@@ -960,7 +960,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
 
    const bar=document.createElement('div');
    bar.id='jbV20Bar';
-   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V26.9</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
+   bar.innerHTML='<div class="v20-title">SCOUT AO VIVO • V27.0</div><button id="v20Match">● Modo Jogo</button><button id="v20Analysis">▦ Análise</button><button id="v20Finish">Finalizar jogo</button>';
    wrap.insertBefore(bar,wrap.firstChild);
 
    const last=document.createElement('div');
@@ -1130,7 +1130,7 @@ body.v20-analysis .main-grid{grid-template-columns:minmax(0,1.34fr) minmax(320px
    if(!anchor)return;
    const el=document.createElement('div');
    el.id='jbV22Panel';
-   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V26.9</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
+   el.innerHTML='<div id="jbV22Top"><strong>PONTO INTELIGENTE • V27.0</strong><div class="jbV22ServeGroup"><button type="button" class="jbV22Serve" id="jbV22Serve0"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA A/B</span></button><button type="button" class="jbV22Serve" id="jbV22Serve1"><span class="jbV22Ball" aria-hidden="true">🎾</span><span><small>DUPLA SACADORA</small>DUPLA C/D</span></button></div></div><div id="jbV22ServerNow" aria-live="polite"></div><div id="jbV22Momentum"><div class="jbV22Card"><small>MOMENTO</small><b id="jbV22Streak">—</b></div><div class="jbV22Card"><small>PONTOS DECISIVOS 40×40</small><b id="jbV22Forty">0</b></div><div class="jbV22Card"><small>BREAK POINTS CONVERTIDOS</small><b id="jbV22BP">0</b></div></div><div id="jbV22Trail"></div>';
    anchor.insertAdjacentElement('afterend',el);
    [0,1].forEach(t=>{
      const btn=q('#jbV22Serve'+t);
@@ -2267,7 +2267,7 @@ window.jbV25SaveSession=function(){
 function avg(a,k){return a.length?Math.round(a.reduce((n,s)=>n+(+(s.metrics?.[k]||0)),0)/a.length):0}
 function trend(c,p){let d=c-p;return d>1?`<span class="v265trend up">↑ +${d} pp</span>`:d<-1?`<span class="v265trend down">↓ ${d} pp</span>`:`<span class="v265trend flat">→ ${d} pp</span>`}
 function showEvolution(i){evoPlayer=Number.isFinite(i)?i:0;renderEvolution();$('#v265Evolution').classList.add('open')}
-function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V26.9 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
+function renderEvolution(){const p=state.players[evoPlayer],all=(read()[p.profileId]||[]).filter(x=>x.v265),a=evoLimit?all.slice(-evoLimit):all;$('#v265ESub').textContent=p.name+' • 14 fundamentos';let h=$('#v265EContent');if(!a.length){h.innerHTML='<div class="v265card"><b>Nenhuma sessão nova com os 14 fundamentos.</b><small>Finalize uma partida na V27.0 para iniciar este histórico.</small></div>';return}let first=a[0],cur=a[a.length-1];
 let vals=F.map(([id,label])=>({id,label,cur:+(cur.metrics?.[id]||0),first:+(first.metrics?.[id]||0),avg:avg(a,id)})),pri=[...vals].map(v=>({...v,need:100-v.cur})).sort((x,y)=>y.need-x.need).slice(0,5);
 h.innerHTML=`<div class="v265hero"><div class="v265card"><small>ALUNO</small><b>${esc(p.name)}</b></div><div class="v265card"><small>SESSÕES</small><b>${a.length}</b></div><div class="v265card"><small>PRIMEIRA</small><b>${new Date(first.at).toLocaleDateString('pt-BR')}</b></div><div class="v265card"><small>ATUAL</small><b>${new Date(cur.at).toLocaleDateString('pt-BR')}</b></div></div><div class="v265sec"><h3>EVOLUÇÃO DOS 14 FUNDAMENTOS</h3><div class="v265fund">${vals.map(v=>`<div class="v265row"><div class="v265rowtop"><b>${v.label}</b>${trend(v.cur,v.first)}</div><div class="v265counts"><span>Inicial ${v.first}%</span><span>Atual ${v.cur}% • média ${v.avg}%</span></div><div class="v265bar v265ok"><i style="width:${v.cur}%"></i></div></div>`).join('')}</div></div><div class="v265sec"><h3>PRIORIDADES ATUAIS</h3><div class="v265priority">${pri.map((v,j)=>`<div class="v265card"><small>${j+1}ª PRIORIDADE</small><b>${v.label}</b><b class="v265need">${v.need}%</b><small>necessidade de treino</small></div>`).join('')}</div></div><div class="v265sec"><h3>SESSÕES</h3><div class="v265table"><div class="v265tablein"><div class="v265thead"><span>Data</span>${F.map(x=>`<span>${x[1]}</span>`).join('')}</div>${a.slice().reverse().map(x=>`<div class="v265tr"><strong>${new Date(x.at).toLocaleDateString('pt-BR')}</strong>${F.map(f=>`<b>${+(x.metrics?.[f[0]]||0)}%</b>`).join('')}</div>`).join('')}</div></div></div>`}
 window.jbV26OpenReport=showEvolution;
@@ -2282,7 +2282,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v266-force-css">
-/* V26.9 — força a interface nova e remove entradas antigas */
+/* V27.0 — força a interface nova e remove entradas antigas */
 body.v20-match #v263,
 body.v20-match #jbV262Fast,
 body.v20-match #jbV261Guide,
@@ -2304,7 +2304,7 @@ body.v20-match #v264{display:block!important}
 }
 @media print{#v266Version,#v266ReportBar{display:none!important}}
 </style>
-<div id="v266Version">V26.9 • 14 FUNDAMENTOS</div>
+<div id="v266Version">V27.0 • 14 FUNDAMENTOS</div>
 <script id="jb-v266-force-js">
 (function(){
  function install(){
@@ -2330,7 +2330,7 @@ body.v20-match #v264{display:block!important}
 
 
 <style id="jb-v267-clean-game-css">
-/* V26.9 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
+/* V27.0 — MODO JOGO LIMPO: somente placar, alunos e 14 fundamentos */
 body.v20-match .main-grid{display:block!important}
 body.v20-match .tracker{max-width:1180px!important;width:100%!important;margin:0 auto!important}
 
@@ -2496,7 +2496,7 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
  <button type="button" id="v267Sound" class="sound">🔊 SOM ATIVADO</button>
  <button type="button" id="v267Finish" class="finish">⚑ FINALIZAR JOGO</button>
 </div>
-<div id="v267Version">V26.9 • JOGO 14F</div>
+<div id="v267Version">V27.0 • JOGO 14F</div>
 
 <script id="jb-v267-clean-game-js">
 (function(){
@@ -2554,7 +2554,7 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
 
 
 <style id="jb-v268-final-force-css">
-/* V26.9: estado inicial do Scout é SEMPRE Modo Jogo */
+/* V27.0: estado inicial do Scout é SEMPRE Modo Jogo */
 body.v20-match .category-tabs,
 body.v20-match .action-zone,
 body.v20-match #jbV262Fast,
@@ -2589,7 +2589,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 }
 @media print{#v268Version{display:none!important}}
 </style>
-<div id="v268Version">V26.9 • MODO JOGO</div>
+<div id="v268Version">V27.0 • MODO JOGO</div>
 <script id="jb-v268-final-force-js">
 (function(){
  const MODE_KEY='jb_scout_v20_mode';
@@ -2645,7 +2645,7 @@ body.v20-match [class*="summary-card"]{display:none!important}
 
 
 <style id="jb-v269-print-fix-css">
-/* V26.9 — camada final de impressão sem conflito com relatórios antigos */
+/* V27.0 — camada final de impressão sem conflito com relatórios antigos */
 @page{size:A4 portrait;margin:10mm}
 
 @media print{
@@ -2869,6 +2869,209 @@ body.v20-match [class*="summary-card"]{display:none!important}
  window.addEventListener('focus',()=>{
    setTimeout(cleanup,300);
  });
+})();
+</script>
+
+
+<style id="jb-v270-prioridades-css">
+/* V27.0 — prioridades completas com os 14 fundamentos */
+.v270-priority-all{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:8px;
+ margin-top:8px
+}
+.v270-priority-item{
+ background:linear-gradient(145deg,#0f2028,#09171d);
+ border:1px solid rgba(255,255,255,.08);
+ border-radius:13px;
+ padding:10px
+}
+.v270-priority-top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:8px
+}
+.v270-priority-top b{
+ font-size:11px;
+ color:#f4f8f9
+}
+.v270-priority-pct{
+ font-size:16px;
+ font-weight:950;
+ color:#cfff20
+}
+.v270-priority-sub{
+ display:flex;
+ justify-content:space-between;
+ gap:8px;
+ margin-top:5px;
+ color:#84979f;
+ font-size:8px
+}
+.v270-priority-bar{
+ height:7px;
+ border-radius:999px;
+ background:#1c2c33;
+ overflow:hidden;
+ margin-top:7px
+}
+.v270-priority-bar i{
+ display:block;
+ height:100%;
+ background:linear-gradient(90deg,#ff7182,#cfff20)
+}
+.v270-priority-rank{
+ color:#ff9eae!important
+}
+@media(min-width:900px){
+ .v270-priority-all{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media print{
+ .v270-priority-item{
+   background:#fff!important;
+   color:#111!important;
+   border:1px solid #bbb!important;
+   break-inside:avoid!important
+ }
+ .v270-priority-top b{color:#111!important}
+ .v270-priority-sub{color:#555!important}
+ .v270-priority-pct{color:#334400!important}
+}
+</style>
+
+<script id="jb-v270-prioridades-js">
+(function(){
+ const FUND=[
+   ['Ace','ace','aceErro'],
+   ['Smash','smashAcerto','smashErro'],
+   ['Saque','primeiroSaque','erroSaque'],
+   ['Voleio Forehand','voleiForehandAcerto','voleiForehandErro'],
+   ['Voleio Backhand','voleiBackhandAcerto','voleiBackhandErro'],
+   ['Defesa Forehand','defesaForehandAcerto','defesaForehandErro'],
+   ['Defesa Backhand','defesaBackhandAcerto','defesaBackhandErro'],
+   ['Gancho','ganchoAcerto','ganchoErro'],
+   ['Acelerada','aceleradaAcerto','aceleradaErro'],
+   ['Curta','curtaAcerto','curtaErro'],
+   ['Devolução Forehand','devolucaoForehandAcerto','devolucaoForehandErro'],
+   ['Devolução Backhand','devolucaoBackhandAcerto','devolucaoBackhandErro'],
+   ['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],
+   ['Rainbow','rainbowAcerto','rainbowErro']
+ ];
+
+ const pc=(a,b)=>b?Math.round((a/b)*100):0;
+
+ function calc(player){
+   const x=player?.stats||{};
+   return FUND.map(([label,okKey,erKey])=>{
+     const ok=+(x[okKey]||0), er=+(x[erKey]||0), total=ok+er;
+     return {
+       label,ok,er,total,
+       acerto:pc(ok,total),
+       erro:pc(er,total),
+       necessidade:pc(er,total)
+     };
+   });
+ }
+
+ function html(player){
+   const rows=calc(player).sort((a,b)=>b.necessidade-a.necessidade);
+   return '<div class="v270-priority-all">'+rows.map((f,i)=>
+     '<div class="v270-priority-item">'+
+       '<div class="v270-priority-top">'+
+         '<b>'+(i+1)+'. '+f.label+'</b>'+
+         '<span class="v270-priority-pct '+(i<3?'v270-priority-rank':'')+'">'+f.necessidade+'%</span>'+
+       '</div>'+
+       '<div class="v270-priority-sub">'+
+         '<span>✓ '+f.ok+' • '+f.acerto+'% acerto</span>'+
+         '<span>✕ '+f.er+' • '+f.erro+'% erro</span>'+
+       '</div>'+
+       '<div class="v270-priority-bar"><i style="width:'+f.necessidade+'%"></i></div>'+
+     '</div>'
+   ).join('')+'</div>';
+ }
+
+ function installIndividualHook(){
+   const old=window.jbV236OpenIndividual;
+   if(!old || old.__v270) return;
+   const wrapped=function(i){
+     old(i);
+     setTimeout(()=>{
+       const p=state.players[i];
+       const content=document.getElementById('v265IContent');
+       if(!content) return;
+       const sections=[...content.querySelectorAll('.v265sec')];
+       const pri=sections.find(sec=>/PRIORIDADES DE TREINO/i.test(sec.textContent||''));
+       if(pri){
+         pri.innerHTML='<h3>PRIORIDADES DE TREINO • 14 FUNDAMENTOS</h3>'+html(p);
+       }
+     },0);
+   };
+   wrapped.__v270=true;
+   window.jbV236OpenIndividual=wrapped;
+ }
+
+ function installEvolutionHook(){
+   const old=window.jbV26OpenReport;
+   if(!old || old.__v270) return;
+   const wrapped=function(i){
+     old(i);
+     setTimeout(()=>{
+       const p=state.players[Number.isFinite(i)?i:(typeof current==='number'?current:0)];
+       const content=document.getElementById('v265EContent');
+       if(!content) return;
+       const sections=[...content.querySelectorAll('.v265sec')];
+       const pri=sections.find(sec=>/PRIORIDADES ATUAIS/i.test(sec.textContent||''));
+       if(pri){
+         pri.innerHTML='<h3>PRIORIDADES ATUAIS • 14 FUNDAMENTOS</h3>'+html(p);
+       }
+     },0);
+   };
+   wrapped.__v270=true;
+   window.jbV26OpenReport=wrapped;
+ }
+
+ function updateDashboard(){
+   const player=state?.players?.[typeof current==='number'?current:0];
+   if(!player) return;
+
+   const candidates=[...document.querySelectorAll('section,div,article')].filter(el=>{
+     const t=(el.textContent||'').trim();
+     return /PRIORIDADES DE TREINO/i.test(t) && t.length<1200;
+   });
+   if(!candidates.length) return;
+
+   const box=candidates.sort((a,b)=>a.textContent.length-b.textContent.length)[0];
+   if(box && !box.querySelector('.v270-priority-all')){
+     box.innerHTML='<h3 style="color:#cfff20;margin:0 0 7px">PRIORIDADES DE TREINO • 14 FUNDAMENTOS</h3>'+html(player);
+   }
+ }
+
+ function install(){
+   installIndividualHook();
+   installEvolutionHook();
+
+   document.addEventListener('click',()=>{
+     setTimeout(()=>{
+       installIndividualHook();
+       installEvolutionHook();
+       updateDashboard();
+     },60);
+   });
+
+   const obs=new MutationObserver(()=>{
+     installIndividualHook();
+     installEvolutionHook();
+   });
+   obs.observe(document.body,{childList:true,subtree:true});
+
+   setTimeout(updateDashboard,250);
+ }
+
+ if(document.readyState==='loading'){
+   document.addEventListener('DOMContentLoaded',install,{once:true});
+ }else install();
 })();
 </script>
 
