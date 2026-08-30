@@ -682,7 +682,7 @@ function point(t){
  }
  const s=state.score;
 
- /* V29.10: guarda o contexto ANTES do ponto manual */
+ /* V29.11: guarda o contexto ANTES do ponto manual */
  const before={
    games:[...s.games],
    points:[...s.points],
@@ -706,7 +706,7 @@ function point(t){
    autoFinish();
  }
 
- /* V29.10: registra também os pontos MANUAIS no motor inteligente.
+ /* V29.11: registra também os pontos MANUAIS no motor inteligente.
     Isso alimenta 40x40 e break points convertidos. */
  const after={
    games:[...s.games],
@@ -5426,7 +5426,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v287-print-hard-fix-css">
-/* V29.10 — nunca imprimir a interface operacional do Scout */
+/* V29.11 — nunca imprimir a interface operacional do Scout */
 @media print{
   header.app-only,
   main.app-only,
@@ -5870,7 +5870,7 @@ if('serviceWorker' in navigator){
 
 
 <style id="jb-v292-analysis-header-fix-css">
-/* V29.10 — corrige a faixa/cabeçalho da tela de Análise */
+/* V29.11 — corrige a faixa/cabeçalho da tela de Análise */
 body.jb-v29-app #v274AnalysisOverlay{
   position:fixed!important;
   inset:58px 0 70px 0!important;
@@ -6094,7 +6094,7 @@ body.jb-v29-app #v274AnalysisOverlay .v274actions{
 
 
 <style id="jb-v294-40x40-fund-css">
-/* V29.10 — 40x40 passa a fazer parte do painel principal de fundamentos */
+/* V29.11 — 40x40 passa a fazer parte do painel principal de fundamentos */
 body.v20-match #v275Extras .v275special:first-child{
   display:none!important;
 }
@@ -6149,7 +6149,7 @@ body.v20-match .v264row:has(.v264name){
 
 
 <style id="jb-v295-analysis-scroll-fix-css">
-/* V29.10 — a Análise rola sozinha; o Modo Jogo fica travado atrás */
+/* V29.11 — a Análise rola sozinha; o Modo Jogo fica travado atrás */
 html.jb-analysis-open,
 body.jb-analysis-open{
   overflow:hidden!important;
@@ -6404,7 +6404,7 @@ body.jb-analysis-open #v274AnalysisOverlay *{
 
 
 <style id="jb-v297-analysis-scroll-lock-css">
-/* V29.10 — bloqueio real da página por trás da Análise */
+/* V29.11 — bloqueio real da página por trás da Análise */
 html.jb-v297-analysis-lock{
   overflow:hidden!important;
   height:100%!important;
@@ -6565,7 +6565,7 @@ body.jb-v297-analysis-lock #v274AnalysisOverlay *{
 
 
 <style id="jb-v298-analysis-header-static-css">
-/* V29.10 — remove de vez o comportamento sticky do cabeçalho da Análise */
+/* V29.11 — remove de vez o comportamento sticky do cabeçalho da Análise */
 body.jb-v29-app #v274AnalysisOverlay.open .v274top,
 body.jb-v29-app #v274AnalysisOverlay .v274top,
 #v274AnalysisOverlay.open .v274top,
@@ -6687,6 +6687,76 @@ body.jb-v29-app #v274AnalysisOverlay #v274Players{
  if(document.readyState==='loading'){
    document.addEventListener('DOMContentLoaded',install,{once:true});
  }else install();
+})();
+</script>
+
+
+<!-- JB V29.11 — ícones do rodapé transferidos para navegação superior -->
+<style id="jb-v2911-nav-icons">
+/* Rodapé antigo removido: evita cobrir os botões do Registro Rápido */
+#jbV29Bottom{display:none!important}
+body.jb-v29-app{padding-bottom:18px!important}
+
+/* Navegação superior com aparência de app */
+#v20Match,#v20Analysis,#v278ConfigBtn,#jbV2911History{
+  width:64px!important;
+  min-width:64px!important;
+  height:54px!important;
+  padding:0!important;
+  border-radius:14px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:0!important;
+  line-height:1!important;
+}
+#v20Match::before{content:"🎾";font-size:25px}
+#v20Analysis::before{content:"📊";font-size:25px}
+#v278ConfigBtn::before{content:"⚙️";font-size:25px}
+#jbV2911History::before{content:"📈";font-size:25px}
+
+#v20Match.active,#v20Analysis.active,
+body.v20-match #v20Match,
+body.v20-analysis #v20Analysis{
+  box-shadow:0 0 0 2px rgba(210,255,0,.35),0 0 24px rgba(210,255,0,.20)!important;
+}
+
+/* Mantém o botão Finalizar jogo normal */
+#v20Finish{font-size:inherit!important;width:auto!important;min-width:unset!important;padding:0 18px!important}
+
+@media(max-width:820px){
+ #v20Match,#v20Analysis,#v278ConfigBtn,#jbV2911History{
+   width:58px!important;min-width:58px!important;height:50px!important
+ }
+}
+</style>
+<script id="jb-v2911-nav-icons-js">
+(function(){
+ function install(){
+   const match=document.getElementById('v20Match');
+   const analysis=document.getElementById('v20Analysis');
+   const config=document.getElementById('v278ConfigBtn');
+   if(match){match.innerHTML='';match.title='Modo Jogo';match.setAttribute('aria-label','Modo Jogo')}
+   if(analysis){analysis.innerHTML='';analysis.title='Análise';analysis.setAttribute('aria-label','Análise')}
+   if(config){config.innerHTML='';config.title='Configuração';config.setAttribute('aria-label','Configuração')}
+
+   /* Histórico também sobe para a barra, usando o ícone que existia no rodapé */
+   if(!document.getElementById('jbV2911History') && analysis && analysis.parentNode){
+     const h=document.createElement('button');
+     h.type='button';h.id='jbV2911History';
+     h.title='Histórico / Evolução';h.setAttribute('aria-label','Histórico / Evolução');
+     h.onclick=function(){
+       const b=document.getElementById('jbV25HistoryBtn');
+       if(b)b.click();
+       else if(typeof window.jbV26OpenReport==='function')window.jbV26OpenReport(typeof current==='number'?current:0);
+     };
+     const anchor=config||analysis;
+     anchor.parentNode.insertBefore(h,anchor.nextSibling);
+   }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(install,80),{once:true});
+ else setTimeout(install,80);
+ new MutationObserver(()=>install()).observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
 

@@ -1,4 +1,4 @@
-const CACHE='jb-play-v29-10-jb-tracker-global-icon';
+const CACHE='jb-play-v29-11-nav-icons';
 const ASSETS=['./', './index.html', './treino.html', './scout.html', './manifest.webmanifest', './jb-tracker-v2-180.png', './jb-tracker-v2-192.png', './jb-tracker-v2-512.png', './jb-logo-lime.png', './jb-watermark-lime.png', './jb-hero-beach.jpg', './jb-3d-reference.png'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
