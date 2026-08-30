@@ -5293,7 +5293,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v287-print-hard-fix-css">
-/* V29.0 — nunca imprimir a interface operacional do Scout */
+/* V29.1 — nunca imprimir a interface operacional do Scout */
 @media print{
   header.app-only,
   main.app-only,
@@ -5679,15 +5679,59 @@ body.jb-v29-app .main-grid{gap:10px!important}
      }
      if(e.target.closest('#v274Back,#v278Back'))setTimeout(()=>setNav('game'),20);
    },true);
-
-   const obs=new MutationObserver(updateStatus);
-   obs.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
-
-   if('serviceWorker' in navigator){
+if('serviceWorker' in navigator){
      navigator.serviceWorker.register('sw.js').catch(()=>{});
    }
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+
+
+<script id="jb-v291-load-fix-js">
+(function(){
+  let timer=null;
+
+  function safeUpdate(){
+    if(timer)return;
+    timer=setTimeout(()=>{
+      timer=null;
+      try{
+        const p=window.state?.players?.[typeof window.current==='number'?window.current:0];
+        const player=document.getElementById('jbV29Player');
+        if(player && p && player.textContent!==p.name) player.textContent=p.name;
+
+        const g=window.state?.score?.games||[0,0];
+        const score=document.getElementById('jbV29Score');
+        const next=(g[0]||0)+' × '+(g[1]||0);
+        if(score && score.textContent!==next) score.textContent=next;
+      }catch(e){}
+    },30);
+  }
+
+  function install(){
+    // Atualiza somente após interações relevantes, sem observar a página inteira.
+    document.addEventListener('click',e=>{
+      if(e.target.closest(
+        '.v264players button,.v264btn,.v275btn,.v282zone,'+
+        'button[onclick^="point("],button[onclick^="game("],'+
+        '#v267Bottom button,#v276ResetStats,#v280SaveNames,#v284Save'
+      )){
+        safeUpdate();
+      }
+    },true);
+
+    // Atualização leve de segurança — não bloqueia a interface.
+    setInterval(()=>{
+      if(!document.hidden)safeUpdate();
+    },2500);
+
+    safeUpdate();
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',install,{once:true});
+  }else install();
 })();
 </script>
 
