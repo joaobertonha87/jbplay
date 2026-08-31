@@ -1,7 +1,0 @@
-JB PLAY V12 — PERSPECTIVAS PRO
-
-- Seletor de perspectiva: Superior / 2D, 3D isométrica e 3D baixa.
-- Perspectiva escolhida fica salva no dispositivo.
-- Professor redesenhado com aparência esportiva, boné, raquete, bola e postura de alimentação.
-- Cesto redesenhado com estrutura metálica, tela e várias bolas.
-- Mantidos Login, Scout, Treinos, trajetórias, animações e editor.
