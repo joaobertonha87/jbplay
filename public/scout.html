@@ -693,7 +693,7 @@ function point(t){
  }
  const s=state.score;
 
- /* V30.0: guarda o contexto ANTES do ponto manual */
+ /* V31.0: guarda o contexto ANTES do ponto manual */
  const before={
    games:[...s.games],
    points:[...s.points],
@@ -717,7 +717,7 @@ function point(t){
    autoFinish();
  }
 
- /* V30.0: registra também os pontos MANUAIS no motor inteligente.
+ /* V31.0: registra também os pontos MANUAIS no motor inteligente.
     Isso alimenta 40x40 e break points convertidos. */
  const after={
    games:[...s.games],
@@ -5447,7 +5447,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <style id="jb-v287-print-hard-fix-css">
-/* V30.0 — nunca imprimir a interface operacional do Scout */
+/* V31.0 — nunca imprimir a interface operacional do Scout */
 @media print{
   header.app-only,
   main.app-only,
@@ -5891,7 +5891,7 @@ if('serviceWorker' in navigator){
 
 
 <style id="jb-v292-analysis-header-fix-css">
-/* V30.0 — corrige a faixa/cabeçalho da tela de Análise */
+/* V31.0 — corrige a faixa/cabeçalho da tela de Análise */
 body.jb-v29-app #v274AnalysisOverlay{
   position:fixed!important;
   inset:58px 0 70px 0!important;
@@ -6115,7 +6115,7 @@ body.jb-v29-app #v274AnalysisOverlay .v274actions{
 
 
 <style id="jb-v294-40x40-fund-css">
-/* V30.0 — 40x40 passa a fazer parte do painel principal de fundamentos */
+/* V31.0 — 40x40 passa a fazer parte do painel principal de fundamentos */
 body.v20-match #v275Extras .v275special:first-child{
   display:none!important;
 }
@@ -6170,7 +6170,7 @@ body.v20-match .v264row:has(.v264name){
 
 
 <style id="jb-v295-analysis-scroll-fix-css">
-/* V30.0 — a Análise rola sozinha; o Modo Jogo fica travado atrás */
+/* V31.0 — a Análise rola sozinha; o Modo Jogo fica travado atrás */
 html.jb-analysis-open,
 body.jb-analysis-open{
   overflow:hidden!important;
@@ -6425,7 +6425,7 @@ body.jb-analysis-open #v274AnalysisOverlay *{
 
 
 <style id="jb-v297-analysis-scroll-lock-css">
-/* V30.0 — bloqueio real da página por trás da Análise */
+/* V31.0 — bloqueio real da página por trás da Análise */
 html.jb-v297-analysis-lock{
   overflow:hidden!important;
   height:100%!important;
@@ -6586,7 +6586,7 @@ body.jb-v297-analysis-lock #v274AnalysisOverlay *{
 
 
 <style id="jb-v298-analysis-header-static-css">
-/* V30.0 — remove de vez o comportamento sticky do cabeçalho da Análise */
+/* V31.0 — remove de vez o comportamento sticky do cabeçalho da Análise */
 body.jb-v29-app #v274AnalysisOverlay.open .v274top,
 body.jb-v29-app #v274AnalysisOverlay .v274top,
 #v274AnalysisOverlay.open .v274top,
@@ -6712,7 +6712,7 @@ body.jb-v29-app #v274AnalysisOverlay #v274Players{
 </script>
 
 
-<!-- JB V30.0 — ícones do rodapé transferidos para navegação superior -->
+<!-- JB V31.0 — ícones do rodapé transferidos para navegação superior -->
 <style id="jb-v2911-nav-icons">
 /* Rodapé antigo removido: evita cobrir os botões do Registro Rápido */
 #jbV29Bottom{display:none!important}
@@ -7017,6 +7017,41 @@ function install(){
  document.querySelectorAll('.v30tabs button').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;document.querySelectorAll('.v30tabs button').forEach(x=>x.classList.toggle('on',x===b));render()});
  const obs=new MutationObserver(ensureButton);obs.observe(document.body,{subtree:true,childList:true});
 }
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+
+
+<style>
+#jbV31{display:none;position:fixed;inset:58px 0 0;z-index:9997;background:#071116;color:#f4f8f9;overflow:auto;padding:14px 14px 30px}
+#jbV31.open{display:block!important}.v31w{max-width:1220px;margin:auto}.v31top{display:flex;justify-content:space-between;align-items:center;gap:10px}.v31top h2{margin:0;font-size:19px}.v31top small{color:#84979f}
+.v31back,.v31new,.v31act{min-height:42px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#10212a;color:#fff;padding:8px 11px;font-weight:900}.v31new,.v31hot{background:#cfff20;color:#071014;border-color:#cfff20}
+.v31layout{display:grid;grid-template-columns:300px 1fr;gap:10px;margin-top:12px}.v31list{display:flex;flex-direction:column;gap:7px;margin-top:8px}.v31stu{display:grid;grid-template-columns:42px 1fr auto;gap:8px;align-items:center;padding:8px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#0d1b23;color:#fff;text-align:left}.v31stu.on{border-color:#cfff20}.v31av{width:42px;height:42px;border-radius:10px;background:#10242d;color:#cfff20;display:grid;place-items:center;font-weight:950}.v31stu b{display:block;font-size:10px}.v31stu small{display:block;color:#84979f;font-size:8px}.v31idx{font-size:16px;font-weight:950;color:#cfff20}
+.v31g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.v31g2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.v31card{background:#0d1b23;border:1px solid rgba(255,255,255,.07);border-radius:13px;padding:10px}.v31card small{display:block;color:#82959d;font-size:8px}.v31card b{display:block;font-size:18px;margin-top:4px}.v31sec{margin-top:12px}.v31sec h3{font-size:10px;color:#cfff20;letter-spacing:.08em}
+.v31form{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.v31field label{display:block;font-size:8px;color:#82959d;margin-bottom:4px}.v31field input,.v31field select{width:100%;min-height:44px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#07171d;color:#fff;padding:9px;font-size:14px}.v31acts{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.v31heat{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.v31h{border:1px solid rgba(255,255,255,.07);background:#0d1b23;border-radius:11px;padding:9px}.v31h strong{display:block;font-size:10px}.v31h span{display:block;font-size:17px;font-weight:950;margin-top:4px}.v31h.good span{color:#2ee6a6}.v31h.mid span{color:#ffc75a}.v31h.bad span{color:#ff7182}.v31h small{display:block;color:#82959d;font-size:8px;margin-top:3px}
+.v31plan{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.v31blk{border:1px solid rgba(255,255,255,.07);background:#0d1b23;border-radius:12px;padding:10px}.v31blk .t{display:inline-block;border-radius:999px;background:rgba(207,255,32,.1);color:#cfff20;padding:5px 8px;font-size:8px;font-weight:950}.v31blk b{display:block;font-size:11px;margin-top:5px}.v31blk p{font-size:9px;color:#9babb1;line-height:1.4}.v31prio{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px}.v31prio span{border:1px solid rgba(255,113,130,.25);background:rgba(255,113,130,.07);color:#ff9daf;border-radius:999px;padding:6px 8px;font-size:8px;font-weight:900}
+#jbV31Btn{width:64px!important;min-width:64px!important;height:54px!important;padding:0!important;border-radius:14px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:0!important}#jbV31Btn::before{content:"👥";font-size:24px}
+@media(max-width:900px){.v31layout{grid-template-columns:1fr}.v31g4,.v31heat{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.v31g4,.v31g2,.v31form,.v31heat,.v31plan{grid-template-columns:1fr}}
+</style>
+<div id="jbV31"><div class="v31w"><div class="v31top"><div><h2>ALUNOS • PERFIL TÉCNICO</h2><small>Cadastro permanente • Índice JB • evolução • treino recomendado</small></div><button id="jbV31Back" class="v31back">← Voltar</button></div><div class="v31layout"><aside><button id="jbV31New" class="v31new">＋ NOVO ALUNO</button><div id="jbV31List" class="v31list"></div></aside><main id="jbV31Main"></main></div></div></div>
+<script>
+(function(){
+const KEY='jb_tracker_students_v31',HIST='jb_scout_history_v283';
+const F=[['Ace','ace','aceErro'],['Smash','smashAcerto','smashErro'],['Saque','primeiroSaque','erroSaque'],['Voleio Forehand','voleiForehandAcerto','voleiForehandErro'],['Voleio Backhand','voleiBackhandAcerto','voleiBackhandErro'],['Defesa Forehand','defesaForehandAcerto','defesaForehandErro'],['Defesa Backhand','defesaBackhandAcerto','defesaBackhandErro'],['Gancho','ganchoAcerto','ganchoErro'],['Acelerada','aceleradaAcerto','aceleradaErro'],['Curta','curtaAcerto','curtaErro'],['Devolução Forehand','devolucaoForehandAcerto','devolucaoForehandErro'],['Devolução Backhand','devolucaoBackhandAcerto','devolucaoBackhandErro'],['Terceira bola','terceiraBolaAcerto','terceiraBolaErro'],['Rainbow','rainbowAcerto','rainbowErro'],['Lob','lobAcerto','lobErro'],['Anômalo','anomaloAcerto','anomaloErro'],['Bola Cruzada','bolaCruzadaAcerto','bolaCruzadaErro'],['40x40','quarentaGanho','quarentaPerdido']];
+let selected=null; const $=q=>document.querySelector(q),pc=(a,b)=>b?Math.round(a*100/b):0,esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function read(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')||[]}catch(e){return[]}} function write(a){localStorage.setItem(KEY,JSON.stringify(a))} function uid(){return 'stu_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7)} function hdb(){try{return JSON.parse(localStorage.getItem(HIST)||'{}')||{}}catch(e){return{}}}
+function sync(){let a=read(),c=false;state.players.forEach((p,i)=>{if(!p.profileId)p.profileId='p'+i;let st=a.find(x=>x.profileId===p.profileId);if(!st){a.push({id:uid(),profileId:p.profileId,name:p.name||('Aluno '+(i+1)),category:'',hand:'',notes:'',createdAt:Date.now()});c=true}});if(c)write(a);if(!selected&&a.length)selected=a[0].id}
+function agg(st){const out={},arr=hdb()[st.profileId]||[];arr.forEach(s=>Object.keys(s.stats||{}).forEach(k=>out[k]=(out[k]||0)+Number(s.stats[k]||0)));const p=state.players.find(x=>x.profileId===st.profileId);Object.keys(p?.stats||{}).forEach(k=>out[k]=(out[k]||0)+Number(p.stats[k]||0));return out}
+function fs(st){const x=agg(st);return F.map(([l,o,e])=>{const ok=+(x[o]||0),er=+(x[e]||0),t=ok+er;return{label:l,ok,er,total:t,pct:pc(ok,t),err:pc(er,t),priority:Math.round(pc(er,t)*(t?(1-Math.exp(-t/5)):0))}})}
+function idx(st){const a=fs(st),ok=a.reduce((n,f)=>n+f.ok,0),er=a.reduce((n,f)=>n+f.er,0),t=ok+er,x=agg(st);const eff=pc(ok,t),f40=pc(x.quarentaGanho||0,(x.quarentaGanho||0)+(x.quarentaPerdido||0)),bp=pc(x.breakPointConverted||0,x.breakPointOpportunities||0),w=Math.min(100,(x.winner||0)*10),vol=Math.min(100,t*2);return Math.round(eff*.55+f40*.15+bp*.15+w*.10+vol*.05)}
+function prio(st){return fs(st).filter(f=>f.total>0).sort((a,b)=>b.priority-a.priority||b.err-a.err||b.total-a.total)}
+function list(){sync();const a=read(),h=$('#jbV31List');h.innerHTML=a.map(st=>'<button class="v31stu '+(st.id===selected?'on':'')+'" data-id="'+st.id+'"><span class="v31av">'+(st.name||'?').split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()+'</span><span><b>'+esc(st.name)+'</b><small>'+(st.category?esc(st.category):'Sem categoria')+'</small></span><span class="v31idx">'+idx(st)+'</span></button>').join('');h.querySelectorAll('.v31stu').forEach(b=>b.onclick=()=>{selected=b.dataset.id;list();render()})}
+function drill(n){return ({'Saque':'Alvos nas zonas 1–5 com variação e segunda bola.','Smash':'Bolas altas com ajuste, direção e definição.','Curta':'Controle de mão, curta cruzada/paralela e recuperação.','Gancho':'Bolas altas laterais com alvo e reposicionamento.','Defesa Forehand':'Defesas baixas FH, recuperação e continuidade.','Defesa Backhand':'Defesas baixas BH, recuperação e continuidade.','40x40':'Simulações No-Ad começando em 40x40.'}[n]||('Drill específico de '+n+' com controle, alvo e continuidade.'))}
+function plan(st){const p=prio(st).slice(0,3),a=p[0]?.label||'fundamento principal',b=p[1]?.label||a,c=p[2]?.label||b;return '<div class="v31prio">'+p.map((x,i)=>'<span>'+(i+1)+'. '+x.label+' • índice '+x.priority+'</span>').join('')+'</div><div class="v31plan"><div class="v31blk"><span class="t">8 MIN</span><b>Aquecimento</b><p>Mobilidade e controle preparando '+a+' e '+b+'.</p></div><div class="v31blk"><span class="t">15 MIN</span><b>'+a+'</b><p>'+drill(a)+'</p></div><div class="v31blk"><span class="t">12 MIN</span><b>'+b+'</b><p>'+drill(b)+'</p></div><div class="v31blk"><span class="t">10 MIN</span><b>'+c+'</b><p>'+drill(c)+'</p></div><div class="v31blk"><span class="t">10 MIN</span><b>Volume integrado</b><p>Sequência combinando '+a+', '+b+' e '+c+'.</p></div><div class="v31blk"><span class="t">5 MIN</span><b>Jogo condicionado</b><p>Pontos forçando as prioridades e registro no JB Tracker.</p></div></div>'}
+function render(){const st=read().find(x=>x.id===selected),m=$('#jbV31Main');if(!st){m.innerHTML='Selecione um aluno.';return}const a=fs(st),u=a.filter(f=>f.total>0),best=u.length?[...u].sort((x,y)=>y.pct-x.pct)[0]:null,w=prio(st)[0]||null,h=(hdb()[st.profileId]||[]);m.innerHTML='<div class="v31g4"><div class="v31card"><small>ÍNDICE JB</small><b>'+idx(st)+'/100</b></div><div class="v31card"><small>PARTIDAS</small><b>'+h.length+'</b></div><div class="v31card"><small>MELHOR</small><b>'+(best?best.label:'—')+'</b></div><div class="v31card"><small>PRIORIDADE</small><b>'+(w?w.label:'—')+'</b></div></div><div class="v31sec"><h3>PERFIL PERMANENTE</h3><div class="v31card"><div class="v31form"><div class="v31field"><label>NOME</label><input id="v31Name" value="'+esc(st.name)+'"></div><div class="v31field"><label>CATEGORIA / NÍVEL</label><input id="v31Cat" value="'+esc(st.category||'')+'"></div><div class="v31field"><label>MÃO DOMINANTE</label><select id="v31Hand"><option value="">Não informado</option><option '+(st.hand==='Direita'?'selected':'')+'>Direita</option><option '+(st.hand==='Esquerda'?'selected':'')+'>Esquerda</option></select></div><div class="v31field"><label>OBSERVAÇÃO</label><input id="v31Notes" value="'+esc(st.notes||'')+'"></div></div><div class="v31acts"><button class="v31act v31hot" id="v31Save">Salvar perfil</button><button class="v31act" id="v31Use">Usar no jogo</button><button class="v31act" id="v31Del">Excluir</button></div></div></div><div class="v31sec"><h3>MAPA TÉCNICO</h3><div class="v31heat">'+a.map(f=>'<div class="v31h '+(f.pct>=70?'good':f.pct>=50?'mid':'bad')+'"><strong>'+f.label+'</strong><span>'+f.pct+'%</span><small>'+f.ok+' acertos • '+f.er+' erros</small></div>').join('')+'</div></div><div class="v31sec"><h3>TREINO AUTOMÁTICO • 60 MIN</h3><div class="v31card">'+plan(st)+'</div></div>';$('#v31Save').onclick=()=>{const arr=read(),x=arr.find(z=>z.id===st.id);x.name=$('#v31Name').value.trim()||'Aluno';x.category=$('#v31Cat').value.trim();x.hand=$('#v31Hand').value;x.notes=$('#v31Notes').value.trim();write(arr);const p=state.players.find(p=>p.profileId===x.profileId);if(p)p.name=x.name;localStorage.setItem('jb_scout_pro_v2',JSON.stringify(state));if(typeof window.render==='function')try{window.render()}catch(e){}list();render()};$('#v31Use').onclick=()=>{const i=Number(prompt('Posição 1, 2, 3 ou 4:','1'))-1;if(i<0||i>3)return;state.players[i].name=st.name;state.players[i].profileId=st.profileId;localStorage.setItem('jb_scout_pro_v2',JSON.stringify(state));if(typeof window.render==='function')try{window.render()}catch(e){};alert(st.name+' aplicado à posição '+(i+1))};$('#v31Del').onclick=()=>{if(!confirm('Excluir '+st.name+'?'))return;const a=read().filter(x=>x.id!==st.id);write(a);selected=a[0]?.id||null;list();render()}}
+function open(){sync();list();render();$('#jbV31').classList.add('open')}function close(){$('#jbV31').classList.remove('open')}function ensure(){if($('#jbV31Btn'))return;const r=$('#jbV30CoachBtn')||$('#jbV2911History')||$('#v278ConfigBtn');if(!r||!r.parentNode)return;const b=document.createElement('button');b.id='jbV31Btn';b.type='button';b.title='Alunos';b.onclick=open;r.parentNode.insertBefore(b,r.nextSibling)}
+function install(){sync();ensure();$('#jbV31Back').onclick=close;$('#jbV31New').onclick=()=>{const n=prompt('Nome do novo aluno:','');if(!n)return;const a=read(),id=uid();a.push({id,profileId:'profile_'+id,name:n.trim(),category:'',hand:'',notes:'',createdAt:Date.now()});write(a);selected=id;list();render()};new MutationObserver(ensure).observe(document.body,{subtree:true,childList:true})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 </script>
