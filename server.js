@@ -18,7 +18,7 @@ app.use((req,res,next)=>{
 });
 app.use(express.static(path.join(__dirname, "public"), { index: "index.html", etag: false }));
 
-app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Tracker V32.1 Elite Performance", ai: !!client }));
+app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Tracker V32.2 Direct Navigation", ai: !!client }));
 
 const apiKey = process.env.OPENAI_API_KEY;
 const client = apiKey ? new OpenAI({ apiKey }) : null;
@@ -245,4 +245,4 @@ app.get("/{*splat}", (_req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, "0.0.0.0", () => console.log(`JB Tracker V32.1 Elite Performance em http://0.0.0.0:${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`JB Tracker V32.2 Direct Navigation em http://0.0.0.0:${port}`));
