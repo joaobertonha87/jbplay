@@ -18,7 +18,7 @@ app.use((req,res,next)=>{
 });
 app.use(express.static(path.join(__dirname, "public"), { index: "index.html", etag: false }));
 
-app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Play Aula na Mão V36.0", ai: !!client, aulaNaMaoImport: true, autoExpandBlocks: true, singleFundamental: true }));
+app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Play Aula na Mão V37.0", ai: !!client, aulaNaMaoImport: true, autoExpandBlocks: true, singleFundamental: true, staticTacticalBoards: true }));
 
 const apiKey = process.env.OPENAI_API_KEY;
 const client = apiKey ? new OpenAI({ apiKey }) : null;
@@ -300,4 +300,4 @@ app.get("/{*splat}", (_req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, "0.0.0.0", () => console.log(`JB Play Aula na Mão V36.0 em http://0.0.0.0:${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`JB Play Aula na Mão V37.0 em http://0.0.0.0:${port}`));
