@@ -316,7 +316,7 @@ body.ipad-setup-collapsed .topbar>div:first-child .section-title h2{font-size:12
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="JB Tracker">
-<link rel="manifest" href="manifest.webmanifest?v=3250">
+<link rel="manifest" href="manifest.webmanifest?v=3260">
 <link rel="apple-touch-icon" sizes="180x180" href="jb-tracker-v2-180.png?v=2910">
 <link rel="icon" type="image/png" sizes="192x192" href="jb-tracker-v2-192.png?v=2910">
 
@@ -5858,7 +5858,7 @@ body.jb-v29-app .main-grid{gap:10px!important}
      if(e.target.closest('#v274Back,#v278Back'))setTimeout(()=>setNav('game'),20);
    },true);
 if('serviceWorker' in navigator){
-     navigator.serviceWorker.register('sw.js?v=3250',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
+     navigator.serviceWorker.register('sw.js?v=3260',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
    }
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
@@ -7216,8 +7216,25 @@ body.v20-match .v264btn{min-height:60px!important;font-size:12px!important}body.
 #v275Extras,#v282ServeZones,#v276ResetStats,#v267Bottom{width:100%!important;max-width:none!important}
 .v274wrap,.v278wrap,.v30wrap,.v31w,.v265box{width:100%!important;max-width:none!important;padding-left:14px!important;padding-right:14px!important}
 .v274top h2,.v278top h2,.v30top h2,.v31top h2{font-size:22px!important}.v274top small,.v278top small,.v30top small,.v31top small{font-size:12px!important}
+/* V32.6 — Análise ocupa toda a tela até a borda inferior */
+body.jb-v29-app #v274AnalysisOverlay.open{
+ position:fixed!important;
+ top:88px!important;right:0!important;bottom:0!important;left:0!important;
+ inset:88px 0 0!important;
+ width:100%!important;height:auto!important;
+ min-height:calc(100dvh - 88px)!important;
+ max-height:calc(100dvh - 88px)!important;
+ margin:0!important;
+ padding-bottom:max(28px,env(safe-area-inset-bottom))!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ background:radial-gradient(circle at 50% -16%,#29370e 0,#101711 25%,#050907 66%)!important;
+ background-color:#050907!important;
+ overscroll-behavior:contain!important;
+ touch-action:pan-y!important;
+ z-index:2147483638!important;
+}
 @media(max-width:900px){#jbV322Nav{justify-content:flex-start!important;overflow-x:auto!important;padding-right:190px!important}#jbV322Nav button{min-width:88px!important}body.v20-match .v264board{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
-@media(max-width:650px){body.jb-v29-app{padding-top:88px!important}#jbV322Nav{height:82px!important}#jbV322Nav .v322brand{height:64px!important}#jbV322Nav button{height:64px!important;min-width:82px!important}#jbV322Nav .v323ico{font-size:22px}#jbV322Nav .v323label{font-size:8px}#v274AnalysisOverlay,#v278ConfigOverlay,#jbV25History,#jbV30Coach,#jbV31,#v265Chooser,#v265Individual,#v265Evolution{top:82px!important;inset:82px 0 0!important;max-height:calc(100% - 82px)!important}body.v20-match .v264players{grid-template-columns:repeat(2,1fr)!important}body.v20-match .v264board{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:650px){body.jb-v29-app{padding-top:88px!important}#jbV322Nav{height:82px!important}#jbV322Nav .v322brand{height:64px!important}#jbV322Nav button{height:64px!important;min-width:82px!important}#jbV322Nav .v323ico{font-size:22px}#jbV322Nav .v323label{font-size:8px}#v274AnalysisOverlay,#v278ConfigOverlay,#jbV25History,#jbV30Coach,#jbV31,#v265Chooser,#v265Individual,#v265Evolution{top:82px!important;inset:82px 0 0!important;max-height:calc(100% - 82px)!important}body.jb-v29-app #v274AnalysisOverlay.open{top:82px!important;bottom:0!important;inset:82px 0 0!important;min-height:calc(100dvh - 82px)!important;max-height:calc(100dvh - 82px)!important}body.v20-match .v264players{grid-template-columns:repeat(2,1fr)!important}body.v20-match .v264board{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media print{body.jb-v29-app{padding-top:0!important}}
 </style>
 </body>
