@@ -1124,7 +1124,7 @@ body.v16-presentation .v16-present-exit{display:block}
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="JB Tracker">
-<link rel="manifest" href="manifest.webmanifest?v=3220">
+<link rel="manifest" href="manifest.webmanifest?v=3240">
 <link rel="apple-touch-icon" sizes="180x180" href="jb-tracker-v2-180.png?v=2910">
 <link rel="icon" type="image/png" sizes="192x192" href="jb-tracker-v2-192.png?v=2910">
 
@@ -3775,7 +3775,7 @@ function v8RefreshStats(){
 setInterval(v8RefreshStats,700);
 v8RefreshStats();
 
-if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=3220',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{}));
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=3240',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{}));
 </script>
 
 <script id="jb-v166-depth-engine">
@@ -3909,11 +3909,6 @@ window.v166DepthScale=function(point){
   }
 
   // Marca versão no painel sem alterar a lógica do app.
-  const versionNote=document.createElement('div');
-  versionNote.id='v15VersionNote';
-  versionNote.textContent='V16.8 • CLEAN AI COURT';
-  versionNote.style.cssText='position:fixed;right:12px;bottom:10px;z-index:20;font:800 10px system-ui;color:#cfff20;background:rgba(7,16,22,.72);border:1px solid rgba(207,255,32,.28);padding:6px 9px;border-radius:9px;pointer-events:none;letter-spacing:.8px';
-  document.body.appendChild(versionNote);
 })();
 </script>
 

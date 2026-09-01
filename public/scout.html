@@ -316,7 +316,7 @@ body.ipad-setup-collapsed .topbar>div:first-child .section-title h2{font-size:12
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="JB Tracker">
-<link rel="manifest" href="manifest.webmanifest?v=3220">
+<link rel="manifest" href="manifest.webmanifest?v=3240">
 <link rel="apple-touch-icon" sizes="180x180" href="jb-tracker-v2-180.png?v=2910">
 <link rel="icon" type="image/png" sizes="192x192" href="jb-tracker-v2-192.png?v=2910">
 
@@ -2505,7 +2505,6 @@ body.v20-match #v264{display:block!important}
 }
 @media print{#v266Version,#v266ReportBar{display:none!important}}
 </style>
-<div id="v266Version">V28.4 • 14 FUNDAMENTOS</div>
 <script id="jb-v266-force-js">
 (function(){
  function install(){
@@ -2697,7 +2696,6 @@ body.v20-match [class*="summary"]:not(.score-summary){display:none!important}
  <button type="button" id="v267Sound" class="sound">🔊 SOM ATIVADO</button>
  <button type="button" id="v267Finish" class="finish">⚑ FINALIZAR JOGO</button>
 </div>
-<div id="v267Version">V28.4 • JOGO 14F</div>
 
 <script id="jb-v267-clean-game-js">
 (function(){
@@ -2790,7 +2788,6 @@ body.v20-match [class*="summary-card"]{display:none!important}
 }
 @media print{#v268Version{display:none!important}}
 </style>
-<div id="v268Version">V28.4 • MODO JOGO</div>
 <script id="jb-v268-final-force-js">
 (function(){
  const MODE_KEY='jb_scout_v20_mode';
@@ -5861,7 +5858,7 @@ body.jb-v29-app .main-grid{gap:10px!important}
      if(e.target.closest('#v274Back,#v278Back'))setTimeout(()=>setNav('game'),20);
    },true);
 if('serviceWorker' in navigator){
-     navigator.serviceWorker.register('sw.js?v=3220',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
+     navigator.serviceWorker.register('sw.js?v=3240',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
    }
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
@@ -7120,7 +7117,6 @@ body.v20-match .v264row{padding:9px!important}.v264name{color:#f1f5f2!important;
 #v321Stamp{position:fixed;right:10px;bottom:8px;z-index:999999;padding:6px 9px;border-radius:999px;background:#0b120e;color:#d9ff32;border:1px solid rgba(217,255,50,.24);font-size:8px;font-weight:950;letter-spacing:.08em}
 @media(max-width:1100px){body.v20-match .v264board{grid-template-columns:repeat(3,minmax(0,1fr))!important}}@media(max-width:760px){body.v20-match .v264board{grid-template-columns:repeat(2,minmax(0,1fr))!important}}@media(max-width:430px){body.v20-match .v264board{grid-template-columns:1fr!important}}@media print{#v321Stamp{display:none!important}}
 </style>
-<div id="v321Stamp">V32.1 • ELITE PERFORMANCE</div>
 <script id="jb-v321-elite-js">
 (function(){
  function mark(){
@@ -7145,21 +7141,19 @@ body.jb-v29-app{padding-top:72px!important}
 #v274AnalysisOverlay,#v278ConfigOverlay,#jbV25History,#jbV30Coach,#jbV31,#v265Chooser,#v265Individual,#v265Evolution{top:66px!important;bottom:0!important;height:auto!important;max-height:calc(100% - 66px)!important}
 #v274AnalysisOverlay,#v278ConfigOverlay,#jbV25History,#v265Chooser,#v265Individual,#v265Evolution{inset:66px 0 0!important}
 #jbV30Coach,#jbV31{inset:66px 0 0!important}
-#v322Version{position:fixed;right:10px;bottom:8px;z-index:2147483639;padding:5px 8px;border-radius:999px;background:#0b120e;color:#d9ff32;border:1px solid rgba(217,255,50,.22);font-size:7px;font-weight:950}
-#v321Stamp{display:none!important}
+#v266Version,#v267Version,#v268Version,#v321Stamp,#v322Version,[id$="Version"]{display:none!important}
 @media(max-width:620px){#jbV322Nav{justify-content:flex-start;overflow-x:auto}.v322brand{position:sticky;left:0;z-index:2}#jbV322Nav button{width:48px;min-width:48px}}
 @media print{#jbV322Nav,#v322Version{display:none!important}body.jb-v29-app{padding-top:0!important}}
 </style>
 <nav id="jbV322Nav" aria-label="Navegação principal">
  <div class="v322brand" aria-label="JB Tracker">JB</div>
- <button type="button" class="active" data-view="game" title="Jogo" aria-label="Jogo">🎾</button>
- <button type="button" data-view="analysis" title="Análise" aria-label="Análise">📊</button>
- <button type="button" data-view="config" title="Configuração" aria-label="Configuração">⚙️</button>
- <button type="button" data-view="history" title="Histórico e evolução" aria-label="Histórico e evolução">📈</button>
- <button type="button" data-view="coach" title="Scout Inteligente" aria-label="Scout Inteligente">🧑‍🏫</button>
- <button type="button" data-view="students" title="Alunos" aria-label="Alunos">👥</button>
+ <button type="button" class="active" data-view="game" title="Jogo" aria-label="Jogo"><span class="v323ico">🎾</span><span class="v323label">Jogo</span></button>
+ <button type="button" data-view="analysis" title="Análise" aria-label="Análise"><span class="v323ico">📊</span><span class="v323label">Análise</span></button>
+ <button type="button" data-view="config" title="Configuração" aria-label="Configuração"><span class="v323ico">⚙️</span><span class="v323label">Configuração</span></button>
+ <button type="button" data-view="history" title="Histórico e evolução" aria-label="Histórico e evolução"><span class="v323ico">📈</span><span class="v323label">Histórico/Evolução</span></button>
+ <button type="button" data-view="coach" title="Scout Inteligente" aria-label="Scout Inteligente"><span class="v323ico">🧑‍🏫</span><span class="v323label">Scout Inteligente</span></button>
+ <button type="button" data-view="students" title="Alunos" aria-label="Alunos"><span class="v323ico">👥</span><span class="v323label">Alunos</span></button>
 </nav>
-<div id="v322Version">V32.2 • NAVEGAÇÃO DIRETA</div>
 <script id="jb-v322-direct-nav-js">
 (function(){
  const nav=document.getElementById('jbV322Nav'),buttons=[...nav.querySelectorAll('button[data-view]')],$=id=>document.getElementById(id);
@@ -7175,5 +7169,35 @@ body.jb-v29-app{padding-top:72px!important}
  buttons.forEach(button=>button.addEventListener('click',()=>open(button.dataset.view)));window.jbV322Open=open;
 })();
 </script>
+<style id="jb-v323-fullscreen-fonts-css">
+html,body{width:100%!important;max-width:none!important;overflow-x:hidden!important}
+body.jb-v29-app{padding-top:94px!important}
+body.jb-v29-app .page,body.jb-v29-app .wrap,body.jb-v29-app main.app-only,body.jb-v29-app .tracker{width:100%!important;max-width:none!important;margin-left:0!important;margin-right:0!important}
+body.jb-v29-app .wrap{padding:12px 14px 22px!important}
+#jbV322Nav{height:88px!important;justify-content:center!important;gap:7px!important;padding:7px 12px!important}
+#jbV322Nav .v322brand{width:58px!important;height:68px!important;min-width:58px!important;margin-right:5px!important;font-size:16px!important}
+#jbV322Nav button{width:94px!important;min-width:76px!important;height:70px!important;padding:6px 5px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;border-radius:15px!important;font-size:inherit!important}
+#jbV322Nav .v323ico{display:block;font-size:25px;line-height:1}
+#jbV322Nav .v323label{display:block;max-width:100%;font-size:9px;line-height:1.05;font-weight:900;text-align:center;white-space:normal}
+#v274AnalysisOverlay,#v278ConfigOverlay,#jbV25History,#jbV30Coach,#jbV31,#v265Chooser,#v265Individual,#v265Evolution{top:88px!important;bottom:0!important;inset:88px 0 0!important;max-height:calc(100% - 88px)!important}
+body.v20-match .score-card{width:100%!important;max-width:none!important;padding:18px 26px!important}
+body.v20-match .score-name{font-size:16px!important}body.v20-match .games{font-size:78px!important}body.v20-match .points{font-size:28px!important}body.v20-match .score-vs{font-size:25px!important}
+body.v20-match .score-actions .btn{min-height:48px!important;font-size:14px!important;padding:10px 22px!important}
+body.v20-match .v264players{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+body.v20-match .v264players button{min-height:72px!important;font-size:16px!important}
+body.v20-match .v264players button.on:after{font-size:9px!important}
+body.v20-match .v264head{padding:13px 15px!important}body.v20-match .v264head b{font-size:16px!important}body.v20-match .v264head small{font-size:11px!important}body.v20-match .v264undo{font-size:13px!important;min-height:44px!important}
+body.v20-match .v264board{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+body.v20-match .v264row{min-height:112px!important;padding:11px!important}
+body.v20-match .v264name{font-size:14px!important;line-height:1.2!important;min-height:34px!important}
+body.v20-match .v264btn{min-height:60px!important;font-size:12px!important}body.v20-match .v264btn small{font-size:9px!important}
+#v264last{font-size:12px!important;padding:11px 13px!important}
+#v275Extras,#v282ServeZones,#v276ResetStats,#v267Bottom{width:100%!important;max-width:none!important}
+.v274wrap,.v278wrap,.v30wrap,.v31w,.v265box{width:100%!important;max-width:none!important;padding-left:14px!important;padding-right:14px!important}
+.v274top h2,.v278top h2,.v30top h2,.v31top h2{font-size:22px!important}.v274top small,.v278top small,.v30top small,.v31top small{font-size:12px!important}
+@media(max-width:900px){#jbV322Nav{justify-content:flex-start!important;overflow-x:auto!important}#jbV322Nav button{min-width:88px!important}body.v20-match .v264board{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:650px){body.jb-v29-app{padding-top:88px!important}#jbV322Nav{height:82px!important}#jbV322Nav .v322brand{height:64px!important}#jbV322Nav button{height:64px!important;min-width:82px!important}#jbV322Nav .v323ico{font-size:22px}#jbV322Nav .v323label{font-size:8px}#v274AnalysisOverlay,#v278ConfigOverlay,#jbV25History,#jbV30Coach,#jbV31,#v265Chooser,#v265Individual,#v265Evolution{top:82px!important;inset:82px 0 0!important;max-height:calc(100% - 82px)!important}body.v20-match .v264players{grid-template-columns:repeat(2,1fr)!important}body.v20-match .v264board{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media print{body.jb-v29-app{padding-top:0!important}}
+</style>
 </body>
 </html>

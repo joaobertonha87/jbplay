@@ -122,13 +122,20 @@ body.locked .auth-screen{display:flex}
   .auth-card{padding:22px 18px 20px;border-radius:22px}.auth-logo img{width:160px}.auth-title{font-size:22px}
 }
 
+/* V32.4 — Scout em tela cheia, sem selos de versão no rodapé */
+.shell{display:block!important;min-height:100vh!important}
+.sidebar,.topbar,.modulebar{display:none!important}
+.main{width:100%!important;max-width:none!important;min-width:0!important;padding:0!important;margin:0!important}
+.framewrap{width:100%!important;min-height:100vh!important;margin:0!important;padding:0!important}
+iframe{width:100%!important;height:100vh!important;min-height:100vh!important;border:0!important;border-radius:0!important;margin:0!important}
+
 </style>
 <meta name="theme-color" content="#071116">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="JB Tracker">
-<link rel="manifest" href="manifest.webmanifest?v=3220">
+<link rel="manifest" href="manifest.webmanifest?v=3240">
 <link rel="apple-touch-icon" sizes="180x180" href="jb-tracker-v2-180.png?v=2910">
 <link rel="icon" type="image/png" sizes="192x192" href="jb-tracker-v2-192.png?v=2910">
 
@@ -189,8 +196,8 @@ body.locked .auth-screen{display:flex}
     </section>
 
     <div class="framewrap">
-      <iframe id="frameTreino" class="active" src="treino.html?v=3220" title="JB Play Treinos"></iframe>
-      <iframe id="frameScout" src="scout.html?v=3220" title="JB Play Scout"></iframe>
+      <iframe id="frameTreino" src="treino.html?v=3240" title="JB Play Treinos"></iframe>
+      <iframe id="frameScout" class="active" src="scout.html?v=3240" title="JB Play Scout"></iframe>
     </div>
   </main>
 </div>
@@ -213,7 +220,7 @@ function openModule(name){
 }
 document.querySelectorAll('[data-module]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.module)));
 document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.open)));
-try{openModule(localStorage.getItem('jbplay-module')||'treino')}catch(e){openModule('treino')}
+try{openModule('scout')}catch(e){openModule('scout')}
 
 /* ===== JB PLAY PERSONAL LOGIN =====
    First access: user creates their own credentials on this device.
