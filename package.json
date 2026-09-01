@@ -1,6 +1,6 @@
 {
-  "name": "jb-tracker-v32-2-direct-nav",
-  "version": "32.2.0",
+  "name": "jb-tracker-v32-4-no-footer-versions",
+  "version": "32.4.0",
   "private": true,
   "type": "module",
   "scripts": {
