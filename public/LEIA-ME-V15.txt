@@ -1,8 +1,0 @@
-JB PLAY V15 — TECHNIQUE MOTION
-
-Evolução da V14 com animação técnica por fundamento:
-- preparação, contato e finalização visualmente distintas;
-- perfis específicos para forehand, backhand, smash, golpes overhead, voleios, defesa, saque e toques;
-- flash e halo de contato;
-- split-step visual no retorno automático;
-- preserva Login, Scout, Arena 3D, editor, timeline e lógica de retorno.
