@@ -316,7 +316,7 @@ body.ipad-setup-collapsed .topbar>div:first-child .section-title h2{font-size:12
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="JB Tracker">
-<link rel="manifest" href="manifest.webmanifest?v=3210">
+<link rel="manifest" href="manifest.webmanifest?v=3220">
 <link rel="apple-touch-icon" sizes="180x180" href="jb-tracker-v2-180.png?v=2910">
 <link rel="icon" type="image/png" sizes="192x192" href="jb-tracker-v2-192.png?v=2910">
 
@@ -5861,7 +5861,7 @@ body.jb-v29-app .main-grid{gap:10px!important}
      if(e.target.closest('#v274Back,#v278Back'))setTimeout(()=>setNav('game'),20);
    },true);
 if('serviceWorker' in navigator){
-     navigator.serviceWorker.register('sw.js?v=3210',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
+     navigator.serviceWorker.register('sw.js?v=3220',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
    }
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
@@ -7130,6 +7130,49 @@ body.v20-match .v264row{padding:9px!important}.v264name{color:#f1f5f2!important;
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mark,{once:true});else mark();
  setTimeout(mark,300);setTimeout(mark,1200);
+})();
+</script>
+<!-- JB TRACKER V32.2 • NAVEGAÇÃO DIRETA POR ÍCONES -->
+<style id="jb-v322-direct-nav-css">
+body.jb-v29-app{padding-top:72px!important}
+#jbV29Shell,#jbV20Bar,#jbV29Bottom{display:none!important}
+#jbV322Nav{position:fixed;left:0;right:0;top:0;z-index:2147483640;height:66px;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px;background:linear-gradient(90deg,rgba(7,12,9,.99),rgba(17,25,17,.99));border-bottom:1px solid rgba(217,255,50,.18);box-shadow:0 14px 38px rgba(0,0,0,.32);backdrop-filter:blur(20px)}
+#jbV322Nav .v322brand{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#efff7d,#bde700);color:#091006;font-size:14px;font-weight:950;box-shadow:0 8px 22px rgba(207,255,32,.16);margin-right:5px}
+#jbV322Nav button{width:52px;min-width:52px;height:48px;border-radius:15px;border:1px solid rgba(255,255,255,.075);background:linear-gradient(145deg,#161e19,#0c110e);color:#97a39b;display:grid;place-items:center;font-size:23px;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#jbV322Nav button.active{background:linear-gradient(145deg,#efff7d,#bde700);color:#091006;border-color:#d9ff32;box-shadow:0 8px 24px rgba(207,255,32,.19)}
+#jbV322Nav button:active{transform:scale(.94)}
+#v274Back,#v278Back,#v25Close,#jbV30Close,#jbV31Back,.v274back,.v278back,.v30close,.v31back{display:none!important}
+#v274AnalysisOverlay,#v278ConfigOverlay,#jbV25History,#jbV30Coach,#jbV31,#v265Chooser,#v265Individual,#v265Evolution{top:66px!important;bottom:0!important;height:auto!important;max-height:calc(100% - 66px)!important}
+#v274AnalysisOverlay,#v278ConfigOverlay,#jbV25History,#v265Chooser,#v265Individual,#v265Evolution{inset:66px 0 0!important}
+#jbV30Coach,#jbV31{inset:66px 0 0!important}
+#v322Version{position:fixed;right:10px;bottom:8px;z-index:2147483639;padding:5px 8px;border-radius:999px;background:#0b120e;color:#d9ff32;border:1px solid rgba(217,255,50,.22);font-size:7px;font-weight:950}
+#v321Stamp{display:none!important}
+@media(max-width:620px){#jbV322Nav{justify-content:flex-start;overflow-x:auto}.v322brand{position:sticky;left:0;z-index:2}#jbV322Nav button{width:48px;min-width:48px}}
+@media print{#jbV322Nav,#v322Version{display:none!important}body.jb-v29-app{padding-top:0!important}}
+</style>
+<nav id="jbV322Nav" aria-label="Navegação principal">
+ <div class="v322brand" aria-label="JB Tracker">JB</div>
+ <button type="button" class="active" data-view="game" title="Jogo" aria-label="Jogo">🎾</button>
+ <button type="button" data-view="analysis" title="Análise" aria-label="Análise">📊</button>
+ <button type="button" data-view="config" title="Configuração" aria-label="Configuração">⚙️</button>
+ <button type="button" data-view="history" title="Histórico e evolução" aria-label="Histórico e evolução">📈</button>
+ <button type="button" data-view="coach" title="Scout Inteligente" aria-label="Scout Inteligente">🧑‍🏫</button>
+ <button type="button" data-view="students" title="Alunos" aria-label="Alunos">👥</button>
+</nav>
+<div id="v322Version">V32.2 • NAVEGAÇÃO DIRETA</div>
+<script id="jb-v322-direct-nav-js">
+(function(){
+ const nav=document.getElementById('jbV322Nav'),buttons=[...nav.querySelectorAll('button[data-view]')],$=id=>document.getElementById(id);
+ function active(view){buttons.forEach(b=>b.classList.toggle('active',b.dataset.view===view))}
+ function closeOne(overlayId,closeId){const overlay=$(overlayId);if(!overlay||!overlay.classList.contains('open'))return;const close=$(closeId);if(close)close.click();else overlay.classList.remove('open')}
+ function closeAll(){
+  closeOne('v274AnalysisOverlay','v274Back');closeOne('v278ConfigOverlay','v278Back');closeOne('jbV25History','v25Close');closeOne('jbV30Coach','jbV30Close');closeOne('jbV31','jbV31Back');
+  ['v265Chooser','v265Individual','v265Evolution'].forEach(id=>$(id)?.classList.remove('open'));
+  document.documentElement.classList.remove('jb-v297-analysis-lock');document.body.classList.remove('jb-analysis-open','jb-v297-analysis-lock');
+ }
+ function clickExisting(id){const el=$(id);if(el){el.click();return true}return false}
+ function open(view){closeAll();active(view);requestAnimationFrame(()=>{if(view==='game')clickExisting('v20Match');else if(view==='analysis')clickExisting('v20Analysis');else if(view==='config')clickExisting('v278ConfigBtn');else if(view==='history')clickExisting('jbV2911History');else if(view==='coach')clickExisting('jbV30CoachBtn');else if(view==='students')clickExisting('jbV31Btn')})}
+ buttons.forEach(button=>button.addEventListener('click',()=>open(button.dataset.view)));window.jbV322Open=open;
 })();
 </script>
 </body>

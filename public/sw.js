@@ -1,5 +1,5 @@
-const CACHE='jb-tracker-v32-1-elite-20260901';
-const CORE=['./index.html?v=3210','./treino.html?v=3210','./scout.html?v=3210','./manifest.webmanifest?v=3210'];
+const CACHE='jb-tracker-v32-2-direct-nav-20260901';
+const CORE=['./index.html?v=3220','./treino.html?v=3220','./scout.html?v=3220','./manifest.webmanifest?v=3220'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
 });
@@ -11,7 +11,7 @@ self.addEventListener('fetch',event=>{
   const url=new URL(event.request.url);
   const isApp=/\.(?:html|js|webmanifest)$/i.test(url.pathname)||url.pathname.endsWith('/');
   if(isApp){
-    event.respondWith(fetch(event.request,{cache:'no-store'}).catch(()=>caches.match(event.request).then(hit=>hit||caches.match('./index.html?v=3210'))));
+    event.respondWith(fetch(event.request,{cache:'no-store'}).catch(()=>caches.match(event.request).then(hit=>hit||caches.match('./index.html?v=3220'))));
     return;
   }
   event.respondWith(caches.match(event.request).then(hit=>hit||fetch(event.request).then(response=>{
