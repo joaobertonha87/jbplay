@@ -316,7 +316,7 @@ body.ipad-setup-collapsed .topbar>div:first-child .section-title h2{font-size:12
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="JB Tracker">
-<link rel="manifest" href="manifest.webmanifest?v=3240">
+<link rel="manifest" href="manifest.webmanifest?v=3250">
 <link rel="apple-touch-icon" sizes="180x180" href="jb-tracker-v2-180.png?v=2910">
 <link rel="icon" type="image/png" sizes="192x192" href="jb-tracker-v2-192.png?v=2910">
 
@@ -5858,7 +5858,7 @@ body.jb-v29-app .main-grid{gap:10px!important}
      if(e.target.closest('#v274Back,#v278Back'))setTimeout(()=>setNav('game'),20);
    },true);
 if('serviceWorker' in navigator){
-     navigator.serviceWorker.register('sw.js?v=3240',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
+     navigator.serviceWorker.register('sw.js?v=3250',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
    }
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
@@ -7142,6 +7142,8 @@ body.jb-v29-app{padding-top:72px!important}
 #v274AnalysisOverlay,#v278ConfigOverlay,#jbV25History,#v265Chooser,#v265Individual,#v265Evolution{inset:66px 0 0!important}
 #jbV30Coach,#jbV31{inset:66px 0 0!important}
 #v266Version,#v267Version,#v268Version,#v321Stamp,#v322Version,[id$="Version"]{display:none!important}
+html.jb-v325-game-scroll,body.jb-v325-game-scroll{height:auto!important;overflow-y:auto!important;overscroll-behavior-y:auto!important;touch-action:pan-y!important}
+body.jb-v325-game-scroll{position:static!important;top:auto!important;width:100%!important}
 @media(max-width:620px){#jbV322Nav{justify-content:flex-start;overflow-x:auto}.v322brand{position:sticky;left:0;z-index:2}#jbV322Nav button{width:48px;min-width:48px}}
 @media print{#jbV322Nav,#v322Version{display:none!important}body.jb-v29-app{padding-top:0!important}}
 </style>
@@ -7158,6 +7160,15 @@ body.jb-v29-app{padding-top:72px!important}
 (function(){
  const nav=document.getElementById('jbV322Nav'),buttons=[...nav.querySelectorAll('button[data-view]')],$=id=>document.getElementById(id);
  function active(view){buttons.forEach(b=>b.classList.toggle('active',b.dataset.view===view))}
+ function restoreGameScroll(){
+  const root=document.documentElement,body=document.body;
+  root.classList.remove('jb-analysis-open','jb-v297-analysis-lock');
+  body.classList.remove('jb-analysis-open','jb-v297-analysis-lock');
+  ['overflow','height','position','top'].forEach(p=>root.style.removeProperty(p));
+  ['overflow','height','position','top','width'].forEach(p=>body.style.removeProperty(p));
+  root.classList.add('jb-v325-game-scroll');body.classList.add('jb-v325-game-scroll');
+ }
+ function suspendGameScroll(){document.documentElement.classList.remove('jb-v325-game-scroll');document.body.classList.remove('jb-v325-game-scroll')}
  function closeOne(overlayId,closeId){const overlay=$(overlayId);if(!overlay||!overlay.classList.contains('open'))return;const close=$(closeId);if(close)close.click();else overlay.classList.remove('open')}
  function closeAll(){
   closeOne('v274AnalysisOverlay','v274Back');closeOne('v278ConfigOverlay','v278Back');closeOne('jbV25History','v25Close');closeOne('jbV30Coach','jbV30Close');closeOne('jbV31','jbV31Back');
@@ -7165,8 +7176,18 @@ body.jb-v29-app{padding-top:72px!important}
   document.documentElement.classList.remove('jb-v297-analysis-lock');document.body.classList.remove('jb-analysis-open','jb-v297-analysis-lock');
  }
  function clickExisting(id){const el=$(id);if(el){el.click();return true}return false}
- function open(view){closeAll();active(view);requestAnimationFrame(()=>{if(view==='game')clickExisting('v20Match');else if(view==='analysis')clickExisting('v20Analysis');else if(view==='config')clickExisting('v278ConfigBtn');else if(view==='history')clickExisting('jbV2911History');else if(view==='coach')clickExisting('jbV30CoachBtn');else if(view==='students')clickExisting('jbV31Btn')})}
+ function open(view){
+  closeAll();active(view);
+  if(view==='game')restoreGameScroll();else suspendGameScroll();
+  requestAnimationFrame(()=>{
+   if(view==='game'){clickExisting('v20Match');restoreGameScroll();setTimeout(restoreGameScroll,120)}
+   else if(view==='analysis')clickExisting('v20Analysis');else if(view==='config')clickExisting('v278ConfigBtn');else if(view==='history')clickExisting('jbV2911History');else if(view==='coach')clickExisting('jbV30CoachBtn');else if(view==='students')clickExisting('jbV31Btn')
+  })
+ }
  buttons.forEach(button=>button.addEventListener('click',()=>open(button.dataset.view)));window.jbV322Open=open;
+ document.addEventListener('click',e=>{if(e.target.closest('#v20Analysis'))suspendGameScroll();if(e.target.closest('#v20Match'))setTimeout(restoreGameScroll,30)},true);
+ window.addEventListener('pageshow',()=>{if(document.body.classList.contains('v20-match'))restoreGameScroll()});
+ setTimeout(()=>{if(document.body.classList.contains('v20-match'))restoreGameScroll()},180);
 })();
 </script>
 <style id="jb-v323-fullscreen-fonts-css">
@@ -7174,7 +7195,7 @@ html,body{width:100%!important;max-width:none!important;overflow-x:hidden!import
 body.jb-v29-app{padding-top:94px!important}
 body.jb-v29-app .page,body.jb-v29-app .wrap,body.jb-v29-app main.app-only,body.jb-v29-app .tracker{width:100%!important;max-width:none!important;margin-left:0!important;margin-right:0!important}
 body.jb-v29-app .wrap{padding:12px 14px 22px!important}
-#jbV322Nav{height:88px!important;justify-content:center!important;gap:7px!important;padding:7px 12px!important}
+#jbV322Nav{height:88px!important;justify-content:center!important;gap:7px!important;padding:7px 255px 7px 12px!important}
 #jbV322Nav .v322brand{width:58px!important;height:68px!important;min-width:58px!important;margin-right:5px!important;font-size:16px!important}
 #jbV322Nav button{width:94px!important;min-width:76px!important;height:70px!important;padding:6px 5px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;border-radius:15px!important;font-size:inherit!important}
 #jbV322Nav .v323ico{display:block;font-size:25px;line-height:1}
@@ -7195,7 +7216,7 @@ body.v20-match .v264btn{min-height:60px!important;font-size:12px!important}body.
 #v275Extras,#v282ServeZones,#v276ResetStats,#v267Bottom{width:100%!important;max-width:none!important}
 .v274wrap,.v278wrap,.v30wrap,.v31w,.v265box{width:100%!important;max-width:none!important;padding-left:14px!important;padding-right:14px!important}
 .v274top h2,.v278top h2,.v30top h2,.v31top h2{font-size:22px!important}.v274top small,.v278top small,.v30top small,.v31top small{font-size:12px!important}
-@media(max-width:900px){#jbV322Nav{justify-content:flex-start!important;overflow-x:auto!important}#jbV322Nav button{min-width:88px!important}body.v20-match .v264board{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:900px){#jbV322Nav{justify-content:flex-start!important;overflow-x:auto!important;padding-right:190px!important}#jbV322Nav button{min-width:88px!important}body.v20-match .v264board{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 @media(max-width:650px){body.jb-v29-app{padding-top:88px!important}#jbV322Nav{height:82px!important}#jbV322Nav .v322brand{height:64px!important}#jbV322Nav button{height:64px!important;min-width:82px!important}#jbV322Nav .v323ico{font-size:22px}#jbV322Nav .v323label{font-size:8px}#v274AnalysisOverlay,#v278ConfigOverlay,#jbV25History,#jbV30Coach,#jbV31,#v265Chooser,#v265Individual,#v265Evolution{top:82px!important;inset:82px 0 0!important;max-height:calc(100% - 82px)!important}body.v20-match .v264players{grid-template-columns:repeat(2,1fr)!important}body.v20-match .v264board{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media print{body.jb-v29-app{padding-top:0!important}}
 </style>

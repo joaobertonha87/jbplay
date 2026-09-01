@@ -122,12 +122,18 @@ body.locked .auth-screen{display:flex}
   .auth-card{padding:22px 18px 20px;border-radius:22px}.auth-logo img{width:160px}.auth-title{font-size:22px}
 }
 
-/* V32.4 — Scout em tela cheia, sem selos de versão no rodapé */
+/* V32.5 — troca rápida entre Scout e Treinos */
 .shell{display:block!important;min-height:100vh!important}
 .sidebar,.topbar,.modulebar{display:none!important}
 .main{width:100%!important;max-width:none!important;min-width:0!important;padding:0!important;margin:0!important}
 .framewrap{width:100%!important;min-height:100vh!important;margin:0!important;padding:0!important}
 iframe{width:100%!important;height:100vh!important;min-height:100vh!important;border:0!important;border-radius:0!important;margin:0!important}
+#jbModuleQuickSwitch{position:fixed;top:9px;right:14px;z-index:2147483646;height:70px;display:flex;align-items:stretch;gap:7px;padding:5px;border:1px solid rgba(217,255,50,.18);border-radius:17px;background:linear-gradient(145deg,rgba(18,27,20,.98),rgba(7,12,9,.98));box-shadow:0 12px 32px rgba(0,0,0,.38);backdrop-filter:blur(18px)}
+#jbModuleQuickSwitch button{min-width:104px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:linear-gradient(145deg,#161e19,#0c110e);color:#aeb9b1;display:flex;align-items:center;justify-content:center;gap:7px;padding:6px 10px;font-size:11px;font-weight:950;cursor:pointer}
+#jbModuleQuickSwitch button span{font-size:20px;line-height:1}
+#jbModuleQuickSwitch button.active{background:linear-gradient(145deg,#efff7d,#bde700);border-color:#d9ff32;color:#091006;box-shadow:0 7px 20px rgba(207,255,32,.18)}
+body.locked #jbModuleQuickSwitch{display:none!important}
+@media(max-width:900px){#jbModuleQuickSwitch{top:8px;right:7px;height:64px;gap:4px;padding:4px}#jbModuleQuickSwitch button{min-width:82px;padding:5px 7px;font-size:9px}#jbModuleQuickSwitch button span{font-size:17px}}
 
 </style>
 <meta name="theme-color" content="#071116">
@@ -135,7 +141,7 @@ iframe{width:100%!important;height:100vh!important;min-height:100vh!important;bo
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="JB Tracker">
-<link rel="manifest" href="manifest.webmanifest?v=3240">
+<link rel="manifest" href="manifest.webmanifest?v=3250">
 <link rel="apple-touch-icon" sizes="180x180" href="jb-tracker-v2-180.png?v=2910">
 <link rel="icon" type="image/png" sizes="192x192" href="jb-tracker-v2-192.png?v=2910">
 
@@ -163,6 +169,10 @@ iframe{width:100%!important;height:100vh!important;min-height:100vh!important;bo
     <div class="auth-foot" id="authFoot">Acesso pessoal • João Bertonha Beach Tennis</div>
   </div>
 </div>
+<nav id="jbModuleQuickSwitch" aria-label="Acesso às ferramentas">
+  <button type="button" class="active" data-module="scout" title="Abrir Scout"><span>▦</span>SCOUT</button>
+  <button type="button" data-module="treino" title="Abrir Gerador de Treinos"><span>▶</span>TREINOS</button>
+</nav>
 <div class="shell">
   <aside class="sidebar">
     <div class="logo"><img src="jb-logo-lime.png" alt="João Bertonha Beach Tennis"></div>
@@ -196,8 +206,8 @@ iframe{width:100%!important;height:100vh!important;min-height:100vh!important;bo
     </section>
 
     <div class="framewrap">
-      <iframe id="frameTreino" src="treino.html?v=3240" title="JB Play Treinos"></iframe>
-      <iframe id="frameScout" class="active" src="scout.html?v=3240" title="JB Play Scout"></iframe>
+      <iframe id="frameTreino" src="treino.html?v=3250" title="JB Play Treinos"></iframe>
+      <iframe id="frameScout" class="active" src="scout.html?v=3250" title="JB Play Scout"></iframe>
     </div>
   </main>
 </div>
