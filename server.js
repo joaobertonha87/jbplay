@@ -18,7 +18,7 @@ app.use((req,res,next)=>{
 });
 app.use(express.static(path.join(__dirname, "public"), { index: "index.html", etag: false }));
 
-app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Tracker V32.6", ai: !!client }));
+app.get("/health", (_req, res) => res.json({ ok: true, app: "JB Play Aula Inteligente V33.0", ai: !!client }));
 
 const apiKey = process.env.OPENAI_API_KEY;
 const client = apiKey ? new OpenAI({ apiKey }) : null;
@@ -193,6 +193,37 @@ const TRAINING_SCHEMA = {
   required:["title","level","players","mode","focus","direction","shots","objective","notes","confidence","warnings","timeline"]
 };
 
+const LESSON_SYSTEM = `
+Você é o planejador de aulas JB Aula Inteligente, do professor João Bertonha, especialista em Beach Tennis.
+Crie uma aula prática, segura, objetiva e aplicável na quadra, usando a nomenclatura informada pelo professor.
+Adapte a organização para 1 a 12 alunos. Com mais de quatro alunos, use rodízio, estações ou filas curtas, mantendo no máximo quatro jogadores ativos por sequência.
+O plano deve ter exatamente cinco blocos: Aquecimento, Exercício técnico, Situação técnico/tática, Jogo condicionado e Fechamento.
+A soma dos minutos dos cinco blocos deve ser exatamente a duração solicitada.
+Cada bloco deve explicar organização, execução, volume/rodízio e foco de correção de forma concisa.
+Não invente equipamentos especiais. Use professor, alunos, bolas, cesto, cones e quadra quando necessário.
+Responda somente em JSON válido segundo o schema.
+`;
+
+const LESSON_SCHEMA = {
+  type:"object",additionalProperties:false,
+  properties:{
+    title:{type:"string"},objective:{type:"string"},teacherTips:{type:"array",items:{type:"string"},maxItems:6},
+    blocks:{type:"array",minItems:5,maxItems:5,items:{type:"object",additionalProperties:false,properties:{
+      title:{type:"string"},minutes:{type:"integer",minimum:1,maximum:120},text:{type:"string"}
+    },required:["title","minutes","text"]}}
+  },required:["title","objective","teacherTips","blocks"]
+};
+
+function normalizeLesson(plan,duration){
+  if(!plan||!Array.isArray(plan.blocks)||plan.blocks.length!==5)throw new Error("Plano de aula incompleto.");
+  const total=plan.blocks.reduce((sum,b)=>sum+(Number(b.minutes)||0),0);
+  if(total!==duration){
+    const diff=duration-total;
+    plan.blocks[3].minutes=Math.max(1,(Number(plan.blocks[3].minutes)||1)+diff);
+  }
+  return plan;
+}
+
 function validateTrainingPlan(plan){
   if(!plan||!Array.isArray(plan.timeline)||!plan.timeline.length) throw new Error("Resposta da IA sem timeline executável.");
   plan.timeline=plan.timeline.slice(0,24).map((step,i)=>({...step,order:i+1,speed:Math.max(.55,Math.min(2.2,Number(step.speed)||1.1))}));
@@ -240,9 +271,33 @@ app.post("/api/generate-training", async (req, res) => {
   }
 });
 
+app.post("/api/generate-lesson", async (req,res)=>{
+  const started=Date.now();
+  try{
+    const {config,students,scout}=req.body||{};
+    const duration=Math.max(30,Math.min(120,Number(config?.duration)||60));
+    if(!config?.fundamentals?.length)return res.status(400).json({error:"Selecione ao menos um fundamento."});
+    if(!client)return res.status(503).json({error:"OPENAI_API_KEY nao configurada no servidor."});
+    const request={...config,duration,students:(students||[]).slice(0,12),scout:scout||null};
+    const response=await client.responses.create({
+      model,
+      input:[{role:"system",content:LESSON_SYSTEM},{role:"user",content:`Configuração da aula: ${JSON.stringify(request)}`}],
+      text:{format:{type:"json_schema",name:"jb_lesson_plan",strict:true,schema:LESSON_SCHEMA}}
+    },{timeout:90000,maxRetries:0});
+    const clean=(response.output_text||"").trim().replace(/^```json\s*/i,"").replace(/```$/," ").trim();
+    const plan=normalizeLesson(JSON.parse(clean),duration);
+    plan.meta={source:"openai",model,latencyMs:Date.now()-started,schema:"jb-lesson-v1"};
+    res.json(plan);
+  }catch(err){
+    console.error("JB AULA IA ERRO:",err?.status||"",err?.message||err);
+    const status=err?.status||(err?.name==="APIConnectionTimeoutError"?504:500);
+    res.status(status).json({error:status===504?"A IA excedeu o tempo máximo.":"Falha ao gerar a aula com IA.",message:err?.message||"Erro desconhecido",model});
+  }
+});
+
 app.get("/{*splat}", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, "0.0.0.0", () => console.log(`JB Tracker V32.6 em http://0.0.0.0:${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`JB Play Aula Inteligente V33.0 em http://0.0.0.0:${port}`));
