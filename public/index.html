@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>JB Play — Treinos & Scout</title>
+<style>
+:root{
+  --bg:#071019;
+  --panel:#0d1b28;
+  --panel2:#0a141e;
+  --line:rgba(255,255,255,.10);
+  --text:#f4f7fa;
+  --muted:#9ba9b4;
+  --lime:#c9ff28;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#071019;color:var(--text)}
+body{
+  background:
+    radial-gradient(circle at 18% 0%,rgba(201,255,40,.05),transparent 24%),
+    linear-gradient(160deg,#071019 0%,#0a1118 56%,#070c12 100%);
+}
+.shell{display:grid;grid-template-columns:235px 1fr;min-height:100vh}
+.sidebar{
+  position:sticky;top:0;height:100vh;
+  padding:14px 12px;
+  border-right:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(15,29,42,.97),rgba(7,14,21,.98));
+  display:flex;flex-direction:column;gap:12px;z-index:20
+}
+.logo{
+  height:145px;border:1px solid var(--line);border-radius:20px;
+  background:linear-gradient(180deg,rgba(15,28,39,.96),rgba(7,14,20,.98));
+  display:grid;place-items:center;overflow:hidden
+}
+.logo img{width:88%;max-height:125px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(201,255,40,.16))}
+.module-title{font-size:10px;letter-spacing:.13em;color:#7f8d98;padding:4px 8px 0}
+.nav{display:grid;gap:7px}
+.nav button{
+  border:1px solid transparent;background:transparent;color:#eef3f6;
+  border-radius:13px;padding:12px 13px;font-weight:850;text-align:left;cursor:pointer;
+  display:flex;align-items:center;gap:11px
+}
+.nav button:hover{background:rgba(255,255,255,.04);border-color:var(--line)}
+.nav button.active{background:linear-gradient(135deg,#d7ff22,#b4eb17);color:#071018;box-shadow:0 8px 24px rgba(201,255,40,.18)}
+.nav .icon{font-size:19px;width:24px;text-align:center}
+.spacer{flex:1}
+.quote{border:1px solid var(--line);border-radius:17px;padding:13px;background:rgba(11,21,30,.8)}
+.quote small{display:block;color:#8d9ba6;margin-bottom:5px}.quote b{font-size:12px;color:var(--lime);line-height:1.4}
+.main{min-width:0;padding:10px 12px 16px}
+.topbar{height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.search{min-width:340px;max-width:480px;height:40px;border:1px solid var(--line);border-radius:14px;background:rgba(13,25,36,.82);display:flex;align-items:center;gap:9px;padding:0 14px;color:#84939f;font-size:12px}
+.profile{display:flex;align-items:center;gap:10px}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#fff,#c9ff28);display:grid;place-items:center;color:#081016;font-weight:950}
+.profile small{display:block;color:#94a2ae;margin-top:2px}
+.modulebar{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-bottom:10px;padding:10px 12px;border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(180deg,rgba(14,27,39,.90),rgba(8,17,25,.92))
+}
+.modulebar strong{font-size:14px}.modulebar span{font-size:10px;color:var(--muted)}
+.switch{display:flex;gap:6px;background:#09141d;border:1px solid var(--line);padding:4px;border-radius:12px}
+.switch button{border:0;border-radius:9px;background:transparent;color:#aebbc5;padding:8px 12px;font-weight:850;cursor:pointer}
+.switch button.active{background:var(--lime);color:#071018}
+.framewrap{position:relative;min-height:calc(100vh - 92px)}
+iframe{
+  width:100%;height:calc(100vh - 92px);border:0;border-radius:18px;background:transparent;
+  display:none
+}
+iframe.active{display:block}
+@media(max-width:900px){
+  .shell{grid-template-columns:78px 1fr}
+  .sidebar{padding:9px 7px}.logo{height:72px}.logo img{width:68px}
+  .nav button{justify-content:center;padding:11px 8px}.nav button span:last-child,.module-title,.quote{display:none}
+}
+@media(max-width:650px){
+  .shell{display:block}
+  .sidebar{position:sticky;top:0;height:auto;flex-direction:row;align-items:center;padding:7px;border-right:0;border-bottom:1px solid var(--line)}
+  .logo{display:none}.nav{display:flex;overflow:auto}.nav button{min-width:50px}.spacer,.quote{display:none}
+  .main{padding:7px}.topbar{display:none}.modulebar{position:sticky;top:62px;z-index:10}
+  iframe{height:calc(100vh - 82px)}
+}
+
+
+/* ===== JB PLAY ACCESS ===== */
+body.locked .shell{filter:blur(10px);pointer-events:none;user-select:none;transform:scale(.995)}
+body.locked{overflow:hidden}
+.auth-screen{
+  position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;
+  padding:22px;background:
+    linear-gradient(180deg,rgba(3,10,16,.76),rgba(3,8,13,.94)),
+    url('jb-hero-beach.jpg') center/cover no-repeat;
+}
+body.locked .auth-screen{display:flex}
+.auth-card{
+  width:min(430px,100%);border:1px solid rgba(255,255,255,.12);border-radius:26px;
+  padding:28px 26px 24px;background:linear-gradient(180deg,rgba(13,27,40,.96),rgba(6,14,21,.97));
+  box-shadow:0 28px 90px rgba(0,0,0,.48);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)
+}
+.auth-logo{display:flex;justify-content:center;margin:0 auto 16px}
+.auth-logo img{width:190px;max-height:118px;object-fit:contain;filter:drop-shadow(0 0 18px rgba(201,255,40,.14))}
+.auth-kicker{text-align:center;color:var(--lime);font-weight:900;letter-spacing:.18em;font-size:10px;margin-bottom:7px}
+.auth-title{text-align:center;font-size:25px;font-weight:950;letter-spacing:-.02em;margin:0}
+.auth-sub{text-align:center;color:#95a4af;font-size:12px;line-height:1.5;margin:8px auto 22px;max-width:320px}
+.auth-field{display:grid;gap:7px;margin:12px 0}
+.auth-field label{font-size:10px;color:#95a4af;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.auth-input-wrap{display:flex;align-items:center;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:#09141e;overflow:hidden}
+.auth-input-wrap:focus-within{border-color:rgba(201,255,40,.58);box-shadow:0 0 0 3px rgba(201,255,40,.07)}
+.auth-input-wrap span{width:43px;text-align:center;color:#84929e;font-size:16px}
+.auth-input{width:100%;height:47px;border:0;outline:0;background:transparent;color:#fff;padding:0 12px 0 0;font-size:15px}
+.auth-eye{width:48px!important;cursor:pointer;color:#aeb9c2!important;user-select:none}
+.auth-check{display:flex;align-items:center;gap:9px;color:#a4b0b9;font-size:12px;margin:14px 0 17px}
+.auth-check input{accent-color:#c9ff28;width:16px;height:16px}
+.auth-btn{width:100%;height:49px;border:0;border-radius:14px;background:linear-gradient(135deg,#d7ff22,#b4eb17);color:#071018;font-weight:950;font-size:14px;cursor:pointer;box-shadow:0 10px 28px rgba(201,255,40,.15)}
+.auth-btn:active{transform:translateY(1px)}
+.auth-error{min-height:18px;margin:10px 0 0;text-align:center;color:#ff8d8d;font-size:11px;font-weight:750}
+.auth-foot{text-align:center;color:#70808b;font-size:10px;margin-top:17px}
+.logout-btn{border:1px solid var(--line)!important;background:rgba(255,255,255,.02)!important;color:#c6d0d8!important}
+.logout-btn:hover{border-color:rgba(201,255,40,.35)!important;color:var(--lime)!important}
+@media(max-width:650px){
+  .auth-card{padding:22px 18px 20px;border-radius:22px}.auth-logo img{width:160px}.auth-title{font-size:22px}
+}
+
+</style>
+<meta name="theme-color" content="#071116">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JB Tracker">
+<link rel="manifest" href="manifest.webmanifest?v=2910">
+<link rel="apple-touch-icon" sizes="180x180" href="jb-tracker-v2-180.png?v=2910">
+<link rel="icon" type="image/png" sizes="192x192" href="jb-tracker-v2-192.png?v=2910">
+
+</head>
+<body class="locked">
+<div class="auth-screen" id="authScreen" aria-modal="true" role="dialog">
+  <div class="auth-card">
+    <div class="auth-logo"><img src="jb-logo-lime.png" alt="João Bertonha Beach Tennis"></div>
+    <div class="auth-kicker">JB PLAY</div>
+    <h1 class="auth-title" id="authTitle">Acesso ao JB Play</h1>
+    <p class="auth-sub" id="authSub">Entre para acessar sua plataforma de Treinos e Scout.</p>
+    <form id="authForm" autocomplete="on">
+      <div class="auth-field">
+        <label for="authUser">Usuário</label>
+        <div class="auth-input-wrap"><span>●</span><input class="auth-input" id="authUser" name="username" autocomplete="username" required placeholder="Seu usuário"></div>
+      </div>
+      <div class="auth-field">
+        <label for="authPass">Senha</label>
+        <div class="auth-input-wrap"><span>◆</span><input class="auth-input" id="authPass" name="password" type="password" autocomplete="current-password" required placeholder="Sua senha"><span class="auth-eye" id="authEye" title="Mostrar senha">◉</span></div>
+      </div>
+      <label class="auth-check" id="rememberRow"><input id="authRemember" type="checkbox" checked> Manter conectado neste dispositivo</label>
+      <button class="auth-btn" type="submit" id="authSubmit">ENTRAR</button>
+      <div class="auth-error" id="authError"></div>
+    </form>
+    <div class="auth-foot" id="authFoot">Acesso pessoal • João Bertonha Beach Tennis</div>
+  </div>
+</div>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo"><img src="jb-logo-lime.png" alt="João Bertonha Beach Tennis"></div>
+    <div class="module-title">JB PLAY</div>
+    <nav class="nav">
+      <button class="active" data-module="treino"><span class="icon">▶</span><span>Treinos</span></button>
+      <button data-module="scout"><span class="icon">▦</span><span>Scout</span></button>
+    </nav>
+    <div class="module-title">ACESSO RÁPIDO</div>
+    <nav class="nav">
+      <button data-open="treino"><span class="icon">◫</span><span>Quadra / IA</span></button>
+      <button data-open="scout"><span class="icon">◎</span><span>Estatísticas</span></button>
+    </nav>
+    <div class="spacer"></div>
+    <nav class="nav"><button class="logout-btn" id="logoutBtn"><span class="icon">↪</span><span>Sair</span></button></nav>
+    <div class="quote"><small>JOÃO BERTONHA</small><b>Foco • Evolução • Resultados</b></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="search">⌕ <span>Buscar treino, scout ou fundamento...</span></div>
+      <div class="profile"><div class="avatar">JB</div><div><b>João Bertonha</b><small>Treinador</small></div></div>
+    </header>
+
+    <section class="modulebar">
+      <div><strong id="moduleName">Gerador de Treinos</strong><span id="moduleDesc">Quadra animada, IA, movimentação e exportação.</span></div>
+      <div class="switch">
+        <button class="active" data-module="treino">Treinos</button>
+        <button data-module="scout">Scout</button>
+      </div>
+    </section>
+
+    <div class="framewrap">
+      <iframe id="frameTreino" class="active" src="treino.html" title="JB Play Treinos"></iframe>
+      <iframe id="frameScout" src="scout.html" title="JB Play Scout"></iframe>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ===== JB PLAY MODULES ===== */
+const frames={treino:document.getElementById('frameTreino'),scout:document.getElementById('frameScout')};
+const nameEl=document.getElementById('moduleName'),descEl=document.getElementById('moduleDesc');
+function openModule(name){
+  Object.entries(frames).forEach(([k,f])=>f.classList.toggle('active',k===name));
+  document.querySelectorAll('[data-module]').forEach(b=>b.classList.toggle('active',b.dataset.module===name));
+  if(name==='scout'){
+    nameEl.textContent='JB Scout Pro';
+    descEl.textContent='Estatísticas, placar, fundamentos, mapas e relatórios.';
+  }else{
+    nameEl.textContent='Gerador de Treinos';
+    descEl.textContent='Quadra animada, IA, movimentação e exportação.';
+  }
+  try{localStorage.setItem('jbplay-module',name)}catch(e){}
+}
+document.querySelectorAll('[data-module]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.module)));
+document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.open)));
+try{openModule(localStorage.getItem('jbplay-module')||'treino')}catch(e){openModule('treino')}
+
+/* ===== JB PLAY PERSONAL LOGIN =====
+   First access: user creates their own credentials on this device.
+   Password is stored only as a SHA-256 hash, never as plain text.
+*/
+const AUTH_KEY='jbplay-auth-v1';
+const SESSION_KEY='jbplay-session-v1';
+const authTitle=document.getElementById('authTitle');
+const authSub=document.getElementById('authSub');
+const authForm=document.getElementById('authForm');
+const authUser=document.getElementById('authUser');
+const authPass=document.getElementById('authPass');
+const authRemember=document.getElementById('authRemember');
+const authSubmit=document.getElementById('authSubmit');
+const authError=document.getElementById('authError');
+const authEye=document.getElementById('authEye');
+const logoutBtn=document.getElementById('logoutBtn');
+let setupMode=false;
+
+function getStoredAuth(){
+  try{return JSON.parse(localStorage.getItem(AUTH_KEY)||'null')}catch(e){return null}
+}
+async function hashText(text){
+  if(window.crypto&&crypto.subtle){
+    const data=new TextEncoder().encode(text);
+    const buf=await crypto.subtle.digest('SHA-256',data);
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  // lightweight fallback for old webviews (not cryptographic)
+  let h=2166136261; for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}
+  return 'fallback-'+(h>>>0).toString(16);
+}
+function setLoggedIn(remember){
+  try{
+    if(remember){localStorage.setItem(SESSION_KEY,'1');sessionStorage.removeItem(SESSION_KEY)}
+    else{sessionStorage.setItem(SESSION_KEY,'1');localStorage.removeItem(SESSION_KEY)}
+  }catch(e){}
+  document.body.classList.remove('locked');
+  authError.textContent='';
+  setTimeout(()=>{try{frames.treino.contentWindow.focus()}catch(e){}},80);
+}
+function clearSession(){
+  try{localStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(SESSION_KEY)}catch(e){}
+  document.body.classList.add('locked');
+  authPass.value='';
+  authError.textContent='';
+  configureAuthScreen();
+  setTimeout(()=>authUser.focus(),100);
+}
+function configureAuthScreen(){
+  const saved=getStoredAuth();
+  setupMode=!saved;
+  if(setupMode){
+    authTitle.textContent='Crie seu acesso';
+    authSub.textContent='Primeiro acesso: escolha seu usuário e uma senha para proteger o JB Play neste dispositivo.';
+    authSubmit.textContent='CRIAR ACESSO';
+    authPass.autocomplete='new-password';
+    authUser.value='joao';
+  }else{
+    authTitle.textContent='Acesso ao JB Play';
+    authSub.textContent='Entre para acessar sua plataforma de Treinos e Scout.';
+    authSubmit.textContent='ENTRAR';
+    authPass.autocomplete='current-password';
+    if(!authUser.value) authUser.value=saved.user||'';
+  }
+}
+function hasSession(){
+  try{return localStorage.getItem(SESSION_KEY)==='1'||sessionStorage.getItem(SESSION_KEY)==='1'}catch(e){return false}
+}
+
+authEye.addEventListener('click',()=>{
+  authPass.type=authPass.type==='password'?'text':'password';
+  authEye.textContent=authPass.type==='password'?'◉':'◎';
+});
+
+authForm.addEventListener('submit',async(e)=>{
+  e.preventDefault(); authError.textContent='';
+  const user=authUser.value.trim(); const pass=authPass.value;
+  if(!user||!pass){authError.textContent='Preencha usuário e senha.';return}
+  if(pass.length<4){authError.textContent='Use uma senha com pelo menos 4 caracteres.';return}
+  authSubmit.disabled=true; authSubmit.textContent=setupMode?'CRIANDO...':'ENTRANDO...';
+  try{
+    const passHash=await hashText(pass);
+    if(setupMode){
+      localStorage.setItem(AUTH_KEY,JSON.stringify({user,passHash,createdAt:new Date().toISOString()}));
+      setupMode=false; setLoggedIn(authRemember.checked);
+    }else{
+      const saved=getStoredAuth();
+      if(saved && user===saved.user && passHash===saved.passHash){setLoggedIn(authRemember.checked)}
+      else{authError.textContent='Usuário ou senha incorretos.'; authPass.select()}
+    }
+  }catch(err){authError.textContent='Não foi possível validar o acesso neste navegador.'}
+  authSubmit.disabled=false; authSubmit.textContent=setupMode?'CRIAR ACESSO':'ENTRAR';
+});
+
+logoutBtn.addEventListener('click',clearSession);
+
+configureAuthScreen();
+if(hasSession() && getStoredAuth()) document.body.classList.remove('locked');
+else document.body.classList.add('locked');
+</script>
+</body>
+</html>
