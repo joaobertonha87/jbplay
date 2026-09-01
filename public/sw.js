@@ -1,5 +1,20 @@
-const CACHE='jb-play-v32-0-elite-performance';
-const ASSETS=['./', './index.html', './treino.html', './scout.html', './manifest.webmanifest', './jb-tracker-v2-180.png', './jb-tracker-v2-192.png', './jb-tracker-v2-512.png', './jb-logo-lime.png', './jb-watermark-lime.png', './jb-hero-beach.jpg', './jb-3d-reference.png'];
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{const x=r.clone();caches.open(CACHE).then(c=>c.put(e.request,x));return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))))});
+const CACHE='jb-tracker-v32-1-elite-20260901';
+const CORE=['./index.html?v=3210','./treino.html?v=3210','./scout.html?v=3210','./manifest.webmanifest?v=3210'];
+self.addEventListener('install',event=>{
+  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
+});
+self.addEventListener('activate',event=>{
+  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(key=>caches.delete(key)))).then(()=>self.clients.claim()));
+});
+self.addEventListener('fetch',event=>{
+  if(event.request.method!=='GET')return;
+  const url=new URL(event.request.url);
+  const isApp=/\.(?:html|js|webmanifest)$/i.test(url.pathname)||url.pathname.endsWith('/');
+  if(isApp){
+    event.respondWith(fetch(event.request,{cache:'no-store'}).catch(()=>caches.match(event.request).then(hit=>hit||caches.match('./index.html?v=3210'))));
+    return;
+  }
+  event.respondWith(caches.match(event.request).then(hit=>hit||fetch(event.request).then(response=>{
+    const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));return response;
+  })));
+});

@@ -1124,7 +1124,7 @@ body.v16-presentation .v16-present-exit{display:block}
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="JB Tracker">
-<link rel="manifest" href="manifest.webmanifest?v=2910">
+<link rel="manifest" href="manifest.webmanifest?v=3210">
 <link rel="apple-touch-icon" sizes="180x180" href="jb-tracker-v2-180.png?v=2910">
 <link rel="icon" type="image/png" sizes="192x192" href="jb-tracker-v2-192.png?v=2910">
 
@@ -3775,7 +3775,7 @@ function v8RefreshStats(){
 setInterval(v8RefreshStats,700);
 v8RefreshStats();
 
-if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=3210',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{}));
 </script>
 
 <script id="jb-v166-depth-engine">

@@ -2,7 +2,7 @@
   "id": "./?jbtracker=2910",
   "name": "JB Tracker",
   "short_name": "JB Tracker",
-  "start_url": "./index.html?app=jbtracker-v2910",
+  "start_url": "./index.html?app=jbtracker-v3210",
   "scope": "./",
   "display": "standalone",
   "background_color": "#071116",
