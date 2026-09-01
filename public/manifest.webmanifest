@@ -1,14 +1,14 @@
 {
-  "id": "./?jbtracker=2910",
-  "name": "JB Tracker",
-  "short_name": "JB Tracker",
-  "start_url": "./index.html?app=jbtracker-v3260",
+  "id": "./?jbplay=3300",
+  "name": "JB Play • Aula Inteligente",
+  "short_name": "JB Play",
+  "start_url": "./index.html?app=jbplay-v3300",
   "scope": "./",
   "display": "standalone",
   "background_color": "#071116",
   "theme_color": "#071116",
   "orientation": "landscape",
-  "description": "JB Tracker — Treinos e Scout de Beach Tennis",
+  "description": "JB Play — Aulas, Treinos e Scout de Beach Tennis",
   "icons": [
     {
       "src": "jb-tracker-v2-192.png?v=2910",
