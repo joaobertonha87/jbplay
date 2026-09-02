@@ -122,18 +122,54 @@ body.locked .auth-screen{display:flex}
   .auth-card{padding:22px 18px 20px;border-radius:22px}.auth-logo img{width:160px}.auth-title{font-size:22px}
 }
 
-/* V39.0 — Quadra vertical premium baseada na identidade JB */
-.shell{display:block!important;min-height:100vh!important}
-.sidebar,.topbar,.modulebar{display:none!important}
-.main{width:100%!important;max-width:none!important;min-width:0!important;padding:0!important;margin:0!important}
-.framewrap{width:100%!important;min-height:100vh!important;margin:0!important;padding:0!important}
-iframe{width:100%!important;height:100vh!important;min-height:100vh!important;border:0!important;border-radius:0!important;margin:0!important}
-#jbModuleQuickSwitch{position:fixed;top:9px;right:14px;z-index:2147483646;height:70px;display:flex;align-items:stretch;gap:7px;padding:5px;border:1px solid rgba(217,255,50,.18);border-radius:17px;background:linear-gradient(145deg,rgba(18,27,20,.98),rgba(7,12,9,.98));box-shadow:0 12px 32px rgba(0,0,0,.38);backdrop-filter:blur(18px)}
-#jbModuleQuickSwitch button{min-width:104px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:linear-gradient(145deg,#161e19,#0c110e);color:#aeb9b1;display:flex;align-items:center;justify-content:center;gap:7px;padding:6px 10px;font-size:11px;font-weight:950;cursor:pointer}
-#jbModuleQuickSwitch button span{font-size:20px;line-height:1}
-#jbModuleQuickSwitch button.active{background:linear-gradient(145deg,#efff7d,#bde700);border-color:#d9ff32;color:#091006;box-shadow:0 7px 20px rgba(207,255,32,.18)}
-body.locked #jbModuleQuickSwitch{display:none!important}
-@media(max-width:900px){#jbModuleQuickSwitch{top:8px;right:7px;height:64px;gap:4px;padding:4px}#jbModuleQuickSwitch button{min-width:82px;padding:5px 7px;font-size:9px}#jbModuleQuickSwitch button span{font-size:17px}}
+/* V40.0 — Dashboard glass premium inspirado no painel JB */
+:root{--jb-lime:#d8ff16;--jb-blue:#061a2a;--jb-card:rgba(5,24,39,.82);--jb-stroke:rgba(134,194,225,.25);--jb-glow:0 14px 38px rgba(0,7,13,.42),inset 0 1px 0 rgba(255,255,255,.07)}
+html,body{height:100%;overflow:hidden}
+body{background:#eaf0f0 url('jb-hero-beach.jpg') center/cover fixed no-repeat}
+body::before{content:"";position:fixed;inset:0;background:linear-gradient(115deg,rgba(240,245,244,.88),rgba(221,231,233,.72) 48%,rgba(244,247,246,.86)),radial-gradient(circle at 52% 40%,rgba(209,255,22,.12),transparent 32%);backdrop-filter:blur(10px);z-index:-1}
+.shell{display:grid;grid-template-columns:232px minmax(0,1fr);height:100vh;padding:12px;gap:12px}
+.sidebar{position:relative;top:auto;height:calc(100vh - 24px);padding:12px 11px;border:1px solid var(--jb-stroke);border-radius:22px;background:linear-gradient(180deg,rgba(5,23,36,.94),rgba(4,17,28,.89));box-shadow:var(--jb-glow);backdrop-filter:blur(25px);overflow:hidden}
+.sidebar::after{content:"";position:absolute;inset:0;background:linear-gradient(145deg,rgba(255,255,255,.05),transparent 38%);pointer-events:none}
+.logo{height:142px;border:0;border-radius:16px;background:radial-gradient(circle at 50% 30%,rgba(216,255,22,.08),transparent 60%);position:relative;z-index:1}
+.logo img{width:98%;max-height:132px;filter:drop-shadow(0 8px 12px rgba(0,0,0,.48))}
+.module-title{display:none}
+.nav{position:relative;z-index:2;gap:5px}
+.nav button{min-height:49px;border-radius:15px;padding:10px 14px;color:#f4f7f8;font-size:14px;font-weight:750;transition:.2s}
+.nav button:hover{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.1)}
+.nav button.active{background:linear-gradient(90deg,#e2ff24,#aeda00);border-color:#e3ff36;color:#07111a;box-shadow:0 7px 25px rgba(204,255,17,.23),inset 0 1px 0 rgba(255,255,255,.7)}
+.nav .icon{font-size:22px;width:28px;filter:drop-shadow(0 1px 4px rgba(0,0,0,.25))}
+.spacer{min-height:10px}
+.logout-btn{margin-top:3px}
+.quote{position:relative;z-index:2;border-color:rgba(164,209,231,.18);border-radius:17px;padding:16px 14px;background:linear-gradient(145deg,rgba(10,35,51,.7),rgba(4,18,29,.88));box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.quote::before{content:'“';display:block;color:var(--jb-lime);font-size:42px;font-family:Georgia;line-height:.6;margin-bottom:9px}.quote small{display:none}.quote b{font-size:14px;color:var(--jb-lime);line-height:1.45}
+.main{height:calc(100vh - 24px);padding:0;overflow:hidden;display:grid;grid-template-rows:48px minmax(0,1fr)}
+.topbar{height:48px;margin:0;padding:0 5px;display:flex}
+.search{width:min(470px,44vw);height:39px;min-width:250px;border-color:rgba(6,30,47,.13);border-radius:15px;background:rgba(255,255,255,.52);box-shadow:0 8px 24px rgba(7,20,28,.1),inset 0 1px 0 rgba(255,255,255,.82);backdrop-filter:blur(18px);color:#34434c}
+.top-actions{display:flex;align-items:center;gap:11px;margin-left:auto}
+.top-icon{position:relative;width:38px;height:38px;border:0;border-radius:13px;background:rgba(255,255,255,.48);color:#162a37;font-size:19px;box-shadow:0 6px 18px rgba(8,24,35,.09)}
+.top-icon i{position:absolute;right:4px;top:3px;width:9px;height:9px;border-radius:50%;background:var(--jb-lime);box-shadow:0 0 0 2px rgba(7,18,26,.7)}
+.profile{height:43px;padding:3px 12px 3px 4px;border-radius:15px;background:rgba(255,255,255,.42);box-shadow:0 7px 18px rgba(8,24,35,.09)}
+.avatar{width:36px;height:36px;border:2px solid var(--jb-lime);background:#07151f;color:var(--jb-lime);font-size:12px}
+.profile b{color:#152934;font-size:12px}.profile small{color:#657680;font-size:10px}
+.modulebar{display:none}
+.framewrap{position:relative;min-height:0;height:100%;overflow:hidden}
+.dashboard{height:100%;display:grid;grid-template-columns:minmax(0,1fr) 318px;grid-template-rows:280px 102px minmax(0,1fr);gap:12px;padding-bottom:3px}
+.glass{border:1px solid var(--jb-stroke);border-radius:20px;background:linear-gradient(145deg,rgba(7,30,47,.91),rgba(4,20,33,.84));box-shadow:var(--jb-glow);backdrop-filter:blur(23px);overflow:hidden}
+.hero{position:relative;padding:31px 34px;background:linear-gradient(90deg,rgba(3,22,36,.97) 0%,rgba(4,27,43,.85) 47%,rgba(3,19,31,.08) 72%),url('jb-hero-beach.jpg') center/cover no-repeat;border-color:rgba(216,255,22,.42)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.05),transparent 42%);pointer-events:none}
+.hero-copy{position:relative;z-index:2;max-width:530px}.hero-kicker{color:var(--jb-lime);font-size:10px;letter-spacing:.52em;font-weight:950}.hero h1{margin:10px 0 3px;font-size:38px;line-height:1.02;letter-spacing:-.04em;color:#fff}.hero h1 span{display:block;color:var(--jb-lime)}.hero p{margin:13px 0 22px;color:#e2e9ec;font-size:14px}.hero-start{min-height:47px;border:0;border-radius:15px;padding:0 24px;background:linear-gradient(135deg,#e5ff27,#b8ed00);color:#07111a;font-weight:950;box-shadow:0 9px 24px rgba(211,255,18,.22);cursor:pointer}.hero-start span{font-size:17px;margin-right:8px}
+.quick{grid-column:2;grid-row:1/3;padding:16px 14px}.panel-title{display:flex;align-items:center;gap:9px;margin:0 0 13px;color:#fff;font-size:16px}.panel-title .accent{color:var(--jb-lime);font-size:21px}.panel-title::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--jb-lime),transparent);opacity:.58}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.quick-btn{min-height:92px;border:1px solid rgba(129,186,214,.21);border-radius:15px;background:linear-gradient(145deg,rgba(13,43,62,.84),rgba(5,23,37,.94));color:#f5f8f9;padding:11px 5px;font-size:9px;font-weight:750;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);transition:.2s}.quick-btn:hover{transform:translateY(-2px);border-color:rgba(216,255,22,.48)}.quick-btn.primary{background:linear-gradient(145deg,#e4ff27,#aee000);color:#07111a;border-color:#e3ff35}.quick-icon{display:block;font-size:27px;margin-bottom:9px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{padding:13px 15px;display:grid;grid-template-columns:48px 1fr;align-items:center}.stat-icon{width:43px;height:43px;border-radius:13px;background:rgba(216,255,22,.09);display:grid;place-items:center;color:var(--jb-lime);font-size:23px}.stat small{display:block;color:#c1ccd1;font-size:10px}.stat strong{display:block;color:#fff;font-size:25px;line-height:1;margin:3px 0}.stat em{font-style:normal;color:#49e478;font-size:9px;font-weight:850}
+.court-card{grid-column:1;grid-row:3;position:relative;min-height:245px}.court-head{position:absolute;z-index:3;top:15px;left:17px;right:17px;display:flex;align-items:center}.court-head .panel-title{margin:0;min-width:180px}.court-view{position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,18,29,.23),rgba(3,12,20,.16)),url('jb-3d-reference.png') center 53%/cover no-repeat;filter:saturate(1.05) contrast(1.02)}.court-view::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,24,38,.45),transparent 25%,transparent 75%,rgba(2,13,22,.46))}.court-play{position:absolute;z-index:4;right:19px;top:58px;width:48px;height:48px;border:0;border-radius:50%;background:var(--jb-lime);color:#07111a;font-size:22px;font-weight:950;box-shadow:0 0 0 7px rgba(216,255,22,.08),0 10px 22px rgba(0,0,0,.3);cursor:pointer}.court-controls{position:absolute;z-index:4;right:20px;top:118px;display:grid;gap:9px}.court-controls button{width:43px;height:43px;border:1px solid rgba(255,255,255,.18);border-radius:50%;background:rgba(4,20,32,.86);color:#fff;font-weight:900}.watermark{position:absolute;z-index:2;inset:18% 24%;background:url('jb-watermark-lime.png') center/contain no-repeat;opacity:.08;pointer-events:none}
+.agenda{grid-column:2;grid-row:3;padding:15px 16px;min-height:245px}.agenda-date{margin-left:auto;width:39px;height:44px;border:1px solid rgba(255,255,255,.16);border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:950;font-size:15px;line-height:1}.agenda-date small{font-size:7px;color:#acbbc2}.timeline{position:relative;margin-top:8px;padding-left:10px}.timeline::before{content:"";position:absolute;left:57px;top:5px;bottom:5px;width:2px;background:linear-gradient(var(--jb-lime),#27bfff,#8798a1)}.event{position:relative;display:grid;grid-template-columns:48px 16px 1fr;gap:7px;min-height:47px;align-items:start}.event time{color:var(--jb-lime);font-size:11px;font-weight:900}.event:nth-child(2) time{color:#30c9ff}.event-dot{width:11px;height:11px;border-radius:50%;background:var(--jb-lime);box-shadow:0 0 12px rgba(216,255,22,.55);z-index:1}.event:nth-child(2) .event-dot{background:#30c9ff}.event:nth-child(n+3) .event-dot{background:#91a0a8;box-shadow:none}.event b{display:block;color:#fff;font-size:10px}.event small{display:block;color:#91a2aa;font-size:9px;margin-top:2px}.agenda-more{width:100%;height:35px;border:1px solid rgba(216,255,22,.7);border-radius:13px;background:rgba(5,21,34,.65);color:#fff;font-size:9px;font-weight:850}
+.app-view{width:100%;height:100%;min-height:100%;border:1px solid var(--jb-stroke)!important;border-radius:20px!important;background:#071019;box-shadow:var(--jb-glow);display:none}
+.app-view.active{display:block}
+.dashboard.hidden{display:none}
+body.locked .shell{filter:blur(11px)}
+@media(max-width:1180px){.shell{grid-template-columns:90px minmax(0,1fr)}.sidebar{padding:9px 7px}.logo{height:84px}.logo img{width:83px}.nav button{justify-content:center;padding:10px 7px}.nav button span:last-child,.quote{display:none}.dashboard{grid-template-columns:minmax(0,1fr) 270px}.hero h1{font-size:31px}.quick-grid{grid-template-columns:repeat(2,1fr)}.quick-btn{min-height:72px}.quick-btn:nth-child(n+5){display:none}.stats{gap:8px}.stat{padding:10px;grid-template-columns:40px 1fr}.stat-icon{width:36px;height:36px}.stat strong{font-size:21px}}
+@media(max-width:850px){.dashboard{grid-template-columns:1fr;grid-template-rows:238px 90px minmax(240px,1fr);overflow:auto}.quick,.agenda{display:none}.stats{grid-row:2}.court-card{grid-row:3}.hero{padding:26px}.hero h1{font-size:31px}.main{grid-template-rows:45px minmax(0,1fr)}.topbar{height:45px}.profile div:last-child{display:none}}
+@media(max-width:620px){html,body{overflow:auto}.shell{display:block;height:auto;padding:7px}.sidebar{height:auto;position:sticky;top:6px;z-index:20;display:flex;flex-direction:row;border-radius:16px;padding:5px}.logo,.spacer,.logout-btn{display:none}.nav{display:flex;overflow:auto}.nav button{min-width:48px}.main{height:calc(100vh - 66px);margin-top:7px}.search{min-width:0;width:65vw}.stats{grid-template-columns:repeat(2,1fr);grid-row:auto}.dashboard{grid-template-rows:235px auto minmax(240px,1fr)}.stat:nth-child(n+3){display:none}.hero{padding:22px 19px}.hero h1{font-size:27px}.hero p{font-size:12px;max-width:260px}}
 
 </style>
 <meta name="theme-color" content="#071116">
@@ -141,7 +177,7 @@ body.locked #jbModuleQuickSwitch{display:none!important}
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="JB Tracker">
-<link rel="manifest" href="manifest.webmanifest?v=3900">
+<link rel="manifest" href="manifest.webmanifest?v=4000">
 <link rel="apple-touch-icon" sizes="180x180" href="jb-tracker-v2-180.png?v=2910">
 <link rel="icon" type="image/png" sizes="192x192" href="jb-tracker-v2-192.png?v=2910">
 
@@ -169,45 +205,63 @@ body.locked #jbModuleQuickSwitch{display:none!important}
     <div class="auth-foot" id="authFoot">Acesso pessoal • João Bertonha Beach Tennis</div>
   </div>
 </div>
-<nav id="jbModuleQuickSwitch" aria-label="Acesso às ferramentas">
-  <button type="button" class="active" data-module="scout" title="Abrir Scout"><span>▦</span>SCOUT</button>
-  <button type="button" data-module="treino" title="Abrir Gerador de Treinos"><span>▶</span>TREINOS</button>
-</nav>
 <div class="shell">
   <aside class="sidebar">
     <div class="logo"><img src="jb-logo-lime.png" alt="João Bertonha Beach Tennis"></div>
-    <div class="module-title">JB PLAY</div>
     <nav class="nav">
-      <button class="active" data-module="treino"><span class="icon">▶</span><span>Treinos</span></button>
-      <button data-module="scout"><span class="icon">▦</span><span>Scout</span></button>
-    </nav>
-    <div class="module-title">ACESSO RÁPIDO</div>
-    <nav class="nav">
-      <button data-open="treino"><span class="icon">◫</span><span>Quadra / IA</span></button>
-      <button data-open="scout"><span class="icon">◎</span><span>Estatísticas</span></button>
+      <button class="active" data-module="home"><span class="icon">⌂</span><span>Início</span></button>
+      <button data-module="scout"><span class="icon">⚙</span><span>Configuração</span></button>
+      <button data-module="treino"><span class="icon">▦</span><span>Quadra</span></button>
+      <button data-module="treino"><span class="icon">◷</span><span>Linha de tempo</span></button>
+      <button data-module="treino"><span class="icon">✦</span><span>IA Online</span></button>
+      <button data-module="treino"><span class="icon">▷</span><span>Motor</span></button>
+      <button data-module="treino"><span class="icon">⇩</span><span>Exportar</span></button>
+      <button data-module="scout"><span class="icon">◎</span><span>Scout</span></button>
     </nav>
     <div class="spacer"></div>
+    <div class="quote"><small>JOÃO BERTONHA</small><b>Disciplina transforma talento em resultados.</b></div>
     <nav class="nav"><button class="logout-btn" id="logoutBtn"><span class="icon">↪</span><span>Sair</span></button></nav>
-    <div class="quote"><small>JOÃO BERTONHA</small><b>Foco • Evolução • Resultados</b></div>
   </aside>
 
   <main class="main">
     <header class="topbar">
-      <div class="search">⌕ <span>Buscar treino, scout ou fundamento...</span></div>
-      <div class="profile"><div class="avatar">JB</div><div><b>João Bertonha</b><small>Treinador</small></div></div>
+      <div class="search">⌕ <span>Buscar aluno, treino ou torneio...</span></div>
+      <div class="top-actions"><button class="top-icon" aria-label="Notificações">♧<i></i></button><button class="top-icon" aria-label="Mensagens">□<i></i></button><div class="profile"><div class="avatar">JB</div><div><b>João Bertonha</b><small>Treinador</small></div><span>⌄</span></div></div>
     </header>
-
-    <section class="modulebar">
-      <div><strong id="moduleName">Gerador de Treinos</strong><span id="moduleDesc">Quadra animada, IA, movimentação e exportação.</span></div>
-      <div class="switch">
-        <button class="active" data-module="treino">Treinos</button>
-        <button data-module="scout">Scout</button>
-      </div>
-    </section>
-
     <div class="framewrap">
-      <iframe id="frameTreino" src="treino.html?v=3900" title="JB Play Aula na Mão"></iframe>
-      <iframe id="frameScout" class="active" src="scout.html?v=3900" title="JB Play Scout"></iframe>
+      <section class="dashboard" id="jbDashboard">
+        <article class="hero glass">
+          <div class="hero-copy"><div class="hero-kicker">JB PLAY</div><h1>Treino inteligente.<span>Evolução constante.</span></h1><p>Crie, organize, desenhe e analise seus treinos de forma profissional.</p><button class="hero-start" data-module="treino"><span>▶</span> Começar treino</button></div>
+        </article>
+        <aside class="quick glass">
+          <h2 class="panel-title"><span class="accent">ϟ</span>Ações Rápidas</h2>
+          <div class="quick-grid">
+            <button class="quick-btn primary" data-module="treino"><span class="quick-icon">▣</span>Novo Treino</button>
+            <button class="quick-btn" data-module="scout"><span class="quick-icon">♙＋</span>Adicionar Aluno</button>
+            <button class="quick-btn" data-module="scout"><span class="quick-icon">▻</span>Analisar Jogo</button>
+            <button class="quick-btn" data-module="scout"><span class="quick-icon">▤</span>Nova Avaliação</button>
+            <button class="quick-btn" data-module="treino"><span class="quick-icon">♜</span>Criar Modelo</button>
+            <button class="quick-btn" data-module="scout"><span class="quick-icon">▥</span>Gerar Relatório</button>
+          </div>
+        </aside>
+        <section class="stats">
+          <article class="stat glass"><span class="stat-icon">♟</span><div><small>Alunos Ativos</small><strong id="dashStudents">4</strong><em>↑ perfis integrados</em></div></article>
+          <article class="stat glass"><span class="stat-icon">▣</span><div><small>Treinos Salvos</small><strong id="dashTrainings">0</strong><em>↑ histórico local</em></div></article>
+          <article class="stat glass"><span class="stat-icon">♜</span><div><small>Modelos</small><strong id="dashTemplates">0</strong><em>↑ disponíveis</em></div></article>
+          <article class="stat glass"><span class="stat-icon">⌁</span><div><small>Evolução Média</small><strong id="dashEvolution">—</strong><em>BT Tracker</em></div></article>
+        </section>
+        <article class="court-card glass">
+          <div class="court-head"><h2 class="panel-title"><span class="accent">▦</span>Quadra</h2></div><div class="court-view"></div><div class="watermark"></div>
+          <button class="court-play" data-module="treino" aria-label="Abrir quadra">▶</button><div class="court-controls"><button>Ⅱ</button><button>1x</button><button>⛶</button></div>
+        </article>
+        <aside class="agenda glass">
+          <div style="display:flex;align-items:center"><h2 class="panel-title" style="flex:1"><span class="accent">▣</span>Agenda de Hoje</h2><div class="agenda-date"><span id="dashDay">02</span><small id="dashMonth">SET</small></div></div>
+          <div class="timeline"><div class="event"><time>08:00</time><span class="event-dot"></span><div><b>Treino individual</b><small>Técnica e controle</small></div></div><div class="event"><time>09:30</time><span class="event-dot"></span><div><b>Treino em dupla</b><small>Posicionamento tático</small></div></div><div class="event"><time>15:00</time><span class="event-dot"></span><div><b>Treino avançado</b><small>Volume e decisão</small></div></div><div class="event"><time>17:00</time><span class="event-dot"></span><div><b>Análise / Scout</b><small>Evolução dos alunos</small></div></div></div>
+          <button class="agenda-more" data-module="scout">Ver evolução completa →</button>
+        </aside>
+      </section>
+      <iframe class="app-view" id="frameTreino" src="treino.html?v=4000" title="JB Play Aula na Mão"></iframe>
+      <iframe class="app-view" id="frameScout" src="scout.html?v=4000" title="JB Play Scout"></iframe>
     </div>
   </main>
 </div>
@@ -215,22 +269,31 @@ body.locked #jbModuleQuickSwitch{display:none!important}
 <script>
 /* ===== JB PLAY MODULES ===== */
 const frames={treino:document.getElementById('frameTreino'),scout:document.getElementById('frameScout')};
-const nameEl=document.getElementById('moduleName'),descEl=document.getElementById('moduleDesc');
-function openModule(name){
+const dashboard=document.getElementById('jbDashboard');
+function openModule(name,source){
+  const isHome=name==='home';
+  dashboard.classList.toggle('hidden',!isHome);
   Object.entries(frames).forEach(([k,f])=>f.classList.toggle('active',k===name));
-  document.querySelectorAll('[data-module]').forEach(b=>b.classList.toggle('active',b.dataset.module===name));
-  if(name==='scout'){
-    nameEl.textContent='JB Scout Pro';
-    descEl.textContent='Estatísticas, placar, fundamentos, mapas e relatórios.';
-  }else{
-    nameEl.textContent='Gerador de Treinos';
-    descEl.textContent='Quadra animada, IA, movimentação e exportação.';
-  }
+  document.querySelectorAll('.sidebar [data-module]').forEach(b=>b.classList.remove('active'));
+  const activeNav=source?.closest?.('.sidebar')?source:document.querySelector(`.sidebar [data-module="${name}"]`);
+  if(activeNav)activeNav.classList.add('active');
   try{localStorage.setItem('jbplay-module',name)}catch(e){}
+  if(!isHome)setTimeout(()=>{try{frames[name].contentWindow.focus()}catch(e){}},80);
 }
-document.querySelectorAll('[data-module]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.module)));
-document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.open)));
-try{openModule('scout')}catch(e){openModule('scout')}
+document.querySelectorAll('[data-module]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.module,b)));
+function dashboardStats(){
+  const get=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch(e){return fallback}};
+  const students=get('jb_tracker_students_v31',[]),history=get('jb_aula_history_v1',[]),templates=get('jb_aula_templates_v1',[]),scout=get('jb_scout_pro_v2',null);
+  document.getElementById('dashStudents').textContent=students.length||scout?.players?.length||4;
+  document.getElementById('dashTrainings').textContent=history.length||0;
+  document.getElementById('dashTemplates').textContent=templates.length||0;
+  const players=scout?.players||[],values=players.map(p=>{const s=p.stats||{},ok=Object.entries(s).filter(([k])=>/acerto|winner|ace/i.test(k)).reduce((n,[,v])=>n+(+v||0),0),er=Object.entries(s).filter(([k])=>/erro/i.test(k)).reduce((n,[,v])=>n+(+v||0),0);return ok+er?Math.round(ok*100/(ok+er)):null}).filter(v=>v!=null);
+  document.getElementById('dashEvolution').textContent=values.length?`${Math.round(values.reduce((a,b)=>a+b,0)/values.length)}%`:'—';
+  const now=new Date(),months=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];document.getElementById('dashDay').textContent=String(now.getDate()).padStart(2,'0');document.getElementById('dashMonth').textContent=months[now.getMonth()];
+}
+dashboardStats();
+window.addEventListener('storage',dashboardStats);
+try{openModule('home')}catch(e){openModule('home')}
 
 /* ===== JB PLAY PERSONAL LOGIN =====
    First access: user creates their own credentials on this device.

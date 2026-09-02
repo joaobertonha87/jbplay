@@ -1,5 +1,5 @@
-const CACHE='jb-play-aula-na-mao-v39-20260901';
-const CORE=['./index.html?v=3900','./treino.html?v=3900','./scout.html?v=3900','./manifest.webmanifest?v=3900'];
+const CACHE='jb-play-aula-na-mao-v40-20260902';
+const CORE=['./index.html?v=4000','./treino.html?v=4000','./scout.html?v=4000','./manifest.webmanifest?v=4000'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
 });
@@ -11,7 +11,7 @@ self.addEventListener('fetch',event=>{
   const url=new URL(event.request.url);
   const isApp=/\.(?:html|js|webmanifest)$/i.test(url.pathname)||url.pathname.endsWith('/');
   if(isApp){
-    event.respondWith(fetch(event.request,{cache:'no-store'}).catch(()=>caches.match(event.request).then(hit=>hit||caches.match('./index.html?v=3900'))));
+    event.respondWith(fetch(event.request,{cache:'no-store'}).catch(()=>caches.match(event.request).then(hit=>hit||caches.match('./index.html?v=4000'))));
     return;
   }
   event.respondWith(caches.match(event.request).then(hit=>hit||fetch(event.request).then(response=>{
