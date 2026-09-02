@@ -1,8 +1,8 @@
 {
-  "id": "./?jbplay=4000",
+  "id": "./?jbplay=4100",
   "name": "JB Play • Aula na Mão",
   "short_name": "JB Play",
-  "start_url": "./index.html?app=jbplay-v4000",
+  "start_url": "./index.html?app=jbplay-v4100",
   "scope": "./",
   "display": "standalone",
   "background_color": "#071116",
