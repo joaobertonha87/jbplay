@@ -171,6 +171,30 @@ body.locked .shell{filter:blur(11px)}
 @media(max-width:850px){.dashboard{grid-template-columns:1fr;grid-template-rows:238px 90px minmax(240px,1fr);overflow:auto}.quick,.agenda{display:none}.stats{grid-row:2}.court-card{grid-row:3}.hero{padding:26px}.hero h1{font-size:31px}.main{grid-template-rows:45px minmax(0,1fr)}.topbar{height:45px}.profile div:last-child{display:none}}
 @media(max-width:620px){html,body{overflow:hidden}.shell{display:block;height:100dvh;min-height:100svh;padding:max(5px,env(safe-area-inset-top)) max(5px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom)) max(5px,env(safe-area-inset-left))}.sidebar{height:54px;position:sticky;top:0;z-index:20;display:flex;flex-direction:row;border-radius:16px;padding:5px}.logo,.spacer,.logout-btn{display:none}.nav{display:flex;overflow:auto}.nav button{min-width:48px}.main{height:calc(100dvh - 61px);margin-top:7px}.search{min-width:0;width:65vw}.stats{grid-template-columns:repeat(2,1fr);grid-row:auto}.dashboard{grid-template-rows:235px auto minmax(240px,1fr)}.stat:nth-child(n+3){display:none}.hero{padding:22px 19px}.hero h1{font-size:27px}.hero p{font-size:12px;max-width:260px}}
 
+/* ===== V50 — MODOS DE DISPOSITIVO ===== */
+.device-nav .icon{color:var(--jb-lime)}
+.device-overlay{position:fixed;inset:0;z-index:10000;display:none;place-items:center;padding:18px;background:rgba(0,7,12,.80);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.device-overlay.open{display:grid}
+.device-dialog{width:min(540px,100%);padding:22px;border:1px solid rgba(216,255,22,.28);border-radius:22px;background:linear-gradient(155deg,#102431,#06121b 72%);box-shadow:0 28px 90px rgba(0,0,0,.62),0 0 55px rgba(216,255,22,.08)}
+.device-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:17px}.device-kicker{color:var(--jb-lime);font-size:9px;font-weight:950;letter-spacing:.22em}.device-head h2{margin:6px 0 5px;font-size:25px;letter-spacing:-.03em}.device-head p{margin:0;color:#91a3ad;font-size:12px;line-height:1.45}.device-close{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border:1px solid rgba(255,255,255,.13);border-radius:12px;background:#142530;color:#fff;font-size:20px;cursor:pointer}
+.device-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.device-option{min-height:92px;display:grid;grid-template-columns:43px minmax(0,1fr) 22px;align-items:center;gap:10px;padding:13px;border:1px solid rgba(147,190,211,.23);border-radius:15px;background:linear-gradient(145deg,rgba(14,42,58,.88),rgba(5,22,34,.96));color:#fff;text-align:left;cursor:pointer}.device-option:hover{border-color:rgba(216,255,22,.48)}.device-option.selected{border-color:var(--jb-lime);background:linear-gradient(135deg,rgba(216,255,22,.15),rgba(6,25,37,.96));box-shadow:inset 0 0 0 1px rgba(216,255,22,.12)}.device-symbol{display:grid;place-items:center;width:43px;height:43px;border-radius:12px;background:#172d3a;color:#b7c6ce;font-size:21px}.device-option.selected .device-symbol{background:var(--jb-lime);color:#07111a}.device-copy{display:grid;gap:4px}.device-copy strong{font-size:13px}.device-copy small{color:#91a3ad;font-size:10px;line-height:1.35}.device-check{display:none;place-items:center;width:21px;height:21px;border-radius:50%;background:var(--jb-lime);color:#07111a;font-size:13px;font-weight:950}.device-option.selected .device-check{display:grid}.device-note{display:block;margin-top:14px;color:#728791;text-align:center;font-size:10px}
+
+/* PC / Notebook — painel completo. */
+body[data-device="desktop"] .shell{display:grid!important;grid-template-columns:232px minmax(0,1fr)!important;width:100%!important;max-width:none!important;height:100dvh!important;padding:8px!important;gap:12px!important}
+body[data-device="desktop"] .sidebar{position:relative!important;width:auto!important;height:100%!important;display:flex!important;flex-direction:column!important;padding:12px 11px!important;border:1px solid var(--jb-stroke)!important;border-radius:22px!important}
+body[data-device="desktop"] .logo{display:grid!important;height:142px!important}body[data-device="desktop"] .logo img{width:98%!important}body[data-device="desktop"] .nav{display:grid!important;overflow:visible!important}body[data-device="desktop"] .nav button{justify-content:flex-start!important;min-width:0!important;padding:10px 14px!important}body[data-device="desktop"] .nav button span:last-child{display:inline!important}body[data-device="desktop"] .module-title,body[data-device="desktop"] .quote,body[data-device="desktop"] .spacer,body[data-device="desktop"] .logout-btn{display:block!important}body[data-device="desktop"] .main{height:100%!important;margin:0!important;padding:0!important;grid-template-rows:48px minmax(0,1fr)!important}body[data-device="desktop"] .topbar{display:flex!important;height:48px!important}body[data-device="desktop"] .dashboard{grid-template-columns:minmax(0,1fr) 318px!important;grid-template-rows:280px 102px minmax(0,1fr)!important}body[data-device="desktop"] .quick,body[data-device="desktop"] .agenda{display:block!important}body[data-device="desktop"] .stats{grid-template-columns:repeat(4,1fr)!important}body[data-device="desktop"] .stat:nth-child(n){display:grid!important}
+
+/* iPad — menu lateral compacto e conteúdo com mais área útil. */
+body[data-device="ipad"] .shell{display:grid!important;grid-template-columns:90px minmax(0,1fr)!important;width:min(1180px,100%)!important;margin:auto!important;height:100dvh!important;padding:8px!important;gap:9px!important}
+body[data-device="ipad"] .sidebar{position:relative!important;height:100%!important;display:flex!important;flex-direction:column!important;padding:8px 6px!important;border:1px solid var(--jb-stroke)!important;border-radius:19px!important}body[data-device="ipad"] .logo{display:grid!important;height:84px!important}body[data-device="ipad"] .logo img{width:82px!important}body[data-device="ipad"] .nav{display:grid!important;overflow:visible!important}body[data-device="ipad"] .nav button{justify-content:center!important;min-width:0!important;padding:9px 6px!important}body[data-device="ipad"] .nav button span:last-child,body[data-device="ipad"] .quote{display:none!important}body[data-device="ipad"] .spacer{display:block!important}body[data-device="ipad"] .logout-btn{display:flex!important}body[data-device="ipad"] .main{height:100%!important;margin:0!important;grid-template-rows:45px minmax(0,1fr)!important}body[data-device="ipad"] .topbar{display:flex!important;height:45px!important}body[data-device="ipad"] .dashboard{grid-template-columns:minmax(0,1fr) 270px!important;grid-template-rows:250px 94px minmax(240px,1fr)!important;gap:9px!important}body[data-device="ipad"] .quick,body[data-device="ipad"] .agenda{display:block!important}body[data-device="ipad"] .quick-grid{grid-template-columns:repeat(2,1fr)!important}body[data-device="ipad"] .quick-btn{min-height:70px!important}body[data-device="ipad"] .quick-btn:nth-child(n+5){display:none!important}body[data-device="ipad"] .stats{grid-template-columns:repeat(2,1fr)!important;gap:8px!important}body[data-device="ipad"] .stat:nth-child(n+3){display:none!important}
+
+/* iPhone — navegação superior, botões de toque e conteúdo vertical. */
+body[data-device="iphone"] .shell{display:block!important;width:100%!important;max-width:520px!important;height:100dvh!important;margin:0 auto!important;padding:max(5px,env(safe-area-inset-top)) max(5px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom)) max(5px,env(safe-area-inset-left))!important}
+body[data-device="iphone"] .sidebar{position:sticky!important;top:0!important;z-index:20!important;width:100%!important;height:58px!important;display:flex!important;flex-direction:row!important;align-items:center!important;padding:5px!important;border:1px solid var(--jb-stroke)!important;border-radius:16px!important}body[data-device="iphone"] .logo,body[data-device="iphone"] .spacer,body[data-device="iphone"] .quote,body[data-device="iphone"] .logout-btn{display:none!important}body[data-device="iphone"] .sidebar>.nav{display:flex!important;overflow-x:auto!important;overflow-y:hidden!important;gap:4px!important}body[data-device="iphone"] .sidebar>.nav button{flex:0 0 51px!important;min-width:51px!important;min-height:46px!important;justify-content:center!important;padding:5px!important}body[data-device="iphone"] .sidebar>.nav button span:last-child{display:none!important}body[data-device="iphone"] .main{height:calc(100dvh - 65px)!important;margin-top:7px!important;grid-template-rows:minmax(0,1fr)!important}body[data-device="iphone"] .topbar{display:none!important}body[data-device="iphone"] .dashboard{grid-template-columns:1fr!important;grid-template-rows:235px auto minmax(245px,1fr)!important;gap:8px!important;overflow-y:auto!important}body[data-device="iphone"] .hero{padding:22px 19px!important}body[data-device="iphone"] .hero h1{font-size:27px!important}body[data-device="iphone"] .hero p{font-size:12px!important;max-width:260px!important}body[data-device="iphone"] .quick,body[data-device="iphone"] .agenda{display:none!important}body[data-device="iphone"] .stats{grid-template-columns:repeat(2,1fr)!important;grid-row:auto!important;gap:7px!important}body[data-device="iphone"] .stat:nth-child(n+3){display:none!important}body[data-device="iphone"] .app-view{border-radius:15px!important}
+
+@media(max-width:900px){body[data-device="ipad"] .dashboard{grid-template-columns:1fr!important;grid-template-rows:238px 90px minmax(250px,1fr)!important;overflow-y:auto!important}body[data-device="ipad"] .quick,body[data-device="ipad"] .agenda{display:none!important}}
+@media(max-width:600px){.device-dialog{padding:17px;border-radius:18px}.device-options{grid-template-columns:1fr}.device-option{min-height:75px}.device-head h2{font-size:22px}}
+
 </style>
 <meta name="theme-color" content="#071116">
 <meta name="color-scheme" content="dark">
@@ -178,7 +202,7 @@ body.locked .shell{filter:blur(11px)}
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="JB Tracker">
-<link rel="manifest" href="manifest.webmanifest?v=4200">
+<link rel="manifest" href="manifest.webmanifest?v=5000">
 <link rel="apple-touch-icon" sizes="180x180" href="jb-tracker-v2-180.png?v=2910">
 <link rel="icon" type="image/png" sizes="192x192" href="jb-tracker-v2-192.png?v=2910">
 
@@ -218,6 +242,7 @@ body.locked .shell{filter:blur(11px)}
       <button data-module="treino"><span class="icon">▷</span><span>Motor</span></button>
       <button data-module="treino"><span class="icon">⇩</span><span>Exportar</span></button>
       <button data-module="scout"><span class="icon">◎</span><span>Scout</span></button>
+      <button type="button" class="device-nav" id="deviceModeBtn"><span class="icon">▣</span><span>Tela</span></button>
     </nav>
     <div class="spacer"></div>
     <div class="quote"><small>JOÃO BERTONHA</small><b>Disciplina transforma talento em resultados.</b></div>
@@ -261,16 +286,62 @@ body.locked .shell{filter:blur(11px)}
           <button class="agenda-more" data-module="scout">Ver evolução completa →</button>
         </aside>
       </section>
-      <iframe class="app-view" id="frameTreino" src="treino.html?v=4200" title="JB Play Aula na Mão"></iframe>
-      <iframe class="app-view" id="frameScout" src="scout.html?v=4200" title="JB Play Scout"></iframe>
+      <iframe class="app-view" id="frameTreino" src="treino.html?v=5000" title="JB Play Aula na Mão"></iframe>
+      <iframe class="app-view" id="frameScout" src="scout.html?v=5000" title="JB Play Scout"></iframe>
     </div>
   </main>
+</div>
+
+<div class="device-overlay" id="deviceOverlay" role="presentation">
+  <section class="device-dialog" role="dialog" aria-modal="true" aria-labelledby="deviceTitle">
+    <div class="device-head"><div><div class="device-kicker">EXPERIÊNCIA RESPONSIVA</div><h2 id="deviceTitle">Modo do dispositivo</h2><p>Escolha como o JB Play deve organizar o painel nesta tela.</p></div><button type="button" class="device-close" id="deviceClose" aria-label="Fechar">×</button></div>
+    <div class="device-options">
+      <button type="button" class="device-option" data-device-option="auto"><span class="device-symbol">◈</span><span class="device-copy"><strong>Automático</strong><small id="autoDeviceLabel">Detectando dispositivo...</small></span><span class="device-check">✓</span></button>
+      <button type="button" class="device-option" data-device-option="iphone"><span class="device-symbol">▯</span><span class="device-copy"><strong>iPhone</strong><small>Navegação superior e comandos de toque</small></span><span class="device-check">✓</span></button>
+      <button type="button" class="device-option" data-device-option="ipad"><span class="device-symbol">▭</span><span class="device-copy"><strong>iPad</strong><small>Painel compacto com área ampla</small></span><span class="device-check">✓</span></button>
+      <button type="button" class="device-option" data-device-option="desktop"><span class="device-symbol">▰</span><span class="device-copy"><strong>PC / Notebook</strong><small>Painel completo e máxima produtividade</small></span><span class="device-check">✓</span></button>
+    </div>
+    <small class="device-note">A escolha fica salva somente neste dispositivo.</small>
+  </section>
 </div>
 
 <script>
 /* ===== JB PLAY MODULES ===== */
 const frames={treino:document.getElementById('frameTreino'),scout:document.getElementById('frameScout')};
 const dashboard=document.getElementById('jbDashboard');
+/* ===== JB PLAY DEVICE MODE V50 ===== */
+const DEVICE_KEY='jbplay-device-mode-v1';
+const deviceOverlay=document.getElementById('deviceOverlay');
+const deviceModeBtn=document.getElementById('deviceModeBtn');
+const deviceClose=document.getElementById('deviceClose');
+const autoDeviceLabel=document.getElementById('autoDeviceLabel');
+let chosenDevice=localStorage.getItem(DEVICE_KEY)||'auto';
+function detectDevice(){
+  const ua=navigator.userAgent||'';
+  const ipad=/iPad/i.test(ua)||(/Macintosh/i.test(ua)&&navigator.maxTouchPoints>1);
+  const iphone=/iPhone|iPod/i.test(ua);
+  const androidTablet=/Android/i.test(ua)&&Math.min(innerWidth,innerHeight)>=600;
+  return iphone||innerWidth<700?'iphone':ipad||androidTablet||innerWidth<1200?'ipad':'desktop';
+}
+function deviceName(value){return value==='iphone'?'iPhone':value==='ipad'?'iPad':'PC / Notebook'}
+function applyDeviceMode(){
+  const automatic=detectDevice();
+  const resolved=chosenDevice==='auto'?automatic:chosenDevice;
+  document.body.dataset.device=resolved;
+  autoDeviceLabel.textContent='Detectado: '+deviceName(automatic);
+  document.querySelectorAll('[data-device-option]').forEach(button=>button.classList.toggle('selected',button.dataset.deviceOption===chosenDevice));
+  setTimeout(()=>Object.values(frames).forEach(frame=>{try{frame.contentWindow.dispatchEvent(new Event('resize'))}catch(e){}}),80);
+}
+function openDeviceMenu(){applyDeviceMode();deviceOverlay.classList.add('open')}
+function closeDeviceMenu(){deviceOverlay.classList.remove('open')}
+deviceModeBtn.addEventListener('click',openDeviceMenu);
+deviceClose.addEventListener('click',closeDeviceMenu);
+deviceOverlay.addEventListener('click',event=>{if(event.target===deviceOverlay)closeDeviceMenu()});
+document.querySelectorAll('[data-device-option]').forEach(button=>button.addEventListener('click',()=>{chosenDevice=button.dataset.deviceOption;localStorage.setItem(DEVICE_KEY,chosenDevice);applyDeviceMode();closeDeviceMenu()}));
+window.addEventListener('resize',()=>{if(chosenDevice==='auto')applyDeviceMode()},{passive:true});
+window.addEventListener('orientationchange',applyDeviceMode,{passive:true});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeDeviceMenu()});
+applyDeviceMode();
 function openModule(name,source){
   const isHome=name==='home';
   dashboard.classList.toggle('hidden',!isHome);
